@@ -42,7 +42,7 @@ python3 -m venv .venv
 python3 -m pip install -r requirements.txt
 ```
 
-如果使用本地模型tokenizer，另安装requirements-tokenizer.txt，并用--tokenizer提供实际目录。未提供时抽取采用保守预算，不是精确token统计。
+如果使用本地模型tokenizer，另安装requirements-tokenizer.txt，并用--tokenizer提供实际目录。未提供时抽取调用服务根地址的/tokenize，按与推理一致的聊天模板计算实际token，并预留输出和安全余量；计数服务失败按技术失败处理，不回退为字节估算或内容DROP。相同请求的计数在进程内缓存。
 
 复制examples/books.json填写新书单。每本必须有identifier、title、md_path；提供pdf_path可准备全书辅助格式。后续清洗还必须明确subject_slug与scope_config，不能从路径或书名臆测学科。所有文件路径是运行机器上的绝对路径。
 

@@ -28,3 +28,6 @@ jobs:
       - run: python -B -m unittest discover -s modules/dictionary/classification/tests -v
         env:
           PYTHONPATH: modules/dictionary/classification/scripts
+      - run: python -B -m unittest discover -s modules/dictionary/tests -p 'test_fullbook_v5*.py' -v
+        env:
+          PYTHONPATH: modules/dictionary/src
