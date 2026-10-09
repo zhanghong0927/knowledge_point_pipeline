@@ -10,6 +10,7 @@ from cleaning_handoff import seal_export, verify_export
 
 ROOT = Path(__file__).resolve().parents[1]
 TEXT_FIELDS = ('knowledge_point', 'name', 'definition', 'en_definition', 'description', 'en_description')
+CONTENT_TRACE_BASIS = 'raw_content in frozen cleaning input, zero-based Unicode offsets; reconstruct via body_locations'
 
 
 def read(path):
@@ -101,12 +102,19 @@ def export_records(input_path, native, out, subject, slug):
         original = by_id[row['id']]
         if original.get('subject_slug', slug) != slug:
             raise ValueError('Mixed subjects in dictionary cleaning export')
-        if row.get('source') != original.get('source'):
+        source, original_source = row.get('source'), original.get('source')
+        if (not isinstance(source, dict) or not isinstance(original_source, dict)
+                or any(key not in source or source[key] != value for key, value in original_source.items())
+                or set(source) - set(original_source) - {'content_trace', 'content_trace_basis'}):
             raise ValueError('Native cleaner changed original source identity')
+        if set(source) - set(original_source):
+            if not isinstance(source.get('content_trace'), dict) or source.get('content_trace_basis') != CONTENT_TRACE_BASIS:
+                raise ValueError('Invalid native cleaning content trace')
         values = {field: row.get(field, '') for field in TEXT_FIELDS}
         if any(not isinstance(v, str) for v in values.values()) or not any(values[f] for f in ('knowledge_point', 'name')):
             raise ValueError('Invalid native standard name/text fields')
-        records.append({'id': row['id'], **values, 'source': row.get('source', ''),
+        # The native trace remains in trace.jsonl; published provenance keeps its original identity.
+        records.append({'id': row['id'], **values, 'source': original_source,
                         'tag': subject, 'main_tags': '', 'related_tags': []})
         traces.append({'id': row['id'], 'subject': subject, 'subject_slug': slug,
                        'mode': 'dictionary', 'original_record': original, 'cleaned_record': row})

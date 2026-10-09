@@ -68,6 +68,16 @@ class DictionaryExtractionTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "HTTP504"):
                 self.load().finalized_report(manifest, out, 2, True)
 
+    def test_partial_with_other_api_errors_requires_recovery(self):
+        with tempfile.TemporaryDirectory() as d:
+            manifest, out = self.fixture(Path(d))
+            summary = json.loads((out / "SUMMARY.json").read_text())
+            summary["books"][0]["execution"] = {"technical_errors": 1}
+            (out / "SUMMARY.json").write_text(json.dumps(summary))
+            (out / "book/SUMMARY.json").write_text(json.dumps(summary["books"][0]))
+            with self.assertRaisesRegex(ValueError, "Technical errors"):
+                self.load().finalized_report(manifest, out, 2, True)
+
     def test_completed_does_not_require_partial_switch(self):
         with tempfile.TemporaryDirectory() as d:
             manifest, out = self.fixture(Path(d), "completed")

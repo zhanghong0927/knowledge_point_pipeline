@@ -29,6 +29,8 @@ def finalized_report(manifest, out, returncode, allow_partial):
            for k in ("http504_pending_chunks", "http504_unresolved_chunks")):
         raise ValueError("Unresolved HTTP504 is a technical failure, not a content partial")
     partial = "partial" in statuses
+    if any(b["status"] == "partial" and b.get("execution", {}).get("technical_errors", 0) for b in books):
+        raise ValueError("Technical errors in partial extraction require recovery before handoff")
     if returncode != (2 if partial else 0):
         raise ValueError("Native return code does not match finalized extraction status")
     if partial and not allow_partial:

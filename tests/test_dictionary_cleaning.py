@@ -105,6 +105,31 @@ class DictionaryCleaningTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'passed'):
                 adapter.export_records(inp, native, root / 'export', 'Mechanical', 'mechanical_engineering')
 
+    def test_native_content_trace_is_audited_without_changing_export_source(self):
+        adapter = load_adapter(self)
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            inp, native, original, kept = finished_fixture(root)
+            kept['source'] = {**kept['source'],
+                'content_trace': {'en_definition': {'raw_body_spans': [[0, 13]], 'joiners': []}},
+                'content_trace_basis': 'raw_content in frozen cleaning input, zero-based Unicode offsets; reconstruct via body_locations'}
+            bridge.write_rows(native / 'FINAL_RECORDS.jsonl', [kept])
+            adapter.export_records(inp, native, root / 'export', 'Mechanical', 'mechanical_engineering')
+            self.assertEqual(bridge.rows(root / 'export/records.jsonl')[0]['source'], original[0]['source'])
+            self.assertEqual(bridge.rows(root / 'export/trace.jsonl')[0]['cleaned_record']['source'], kept['source'])
+
+    def test_content_trace_does_not_allow_other_source_changes(self):
+        adapter = load_adapter(self)
+        for change in ({'identifier': 'OTHER'}, {'body_spans': [[9, 23]]}, {'unexpected': 'value'}):
+            with self.subTest(change=change), tempfile.TemporaryDirectory() as d:
+                root = Path(d)
+                inp, native, _, kept = finished_fixture(root)
+                kept['source'] = {**kept['source'], **change, 'content_trace': {},
+                    'content_trace_basis': 'raw_content in frozen cleaning input, zero-based Unicode offsets; reconstruct via body_locations'}
+                bridge.write_rows(native / 'FINAL_RECORDS.jsonl', [kept])
+                with self.assertRaisesRegex(ValueError, 'source identity'):
+                    adapter.export_records(inp, native, root / 'export', 'Mechanical', 'mechanical_engineering')
+
     def test_running_native_cleaner_and_changed_input_are_not_exported(self):
         adapter = load_adapter(self)
         with tempfile.TemporaryDirectory() as d:
