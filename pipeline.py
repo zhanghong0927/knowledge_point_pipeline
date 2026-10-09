@@ -166,11 +166,17 @@ def plan(config, v):
         source = extraction / "source_prepared"
         task(tasks, "prepare_fullbook", [py, dictionary / "portable_pipeline.py", "prepare", "--books",
              approved_books, "--out", source], [approved_books], [source / "books.json"])
-        task(tasks, "extract_fullbook", [py, dictionary / "src/run_fullbook_v5.py", "--manifest", source / "books.json",
+        extraction_options = config.get("dictionary_extraction", {})
+        allow_partial = extraction_options.get("allow_partial", False)
+        if not isinstance(allow_partial, bool):
+            raise ValueError("dictionary_extraction.allow_partial must be boolean")
+        task(tasks, "extract_fullbook", [py, ROOT / "adapters/dictionary_extraction.py",
+             *(["--allow-partial"] if allow_partial else []), "--manifest", source / "books.json",
              "--out", extraction / "raw", "--api-url", v["api_root"], "--model", v["model"],
              "--context", config.get("context_limit", 32768), "--server-context", config.get("context_limit", 32768),
              "--output-tokens", config.get("extraction_max_tokens", 8192),
-             "--book-workers", config.get("book_workers", 4)], [source / "books.json"], [extraction / "raw"])
+             "--book-workers", config.get("book_workers", 4)], [source / "books.json"],
+             [extraction / "raw/HANDOFF.json", extraction / "raw/UNRESOLVED.jsonl"])
         task(tasks, "verify_extraction_sources", [py, dictionary / "portable_pipeline.py", "clean-prepare",
              "--books", source / "books.json", "--extraction", extraction / "raw", "--out", extraction / "verified"],
              [source / "books.json", extraction / "raw"], [extraction / "verified/INPUT.json",

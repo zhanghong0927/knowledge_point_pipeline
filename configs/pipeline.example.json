@@ -39,6 +39,7 @@
     "path_maps": []
   },
   "dictionary_approval": {"enabled": true, "allowed_families": ["entry_prose"]},
+  "dictionary_extraction": {"allow_partial": false},
   "mounting": {"threshold": 0.85, "min_depth": 2, "max_depth": 5, "max_related": 2, "workers": 16, "max_tokens": 4096, "timeout": 600, "limit": 0, "api_key_env": ""},
   "screening_environment": {},
   "hooks": {"mounting": null},
