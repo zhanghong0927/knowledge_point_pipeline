@@ -1,17 +1,20 @@
 # 知识点全流程处理管线
 
-版本：2026-10-08。面向多个学科，将书目筛选、书籍质量与结构分类、知识点抽取、知识点清洗、知识树挂载、去重与合并组织成六个阶段。
+版本：2026-10-09。面向多个学科，将书目筛选、书籍质量与结构分类、知识点抽取、知识点清洗、知识树挂载、去重与合并组织成六个阶段。
 
 ## 文档导航
 
 - 本README：当前能力、配置、运行方法和恢复约束。
 - [技术说明：模块与数据流转](docs/技术说明_模块与数据流转.md)：各模块职责、输入输出、字段与ID契约、状态和统计口径。
+- [辞海线路分离与挂载合流](docs/辞海线路分离与挂载合流.md)：第一类准入配置、辞海原生清洗及两路挂载入口。
 - [机械MD全流程测试记录](docs/机械MD全流程测试记录_20261008.md)：本次真实测试逐模块的输出文件、数量、修复和验收。
 - [本次最终70条知识点](runs/mechanical_e2e_20261008/important/06_dedup_after_review_retry/retained.jsonl)：复测后的最终结果，不是首轮68条基线。
 
 ## 当前状态
 
 本版已解压现有工具包、接入当前两阶段清洗代码，并增加统一计划/调度入口、审核书单转换、辞海分类放行、字段转换、首次挂载及标准导出。**六阶段代码接口已衔接，重要书籍LLM分支已完成机械MD真实小样本联调。** 必须填写真实输入、依赖环境和模型配置后再执行，不能将小样本测试视为全量运行或语义验收。
+
+2026-10-09调整：辞海默认仅放行第一类 `entry_prose`，第4步复用辞海原生 v22/v9/V46 清洗；重要书籍清洗保持不变。第5步可配置同学科多路清洗结果合流，不再要求等到第6步才汇合。该调整不改变抽取或清洗模型提示词，也不表示语义质量已合格。
 
 当前约定：PDF默认符合质量要求，不执行独立PDF质量筛选；保留可选PDF版式辅助。重要书籍仅处理N1/N3，N2/N4/N5暂不纳入开发和抽取范围。
 
@@ -34,24 +37,26 @@
 原始全量书目 CSV / 已有学科书单
   01 书目筛选：学科召回、元数据初筛、重要书籍精筛、两轨拆分
   02 MD质量审核 → 审核书单转books.json → MD主体结构分类
-       辞海轨：entry_prose / fixed_fields / text_commentary 等
+       辞海轨：分类为entry_prose / fixed_fields / text_commentary等，默认只准入entry_prose
        重要书籍轨：N1 / N3 / OTHER / needs_review / technical_failed
   03 知识点抽取
        辞海轨：完整MD分块模型抽取 + 原文范围核验
        重要书籍轨：只放行N1/N3，选择rule本地规则或llm逐书模型抽取
-  04 当前清洗流程：字段规范化 → 通用规则 → 模型清洗 → 恢复来源与tag
-  05 知识树挂载：整理已有边界 → 首次路由 → 路径复核 → 标准导出
+  04 分轨清洗
+       辞海轨：v22名称格式 → v9学科范围 → V46正文/定义/对应检查 → 标准导出
+       重要书籍轨：字段规范化 → 通用规则 → 模型清洗 → 恢复来源与tag
+  05 同学科清洗结果合流 → 整理已有边界 → 首次路由 → 路径复核 → 标准导出
   06 去重与合并：同学科多个输入 → 同完整主路径同名去重 → 验收
 ```
 
-两条抽取轨道分别运行。合并发生在第6步，按学科汇合，不把所有学科混在一起做去重。一个知识点是否符合学科范围由第4步审核；具体挂载路径由第5步判断，二者不是同一任务。
+两条轨道独立抽取、独立清洗。第5步可通过 `mounting.inputs` 汇合两路已通过的清洗结果，第6步再做同分支去重；旧单输入挂载和多个已挂载结果的去重接口仍保留。不把所有学科混在一起处理。一个知识点是否符合学科范围由第4步审核；具体挂载路径由第5步判断，二者不是同一任务。
 
 | 阶段 | 现有模块 | 当前接入情况 | 模型/GPU需求 |
 | --- | --- | --- | --- |
 | 01 书目筛选 | `modules/book_screening` | 已接原包1–4子阶段 | 学科召回及硬规则本地执行；重要书籍精筛调用模型 |
 | 02 质量与分类 | `book_screening` 的5–7子阶段、书单转换适配器、两轨分类模块 | 审核结果自动转书单；不做PDF质量筛选 | 模型远端推理；本地CPU整理书单和读取版式 |
 | 03 抽取 | `dictionary`、`important_books`、`important_llm` | 辞海模型抽取；重要书籍N1/N3支持rule/llm二选一 | rule使用CPU；llm使用远端服务和本地tokenizer |
-| 04 清洗 | `modules/cleaning` | 当前规则＋模型流程已接入 | 规则本地CPU；模型审核调用接口 |
+| 04 清洗 | `modules/dictionary`、`modules/cleaning` | 辞海原生分阶段清洗；重要书籍原规则＋模型流程 | 格式处理本地CPU；审核调用模型接口 |
 | 05 挂载 | `adapters/mounting_bridge.py`、`modules/mounting` | 标准输入、知识树适配、首次挂载、复核与标准导出已接入 | 准备阶段本地；挂载和复核调用模型 |
 | 06 去重合并 | `modules/dedup` | 已接默认长度优先模式，支持同学科多个输入 | 长度模式本地CPU；原包另有模型质量模式 |
 
@@ -79,6 +84,8 @@ knowledge_point_pipeline/
 │  ├─ normalize_records.py       # 标准化字段/ID、来源侧文件、清洗后恢复
 │  ├─ screened_books_to_manifest.py # PASS审核书单转books.json，保存未匹配清单
 │  ├─ approve_dictionary_books.py # 分类完成后生成approved_books.json，复核证据与MD哈希
+│  ├─ dictionary_cleaning.py    # 辞海原生清洗入口与通过项标准导出，保留原文证据
+│  ├─ cleaning_handoff.py       # 通过项出口与原生证据哈希核验
 │  ├─ important_llm_io.py        # N1/N3清单转LLM协议，原生交接快照转统一清洗输入
 │  ├─ mounting_assets.py         # 知识树格式统一、原节点路径映射
 │  ├─ mounting_bridge.py         # prepare / route / review / export
@@ -138,11 +145,14 @@ OSS下载依赖、tokenizer依赖分别按需求安装；OCR/EPUB转MD和模型�
 - `paths.dictionary_scope`：辞海分支的v9学科范围配置，可按书单行逐本提供scope_config。
 - `paths.books`：已有标准书单时，将 `book_manifest.enabled=false` 后直接读取此文件。
 - `dictionary_approval.enabled`：默认为true，第2步分类完成后自动生成approved_books并接入第3步。
+- `dictionary_approval.allowed_families`：默认 `["entry_prose"]`；第一类包括旧O1/O2。显式加入其他已知结构族可恢复旧准入口径，不绕过原文证据校验。
 - `paths.approved_books`：仅在 `dictionary_approval.enabled=false` 时使用的外部放行书单。
 - `paths.taxonomy`：当前学科的真实知识树。
 - `paths.classification_model_config`：结构分类专用JSON模型配置。
 - `model.api_url/model.name`：清洗与抽取使用的真实服务和模型ID。分类JSON中的模型设置须同步填写。
-- `paths.knowledge_input`：可选，直接从已有抽取数据启动第4步；配合 `knowledge_input_format=standard/dictionary/important`。
+- `paths.knowledge_input`：可选，直接从已有抽取数据启动第4步。辞海必须提供原生已核验 `INPUT.json`，格式为dictionary，不能使用丢失原文范围的standard记录替代。
+- `paths.cleaning_books`：辞海只执行第4步时，可指定与输入相匹配的原生书单（含MD、学科及scope_config）；默认使用第3步source_prepared/books.json。
+- `mounting.inputs`：可选，同一学科已清洗JSONL的非空路径数组；默认只读取本次04_cleaning/export/records.jsonl。多输入需使用内置挂载入口；见合流说明。
 
 `paths` 中相对路径以配置文件所在目录为基准；可以使用 `{root}` 指向整合目录。`books.json` 里面的MD/PDF/scope路径按照原模块要求填写绝对路径。只复制根目录至其他环境即可携带逻辑代码，但必须重配数据、模型、知识树及依赖。
 
@@ -168,7 +178,7 @@ python pipeline.py run --config configs/my_subject.json --stages 05,06
 python pipeline.py run --config configs/my_subject.json --stages 01,02,03,04,05,06
 ```
 
-`--resume` 只跳过调度器记录为completed且命令/产物检查通过的任务。修复失败原因后可显式加 `--retry-failed` 重试failed任务，保存上一轮失败记录；它不会删除已有输出，是否能原地恢复仍由各模块决定。running任务仍拒绝重入。调度器完成状态只代表进程结束且约定文件存在，不等于语义准确，也不代替各包验收报告。
+`--resume` 只跳过调度器记录为completed且命令/产物检查通过的任务；第4步清洗出口还需验证其绑定的原生证据哈希。修复失败原因后可显式加 `--retry-failed` 重试failed任务，保存上一轮失败记录；它不会删除已有输出，是否能原地恢复仍由各模块决定。running任务仍拒绝重入。调度器完成状态不等于语义准确，也不代替各包验收报告。
 
 整合层目前尚未对所有任务的全部输入、输出内容与代码统一计算续跑指纹；命令相同且文件存在不足以证明文件内容未改动。不要改动原输入或手动混拼不同批次；原生模块有自己的更严格检查点约束。外部手动修复失败任务后，调度状态不会自动接纳该结果，需要按模块恢复流程处理或使用新运行目录。
 
@@ -245,6 +255,7 @@ python adapters/screened_books_to_manifest.py \
 ├─ other.jsonl               # 当前结构不适配，不代表书籍质量差
 ├─ review.jsonl              # 结构、词头、MD或适配性仍有疑点
 ├─ technical_failed.jsonl    # 分类失败、文件变化、记录缺失、校验失败
+├─ not_selected.jsonl        # 已确认但不在allowed_families中的结构，不算技术失败
 ├─ approval_audit.jsonl      # 全量逐书决定及分类证据
 └─ report.json               # 输入/放行/分流数量与校验口径
 ```
@@ -252,7 +263,7 @@ python adapters/screened_books_to_manifest.py \
 默认仅放行同时满足以下条件的书籍：
 
 - 原分类 `status` 和 `routing_status` 均为 `sample_supported`。
-- family属于entry_prose、fixed_fields或text_commentary；head_position为inline、standalone或both。
+- family在allowed_families中，默认仅entry_prose；head_position为inline、standalone或both。
 - md_quality_status为no_problem_reported_in_samples，applicability_status为model_considered_compatible。
 - 分类书单与输入书单一致，MD哈希未变，保存的分类结果可由原响应和原MD证据重新验证。
 
@@ -332,7 +343,11 @@ python pipeline.py run --config configs/my_important_llm.json --stages 03,04
 
 新分支主要产物：`03_extraction/llm_work`（完整原生结果）、`llm_delivery`（带checksums的冻结交接）、`llm_clean_input`（统一输入和ID映射）。保留这三个目录以便回溯，不只拷贝最终records后删除证据。
 
-### 04 当前清洗流程
+### 04 分轨清洗
+
+辞海由 `adapters/dictionary_cleaning.py` 调用原包 `portable_pipeline.run_cleaning()`：v22名称格式、v9学科范围、V46正文选择/定义分离/对应检查。只给名称筛选的review补少量正文；完整raw_content及source_context不在前置标准化中压缩或丢弃。原生REVIEW、TECHNICAL_FAILURES和DISPOSITIONS单独保存，只有各层通过项进入export/records.jsonl。ID和source保持原值，完整抽取记录及原生清洗记录保存在trace中。原生清洗当前仅支持无鉴权端点。
+
+重要书籍继续使用以下原流程：
 
 1. `normalize_records.py`：JSON/JSONL/CSV转标准JSONL。纯英文name在英文名称槽为空时移入knowledge_point，明确为英文的正文移到英文字段；有冲突保留供模型判断。原文无中文不补译中文。混合中英名称不强行拆分。
 2. 当前规则清洗：确定性格式错误删除，安全清理标题标记、序号、布局引用、简繁与字符格式；模糊名称保留给模型。
@@ -341,9 +356,9 @@ python pipeline.py run --config configs/my_important_llm.json --stages 03,04
 
 使用标准文本字段和explanation/raw_content作为证据，不将所有额外字段送模型。来源对象的标题用于模型输入，原对象在清洗导出时恢复。已存在ID统一转字符串，以满足去重包；没有ID的行按学科、轨道、书目、记录内容及位置生成稳定ID，并记录映射。相同ID冲突直接报错，不擅自覆盖。
 
-**清洗包与辞海包内的清洗不能默认叠加。** 辞海包本来还有v22名称、v9学科、v46正文溯源清洗。本初版默认在辞海 `clean-prepare` 后转入当前两阶段清洗，避免两套名称/学科审核都自动跑一次。若要求严格原文片段输出，选择辞海原生clean路径进行单独实验，随后通过标准化接口接挂载，不默认再跑两阶段模型。
+**两套清洗不叠加。** 辞海clean-prepare后只进入原生v22/v9/V46，重要书籍只进入modules/cleaning；两者分别导出相同标准接口后才在挂载入口汇合。
 
-当前模型清洗允许截取和压缩，证据重合校验不是逐字精确原文校验。恢复source也不意味着新定义的全部字符仍对应原span。需要原文级交付时，应补清洗后精确证据检查或采用v46原生分支。
+重要书籍当前模型清洗允许截取和压缩，证据重合校验不是逐字精确原文校验。恢复source也不意味着新定义的全部字符仍对应原span。辞海使用V46原文范围选择，但可追溯也不等于定义选取的语义质量合格。
 
 Review文件独立保存；沿用当前统计口径时计入未保留/删除，但不能清空复核证据。技术错误始终单列。历史“语言误删恢复”脚本作为审计工具保留，本版预先规范语言字段，不默认对新批次执行历史恢复规则。
 

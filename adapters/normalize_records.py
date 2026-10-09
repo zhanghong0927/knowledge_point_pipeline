@@ -7,6 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from cleaning_handoff import seal_export
 
 
 TEXT_FIELDS = ("name", "knowledge_point", "definition", "en_definition", "description", "en_description")
@@ -102,9 +103,15 @@ def main():
     parser.add_argument("--slug", required=True)
     parser.add_argument("--restore", action="store_true")
     parser.add_argument("--trace", type=Path)
+    parser.add_argument("--cleaning-report", type=Path, help="Bind restored output to native model keep decisions")
     args = parser.parse_args()
     if args.out.exists():
         raise FileExistsError(f"Use a new output directory: {args.out}")
+    cleaning_evidence = []
+    if args.cleaning_report:
+        if not args.restore:
+            raise ValueError('--cleaning-report requires --restore')
+        cleaning_evidence = verify_model_keep(args.input, args.cleaning_report, args.subject)
     args.out.mkdir(parents=True)
     traces = {row["id"]: row for row in records(args.trace)} if args.restore and args.trace else {}
     seen = set()
@@ -140,8 +147,39 @@ def main():
     report = {"records": count, "language_moved_records": moved, "subject": args.subject,
               "input_sha256": hashlib.sha256(args.input.read_bytes()).hexdigest(),
               "ids_preserved_as_strings_or_generated": True, "api_calls": 0}
+    if cleaning_evidence:
+        report.update(seal_export(args.out, [args.input, args.trace, *cleaning_evidence], 'important', args.subject))
     (args.out / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(report, ensure_ascii=False))
+
+
+def verify_model_keep(input_path, report_path, subject):
+    report = json.loads(report_path.read_text(encoding='utf-8-sig'))
+    if report.get('stage') != 'model_clean' or report.get('subject') != subject or not report.get('finished_at'):
+        raise ValueError('Incomplete or mismatched native cleaning report')
+    outputs = report['outputs']
+    if Path(outputs['clean']).resolve() != input_path.resolve():
+        raise ValueError('Clean records path differs from native cleaning report')
+    judgments_path = Path(outputs['judgments'])
+    judgments = list(records(judgments_path))
+    upstream = Path(report['input'])
+    originals = list(records(upstream))
+    keys = {str(r.get('cleaning_record_id') or r.get('record_id') or r.get('global_id') or r['id']): str(r['id'])
+            for r in originals}
+    by_id = {r['cleaning_record_id']: r['model_cleaning'] for r in judgments}
+    if (len(keys) != len(originals) or len(set(keys.values())) != len(originals)
+            or len(by_id) != len(judgments) or set(by_id) != set(keys)):
+        raise ValueError('Native cleaning judgment coverage mismatch')
+    by_id = {keys[key]: vote for key, vote in by_id.items()}
+    final = list(records(input_path))
+    kept = {rid for rid, vote in by_id.items() if vote.get('decision') == 'keep'}
+    if (len({str(r['id']) for r in final}) != len(final) or {str(r['id']) for r in final} != kept
+            or report.get('counts', {}).get('keep', 0) != len(final)):
+        raise ValueError('Clean records must match all and only native keep judgments')
+    for row in final:
+        if any(row.get(field, '') != by_id[str(row['id'])].get(field, '') for field in TEXT_FIELDS):
+            raise ValueError('Clean text differs from native keep judgment')
+    return [report_path, judgments_path, upstream]
 
 
 if __name__ == "__main__":

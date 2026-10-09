@@ -56,6 +56,90 @@ def fake_review(base, model, item):
 
 
 class MountingBridgeTests(unittest.TestCase):
+    def test_multiple_inputs_join_at_mounting_and_freeze_each_source(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            args, original = fixture(root)
+            dictionary = root / 'dictionary.jsonl'
+            important = root / 'important.jsonl'
+            bridge.write_rows(dictionary, original[:1])
+            bridge.write_rows(important, original[1:])
+            args.input = [dictionary, important]
+            args.out = root / 'joined_mount'
+            report = bridge.prepare(args)
+            self.assertEqual(report['selected'], 3)
+            self.assertEqual(bridge.rows(args.out / 'input.snapshot.jsonl'), original)
+            manifest = bridge.frozen(args.out)
+            self.assertEqual(len(manifest['inputs']), 2)
+            important.write_text('[]\n')
+            with self.assertRaisesRegex(ValueError, 'changed'):
+                bridge.frozen(args.out)
+
+    def test_multi_input_collisions_and_wrong_subject_fail_before_output(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            args, original = fixture(root)
+            second = root / 'second.jsonl'
+            args.out = root / 'invalid_mount'
+            args.input = [root / 'input.jsonl', second]
+            bridge.write_rows(second, original[:1])
+            with self.assertRaisesRegex(ValueError, 'Duplicate record identity'):
+                bridge.prepare(args)
+            self.assertFalse(args.out.exists())
+            bridge.write_rows(second, [{**original[0], 'id': 'new', 'tag': '历史学'}])
+            with self.assertRaisesRegex(ValueError, 'Mixed subjects'):
+                bridge.prepare(args)
+            self.assertFalse(args.out.exists())
+
+    def test_limit_cannot_hide_input_conflicts_or_wrong_subjects(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            args, original = fixture(root)
+            args.out = root / 'limited_mount'
+            args.limit = 1
+            for tail in (original[0], {**original[0], 'id': 'new', 'tag': '历史学'}):
+                bridge.write_rows(args.input, [original[0], tail])
+                with self.assertRaises(ValueError):
+                    bridge.prepare(args)
+                self.assertFalse(args.out.exists())
+
+    def test_pipeline_mounting_rejects_input_without_cleaning_proof(self):
+        with tempfile.TemporaryDirectory() as d:
+            args, _ = fixture(Path(d))
+            args.out = Path(d) / 'unverified_mount'
+            args.require_cleaned = True
+            with self.assertRaisesRegex(ValueError, 'cleaning'):
+                bridge.prepare(args)
+            self.assertFalse(args.out.exists())
+
+    def test_joined_tracks_mount_then_deduplicate_without_rewriting_ids(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            args, original = fixture(root)
+            dictionary = {**original[0], 'id': 'dictionary-1'}
+            important = {**original[0], 'id': 'important-1', 'definition': '齿轮用于传递运动和动力。', 'source': {'book': 'Important'}}
+            first, second = root / 'dictionary.jsonl', root / 'important.jsonl'
+            bridge.write_rows(first, [dictionary])
+            bridge.write_rows(second, [important])
+            args.input = [first, second]
+            args.out = root / 'joined_mount'
+            bridge.prepare(args)
+            reviewer = bridge.reviewer_module()
+            with patch.object(bridge.subprocess, 'run', side_effect=lambda *a, **kw: fake_routes(args)), \
+                    patch.object(reviewer, 'review_one', side_effect=fake_review):
+                bridge.route(args)
+                bridge.review(args)
+                report = bridge.export(args)
+            self.assertEqual(report['counts']['mounted'], 2)
+            kept = bridge.rows(args.out / 'mounted_standard.jsonl')
+            self.assertEqual([r['id'] for r in kept], ['dictionary-1', 'important-1'])
+            self.assertEqual([r['source'] for r in kept], [dictionary['source'], important['source']])
+            import subprocess
+            subprocess.run([sys.executable, ROOT / 'modules/dedup/dedup.py', 'run', '--mode', 'length',
+                            '--subject', 'mechanical_engineering', '--input', args.out / 'mounted_standard.jsonl',
+                            '--out', root / 'dedup'], check=True, capture_output=True)
+            self.assertEqual([r['id'] for r in bridge.rows(root / 'dedup/retained.jsonl')], ['important-1'])
+
     def test_review_uses_short_wire_id_and_retries_only_technical_failures(self):
         with tempfile.TemporaryDirectory() as d:
             args,_=fixture(Path(d));fake_routes(args)

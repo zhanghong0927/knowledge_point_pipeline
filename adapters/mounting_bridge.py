@@ -15,6 +15,7 @@ import sys
 from urllib import request
 
 from mounting_assets import ROOT, load_module, normalize
+from cleaning_handoff import verify_export
 
 NATIVE = ROOT / "modules/mounting/mapping_runtime"
 REGISTRY = ROOT / "configs/taxonomy_registry.json"
@@ -70,15 +71,31 @@ def prepare(args):
         raise ValueError("Add the subject and its taxonomy file to the registry first")
     if args.taxonomy and not args.subject_slug:
         raise ValueError("An explicit --taxonomy needs --subject-slug")
-    source = rows(args.input)
-    selected = source[:args.limit] if args.limit else source
+    inputs = args.input if isinstance(args.input, list) else [args.input]
+    if not inputs or any(not isinstance(p, Path) for p in inputs):
+        raise ValueError('At least one cleaned input file is required')
+    inputs = [p.resolve() for p in inputs]
+    if len(set(inputs)) != len(inputs):
+        raise ValueError('Duplicate mounting input path')
+    input_info = [{'path': str(p), 'sha256': sha(p)} for p in inputs]
+    if getattr(args, 'require_cleaned', False):
+        for path, info in zip(inputs, input_info):
+            proof = verify_export(path)
+            info['cleaning_report_sha256'] = sha(path.parent / 'report.json')
+            info['cleaning_track'] = proof['cleaning_export']['track']
+    source = []
+    for path, info in zip(inputs, input_info):
+        values = rows(path)
+        source.extend(values)
+        info['records'] = len(values)
     groups, unknown, identities = {}, [], set()
-    for row in selected:
+    # Validate the complete handoff before applying an optional sample limit.
+    for row in source:
         if not isinstance(row, dict) or not isinstance(row.get("id"), (str, int)) or isinstance(row["id"], bool) or str(row["id"]) == "":
             raise ValueError("Every standard record needs a nonempty string/integer id")
         tag = row.get("tag") or args.subject_slug
         slug = by_alias.get(tag)
-        if target_slug and slug and slug != target_slug:
+        if target_slug and tag and slug != target_slug:
             raise ValueError("Mixed subjects in a single-subject pipeline input")
         identity = (str(tag), str(row["id"]))
         canonical = (slug or str(tag), str(row["id"]))
@@ -89,6 +106,9 @@ def prepare(args):
             raise ValueError(f"Empty name fields: {identity}")
         if any(row.get(f) is not None and not isinstance(row[f], str) for f in TEXT_FIELDS):
             raise ValueError(f"Invalid standard text field: {identity}")
+    selected = source[:args.limit] if args.limit else source
+    for row in selected:
+        slug = by_alias.get(row.get('tag') or args.subject_slug)
         explicit_tree = args.taxonomy if args.taxonomy and slug == target_slug else None
         if not slug or (not registry[slug].get("file") and not explicit_tree):
             unknown.append({"record": row, "status": "unconfigured", "reason": "subject_taxonomy_not_configured"})
@@ -98,13 +118,17 @@ def prepare(args):
             unknown.append({"record": row, "status": "unconfigured", "reason": "taxonomy_file_missing", "path": str(tree_path)})
             continue
         groups.setdefault(slug, {"rows": [], "tree_path": tree_path})["rows"].append(row)
+    if any(sha(Path(info['path'])) != info['sha256'] for info in input_info):
+        raise ValueError('Mounting input changed during preparation')
     args.out.mkdir(parents=True)
     write_rows(args.out / "input.snapshot.jsonl", selected)
     write_rows(args.out / "unconfigured.jsonl", unknown)
-    manifest = {"input": str(args.input.resolve()), "input_sha256": sha(args.input), "input_records": len(source),
+    manifest = {"inputs": input_info, "input_records": len(source),
                 "selected_records": len(selected), "limit": args.limit, "unconfigured": len(unknown),
                 "threshold": args.threshold, "min_depth": args.min_depth, "max_depth": args.max_depth,
                 "max_related": args.max_related, "groups": {}}
+    if len(inputs) == 1:
+        manifest.update(input=str(inputs[0]), input_sha256=input_info[0]['sha256'])
     for slug, group in groups.items():
         target = args.out / "groups" / slug
         target.mkdir(parents=True)
@@ -140,6 +164,14 @@ def prepare(args):
 
 def frozen(out):
     m = read(out / "PREPARED.json")
+    for info in m.get('inputs', []):
+        if sha(Path(info['path'])) != info['sha256']:
+            raise ValueError('Mounting source input changed')
+        if info.get('cleaning_report_sha256'):
+            path = Path(info['path'])
+            verify_export(path)
+            if sha(path.parent / 'report.json') != info['cleaning_report_sha256']:
+                raise ValueError('Mounting cleaning report changed')
     if sha(out / "input.snapshot.jsonl") != m["snapshot_sha256"] or sha(out / "unconfigured.jsonl") != m["unconfigured_sha256"]:
         raise ValueError("Mounting snapshot changed")
     for group in m["groups"].values():
@@ -396,7 +428,8 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('action',choices=('prepare','route','review','export'))
     p.add_argument('--out',type=Path,required=True)
-    p.add_argument('--input',type=Path)
+    p.add_argument('--input',type=Path,action='append',help='Repeat to join cleaned dictionary/important records at mounting')
+    p.add_argument('--require-cleaned', action='store_true', help='Require hash-bound pass-only stage04 exports')
     p.add_argument('--taxonomy',type=Path)
     p.add_argument('--taxonomy-dir',type=Path,default=ROOT.parent/'Books_textbooks_cleaning_pipeline/taxonomy')
     p.add_argument('--registry',type=Path,default=REGISTRY)
