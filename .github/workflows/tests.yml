@@ -25,3 +25,6 @@ jobs:
       - run: python -B -m unittest discover -s modules/dictionary/tests -p test_portable_pipeline.py -v
         env:
           PYTHONPATH: modules/dictionary
+      - run: python -B -m unittest discover -s modules/dictionary/classification/tests -v
+        env:
+          PYTHONPATH: modules/dictionary/classification/scripts

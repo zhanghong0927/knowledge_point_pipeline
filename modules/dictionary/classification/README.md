@@ -7,7 +7,7 @@
 分类核心与提示词来自开发机实际运行的：
 `/mnt/nas2/home/wangqiyuan/book_structure_classification_runs/20260921_common_revision_full113/code/`
 
-这 7 个核心文件原样保留。新增 `scripts/classify_books.py` 仅提供可接收新书单、独立模型配置和输出目录的入口，不依赖历史 113 本书目路径。文件校验值见 MANIFEST_SHA256.json。
+分类提示词和证据判定逻辑沿用上述核心。`scripts/classify_books.py` 提供可接收新书单、独立模型配置和输出目录的入口，不依赖历史 113 本书目路径。传输层支持按实际上下文预算缩减分类样本。
 
 不要直接用旧 `run_unseen20_classification.py` 的命令行入口处理新书。该文件保留当前提示词与验证接口，但原来的主函数依赖历史目录和固定书目；推荐入口统一为 classify_books.py。
 
@@ -55,7 +55,7 @@ prepare 只读原书并保存样本，不调用模型。检查 PREPARED.json 和
 
 模型阶段会检查 /v1/models，先完成一条请求再并发。workers 可以按实例容量调至 16；这不是推荐所有部署都开 16。每本至多尝试两次，技术失败不能当作其他类或不合格书。
 
-当前传输逻辑要求服务提供 POST /tokenize，以及 /v1/chat/completions。请求包含 response_format、chat_template_kwargs.enable_thinking=false，最多输出 16000 tokens，并预留 16500 tokens 上下文余量。**不是任意 OpenAI 兼容服务都满足这些接口要求。**当前接口不实现鉴权头、tokenize 替代方案或自动降级，需要鉴权的服务应先适配传输层。包内不含 API 密钥或实际部署地址。
+当前传输逻辑要求服务提供 POST /tokenize，以及 /v1/chat/completions。请求包含 response_format、chat_template_kwargs.enable_thinking=false。输出预算读取配置 max_tokens（默认16000），并额外预留500 tokens；timeout也读取配置。超预算时保留所有区域窗口及候选锚点，逐步缩短连续原文行，不改写文字、行号或保留行的PDF证据。缩减后仍超预算则记technical_failed，不强行调用模型。最终样本及request_budget写入prepared，验收以实际发送的样本为准。这只影响抽样分类，不减少后续全书抽取范围。**不是任意 OpenAI 兼容服务都满足这些接口要求。**当前接口不实现鉴权头、tokenize替代方案，需要鉴权的服务应先适配传输层。包内不含API密钥或实际部署地址。
 
 ## 输出与断点
 
