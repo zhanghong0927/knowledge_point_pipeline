@@ -1,0 +1,23 @@
+{
+  "code": "SUBJECT",
+  "name_zh": "示例学科",
+  "name_en": "Example Subject",
+  "path": "示例学科",
+  "children": [
+    {
+      "code": "SUBJECT-L1-01",
+      "name_zh": "示例一级分类",
+      "name_en": "Example Level 1",
+      "path": "示例学科/示例一级分类",
+      "children": [
+        {
+          "code": "SUBJECT-L2-01",
+          "name_zh": "示例二级分类",
+          "name_en": "Example Level 2",
+          "path": "示例学科/示例一级分类/示例二级分类",
+          "children": []
+        }
+      ]
+    }
+  ]
+}

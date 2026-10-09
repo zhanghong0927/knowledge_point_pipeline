@@ -1,0 +1,15 @@
+{
+  "default": "inference",
+  "services": {
+    "inference": {
+      "base_url": "http://MODEL_HOST:8000/v1",
+      "api_key_env": "LLM_API_KEY",
+      "model": "EXACT_MODEL_ID",
+      "tokenizer_path": "../modules/important_llm/data/tokenizers/qwen3.8-27b",
+      "mode": "json",
+      "temperature": 0.7,
+      "gateway_retries": 10,
+      "extra_body": {"chat_template_kwargs": {"enable_thinking": false}}
+    }
+  }
+}

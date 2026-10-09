@@ -1,0 +1,17 @@
+{
+  "subject_name": "海洋工程",
+  "subject_slug": "ocean_engineering",
+  "boundary": {
+    "core_scope": "研究船舶、海洋结构物、海底工程、海岸港航、海上作业、海洋探测装备及海洋能源资源开发。",
+    "aliases": ["海洋工程", "船舶与海洋工程", "ocean engineering", "marine engineering", "naval architecture and ocean engineering"],
+    "direct_subject_labels": ["海洋工程", "船舶与海洋工程", "船舶工程"],
+    "adjacent_subject_labels": ["土木工程", "水利", "交通运输", "机械", "能源", "地学", "海洋科学", "电子信息"],
+    "accepted_adjacent": ["明确用于船舶、海洋平台、港口航道、海底系统和海上作业的工程知识", "围绕海洋探测通信、海洋能源资源开发及海洋工程安全运维的交叉技术"],
+    "strong_terms": ["船舶工程", "船舶设计", "船舶动力", "轮机工程", "航海技术", "海事工程", "海洋探测装备", "海洋通信", "海岸工程", "港口工程", "航道工程", "海洋结构物", "海上平台", "海底工程", "海洋工程安全", "海洋能源工程", "海洋资源开发", "naval architecture", "ship engineering", "ship design", "marine propulsion", "marine engineering", "maritime engineering", "ocean instrumentation", "underwater communication", "coastal engineering", "port engineering", "waterway engineering", "offshore structures", "offshore engineering", "subsea engineering", "ocean energy engineering", "marine resource development"],
+    "weak_terms": ["船舶", "舰船", "轮机", "航海", "海事", "港口", "航道", "海岸", "近海", "海上平台", "海底", "offshore", "subsea", "ship", "marine propulsion", "maritime", "coastal", "port", "waterway"],
+    "cooccurrence_groups": [["船舶", "工程"], ["海洋", "结构"], ["海底", "工程"], ["港口", "航道"], ["海洋", "能源"], ["offshore", "structure"], ["subsea", "engineering"], ["ocean", "energy"]],
+    "excluded_scope": ["海洋旅游、文学艺术、纯海洋生物或海洋地理内容，且缺少工程系统与技术知识", "仅介绍航运商业、海军历史或船舶收藏而无工程知识的内容"],
+    "exclude_phrases": ["海洋旅游指南", "海洋文学", "邮轮旅游", "船舶收藏", "ocean travel guide", "marine tourism", "cruise travel", "ship collecting"]
+  },
+  "l1_nodes": ["海洋环境与工程基础", "船舶工程", "航海、海事与海上作业", "海洋探测、通信与智能装备", "海岸、港口与航道工程", "海洋结构物与海底工程", "海洋工程安全、运维与绿色全生命周期", "海洋能源与资源开发工程"]
+}

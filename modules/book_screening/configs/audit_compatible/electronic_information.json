@@ -1,0 +1,141 @@
+{
+  "subject_name": "电子信息",
+  "subject_slug": "electronic_information",
+  "boundary": {
+    "core_scope": "研究电子电路、电磁与微波、光电子、微电子、通信、信号信息处理、网络安全以及人工智能与数据技术。\n原配置L1范围：数理与工程基础；电路与系统；电磁场与微波技术；物理电子学与光电子学；微电子学与固体电子学；通信与信息系统；信号与信息处理；计算机与网络安全；人工智能与数据技术",
+    "aliases": [
+      "电子信息",
+      "电子信息工程",
+      "信息与通信工程",
+      "electronic information engineering",
+      "information and communication engineering"
+    ],
+    "direct_subject_labels": [
+      "电子信息",
+      "信息与通信工程",
+      "通信工程",
+      "电子工程"
+    ],
+    "adjacent_subject_labels": [
+      "电气工程",
+      "计算机",
+      "自动化",
+      "集成电路",
+      "物理学",
+      "光学",
+      "人工智能"
+    ],
+    "accepted_adjacent": [
+      "以电路、电磁、通信、信号、信息获取处理和传输为核心的工程知识",
+      "明确服务于电子信息系统的计算机、光学、微电子和人工智能技术"
+    ],
+    "strong_terms": [
+      "电路与系统",
+      "电磁场与微波",
+      "微波技术",
+      "物理电子学",
+      "光电子学",
+      "微电子学",
+      "固体电子学",
+      "通信与信息系统",
+      "通信工程",
+      "信号与信息处理",
+      "数字信号处理",
+      "图像信号处理",
+      "网络安全",
+      "信息论",
+      "electronic circuits and systems",
+      "microwave engineering",
+      "electromagnetics",
+      "physical electronics",
+      "optoelectronics",
+      "microelectronics",
+      "solid-state electronics",
+      "communication systems",
+      "telecommunication engineering",
+      "signal processing",
+      "digital signal processing",
+      "information theory",
+      "network security"
+    ],
+    "weak_terms": [
+      "电子",
+      "电路",
+      "微波",
+      "射频",
+      "天线",
+      "通信",
+      "信号处理",
+      "信息处理",
+      "光纤通信",
+      "electronic",
+      "circuit",
+      "microwave",
+      "radio frequency",
+      "antenna",
+      "telecommunication",
+      "communications",
+      "signal processing",
+      "information processing"
+    ],
+    "cooccurrence_groups": [
+      [
+        "电路",
+        "系统"
+      ],
+      [
+        "电磁",
+        "微波"
+      ],
+      [
+        "通信",
+        "系统"
+      ],
+      [
+        "信号",
+        "处理"
+      ],
+      [
+        "信息",
+        "安全"
+      ],
+      [
+        "circuit",
+        "system"
+      ],
+      [
+        "communication",
+        "system"
+      ],
+      [
+        "signal",
+        "processing"
+      ]
+    ],
+    "excluded_scope": [
+      "电子音乐、电子出版、电子商务或消费产品使用等仅词面相关内容",
+      "纯软件应用或互联网运营且缺少电子信息工程原理的内容"
+    ],
+    "exclude_phrases": [
+      "电子音乐",
+      "电子出版",
+      "电子商务",
+      "电子竞技",
+      "electronic music",
+      "electronic publishing",
+      "electronic commerce",
+      "e-sports"
+    ],
+    "l1_scope_names": [
+      "数理与工程基础",
+      "电路与系统",
+      "电磁场与微波技术",
+      "物理电子学与光电子学",
+      "微电子学与固体电子学",
+      "通信与信息系统",
+      "信号与信息处理",
+      "计算机与网络安全",
+      "人工智能与数据技术"
+    ]
+  }
+}

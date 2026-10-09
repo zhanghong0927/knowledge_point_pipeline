@@ -1,0 +1,134 @@
+{
+  "subject_name": "集成电路",
+  "subject_slug": "integrated_circuits",
+  "boundary": {
+    "core_scope": "研究半导体器件、集成电路设计、制造、材料工艺、封装测试、系统应用及电子设计自动化。\n原配置L1范围：半导体物理与器件；基础支撑与数理工程；集成电路制造与材料工艺；集成电路封测与系统应用；集成电路设计与自动化",
+    "aliases": [
+      "集成电路",
+      "微电子科学与工程",
+      "integrated circuits",
+      "integrated circuit engineering",
+      "microelectronics engineering"
+    ],
+    "direct_subject_labels": [
+      "集成电路",
+      "微电子",
+      "半导体"
+    ],
+    "adjacent_subject_labels": [
+      "电子信息",
+      "电气工程",
+      "材料",
+      "物理学",
+      "化学",
+      "计算机",
+      "自动化"
+    ],
+    "accepted_adjacent": [
+      "围绕芯片器件、设计、制造、封测和系统应用的电子、材料、物理和计算知识",
+      "用于集成电路设计验证与制造的数理方法、软件工具和自动化技术"
+    ],
+    "strong_terms": [
+      "半导体物理",
+      "半导体器件",
+      "集成电路设计",
+      "集成电路制造",
+      "集成电路工艺",
+      "芯片制造",
+      "晶圆制造",
+      "光刻工艺",
+      "集成电路封装",
+      "集成电路测试",
+      "电子设计自动化",
+      "芯片设计",
+      "模拟集成电路",
+      "数字集成电路",
+      "射频集成电路",
+      "semiconductor physics",
+      "semiconductor devices",
+      "integrated circuit design",
+      "integrated circuit fabrication",
+      "semiconductor manufacturing",
+      "wafer fabrication",
+      "lithography process",
+      "integrated circuit packaging",
+      "semiconductor testing",
+      "electronic design automation",
+      "chip design",
+      "analog integrated circuits",
+      "digital integrated circuits",
+      "radio frequency integrated circuits"
+    ],
+    "weak_terms": [
+      "芯片",
+      "晶圆",
+      "半导体",
+      "CMOS",
+      "VLSI",
+      "EDA",
+      "流片",
+      "封装测试",
+      "chip",
+      "wafer",
+      "semiconductor",
+      "cmos",
+      "vlsi",
+      "eda",
+      "tape-out",
+      "chip packaging"
+    ],
+    "cooccurrence_groups": [
+      [
+        "集成",
+        "电路"
+      ],
+      [
+        "半导体",
+        "器件"
+      ],
+      [
+        "晶圆",
+        "制造"
+      ],
+      [
+        "芯片",
+        "设计"
+      ],
+      [
+        "封装",
+        "测试"
+      ],
+      [
+        "integrated",
+        "circuit"
+      ],
+      [
+        "semiconductor",
+        "device"
+      ],
+      [
+        "chip",
+        "design"
+      ]
+    ],
+    "excluded_scope": [
+      "仅讲宏观产业投资、企业新闻或消费电子产品而无芯片技术知识的内容",
+      "一般半导体物理或材料内容，且未涉及器件、工艺、芯片或集成系统的内容"
+    ],
+    "exclude_phrases": [
+      "芯片股票投资",
+      "半导体产业新闻",
+      "消费电子评测",
+      "chip stock investment",
+      "semiconductor industry news",
+      "consumer electronics review"
+    ],
+    "l1_scope_names": [
+      "半导体物理与器件",
+      "基础支撑与数理工程",
+      "集成电路制造与材料工艺",
+      "集成电路封测与系统应用",
+      "集成电路设计与自动化"
+    ]
+  }
+}

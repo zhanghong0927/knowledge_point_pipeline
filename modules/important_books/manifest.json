@@ -1,0 +1,58 @@
+{
+  "version": "2.0.1",
+  "purpose": "N1/N3 classification-and-extraction delivery",
+  "files": {
+    "README.md": {
+      "bytes": 12660,
+      "sha256": "a8e62e257c30c71b275ed3d6782b8f07177587d26243c914026c85b1e66b7720"
+    },
+    "VERSION": {
+      "bytes": 6,
+      "sha256": "fe840f52fb5578d3f77eb497115eb02c6036601c3a53e60df7995c7276baa77a"
+    },
+    "examples/books.json": {
+      "bytes": 115,
+      "sha256": "c34a3e8d37910cdecf3f2e9fa92a77906ed0088695a280f080539b8484e3d772"
+    },
+    "examples/config_layout.json": {
+      "bytes": 202,
+      "sha256": "2a6a194e6cbcf988acaa68dde1b366969a37dd87a9795827e3d5ffd0c610515e"
+    },
+    "module.json": {
+      "bytes": 1141,
+      "sha256": "3dacbcc4d8726f62e8fdeb20538778716cc641c5c7ed235dd58b87ca48d3e45f"
+    },
+    "requirements.txt": {
+      "bytes": 115,
+      "sha256": "b2b328e8429482893200d10fbcab3fb4d25b65baa5072d9fadf86db8ae34ad3a"
+    },
+    "scripts/layout_model_validation.py": {
+      "bytes": 52702,
+      "sha256": "b3febf845335ce993da9d89cbf924caa6e53d599d527717d36fd64c3e45241d1"
+    },
+    "scripts/n1_heading_extractor.py": {
+      "bytes": 42470,
+      "sha256": "d7cf24008f217ab0209a5c99d2bd22aeb7f9a31f2278878fc3b40e4cf8fb6508"
+    },
+    "scripts/n3_rules_extractor.py": {
+      "bytes": 14024,
+      "sha256": "306cb78e7f1cb4c9487945df6af5c82b45f247c8df81c7c8ad7beddfa51c3ee3"
+    },
+    "tests/test_delivery.py": {
+      "bytes": 3245,
+      "sha256": "3ab4c1982af252b3494b587cbc0e30e03e8ea93179985586eda38173fc346884"
+    },
+    "tests/test_n1_heading_extractor.py": {
+      "bytes": 8191,
+      "sha256": "3b47fb7fe8d1119df4ea2a949ed7c4fb4d4f87a5af11df48b5361afc13e2b9e0"
+    },
+    "tests/test_n1_title_filter.py": {
+      "bytes": 9762,
+      "sha256": "4e90f8fb1a0f8556b435286a6f10f8403527b50f157fe53b480d551b22ced9ae"
+    },
+    "tests/test_n3_rules_extractor.py": {
+      "bytes": 3965,
+      "sha256": "08583f8dae6d94758248938b8057650f2b1ab65c5bdcf5eb833bd42352210527"
+    }
+  }
+}

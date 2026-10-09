@@ -1,0 +1,17 @@
+{
+  "subject_name": "水利",
+  "subject_slug": "hydraulic_engineering",
+  "boundary": {
+    "core_scope": "研究水文、水资源、水力学、河流、水工结构、水利水电、灌溉水保、防洪、城市水务、港航近海及水利工程建设管理。",
+    "aliases": ["水利工程", "水利水电工程", "hydraulic engineering", "water resources engineering"],
+    "direct_subject_labels": ["水利", "水利工程", "水利水电"],
+    "adjacent_subject_labels": ["土木工程", "环境工程", "地理学", "地学", "海洋工程", "农业", "能源"],
+    "accepted_adjacent": ["围绕水循环、水资源配置、河湖治理、水工建筑物和涉水基础设施的工程知识", "明确服务于防洪、灌溉、供水、发电、港航和环境水利的交叉技术"],
+    "strong_terms": ["水文学", "水资源工程", "水力学", "河流动力学", "水工结构", "水利水电工程", "农田水利", "水土保持工程", "防洪工程", "治河工程", "城市水务", "环境水利", "港口航道工程", "智慧水利", "hydrology", "water resources engineering", "hydraulics", "river dynamics", "hydraulic structures", "hydropower engineering", "irrigation engineering", "soil and water conservation", "flood control engineering", "river engineering", "urban water management", "port and waterway engineering", "smart water conservancy"],
+    "weak_terms": ["水利", "水文", "水资源", "河流", "水库", "大坝", "灌溉", "防洪", "堤防", "水土保持", "水电站", "水工", "water resources", "river", "reservoir", "dam", "irrigation", "flood control", "levee", "hydropower"],
+    "cooccurrence_groups": [["水文", "资源"], ["河流", "动力"], ["水工", "结构"], ["水利", "水电"], ["治河", "防洪"], ["water", "resources"], ["hydraulic", "structure"], ["flood", "control"]],
+    "excluded_scope": ["液压健身器材、普通管道维修、旅游景观或文学叙事等与水利工程无关的内容", "仅涉及海洋、环境或土木的一般问题而缺少涉水工程知识的内容"],
+    "exclude_phrases": ["液压健身器材", "液压健身设备", "水上旅游指南", "hydraulic fitness equipment", "water tourism guide"]
+  },
+  "l1_nodes": ["水利史与水利软科学", "水文学及水资源", "水力学及河流动力学", "水工结构工程", "水利水电工程", "农田水利与水土保持工程", "治河防洪与防灾减灾工程", "城市水务与环境水利", "港口、海岸及近海工程", "水利工程施工、管理与经济", "水利信息化与智慧水利"]
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "identifier": "book_001",
+    "title": "示例辞典",
+    "md_path": "/absolute/path/book_001.md",
+    "pdf_path": "/absolute/path/book_001.pdf",
+    "subject_slug": "mechanical_engineering",
+    "scope_config": "/absolute/path/validated_v9_scope.json"
+  }
+]

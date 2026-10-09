@@ -1,0 +1,178 @@
+{
+  "book_screening": {
+    "archive": "book_screening_toolkit_20261008.zip",
+    "sha256": "d987968fd9c5f18bb39f3fa08a7dc0cc46900d0a06a7b8b243353385abad0134",
+    "original_root": "book_screening_toolkit_20261008",
+    "files": 71,
+    "integration_overrides": {
+      "reason": "Real E2E test: legacy MD auditor reads fixed pilot filename; materialize selected CSV before audit",
+      "files": {
+        "examples/run_stages.sh": {
+          "original_sha256": "b1322fbcd0008aef343af324914c1cc04ab6da7dd2826dfcbcec453abacd284d",
+          "current_sha256": "c8e8638d5cf9f4fb3018df34b3b3f13f720f11a57154ebfd5417083fb9a4199c"
+        }
+      }
+    }
+  },
+  "dictionary": {
+    "archive": "generic_book_knowledge_toolkit_20261008.zip",
+    "sha256": "821e57c4cb3496a2b571f47eee115fb0cb65419ab78d730d096bcbf471479427",
+    "original_root": "generic_book_knowledge_toolkit_20261008",
+    "files": 113
+  },
+  "important_books": {
+    "archive": "重要书籍交付模块.zip",
+    "sha256": "11e19f42a15be89dc50bb7a2f5023607ba4ac9648466997c745cab9be676485e",
+    "original_root": "交付模块",
+    "files": 18
+  },
+  "mounting": {
+    "archive": "挂载管线_20260929.zip",
+    "sha256": "1a69dfbe91064f16c563125a6d2865778993ed81811c9e6b611b97cde2e1227f",
+    "original_root": "mount_pipeline_package_20260929",
+    "files": 127
+  },
+  "dedup": {
+    "archive": "final_dedup_toolkit_20261008.zip",
+    "sha256": "4a3fbc7e9b2f52cb321f91b8b4784e54264c5349baa0796194b64397aed0b8f1",
+    "original_root": "final_dedup_toolkit_20261008",
+    "files": 15
+  },
+  "cleaning": {
+    "source": "Books_textbooks_cleaning_pipeline",
+    "copied": [
+      "run.py",
+      "README.md",
+      "requirements.txt",
+      "scripts",
+      "prompts",
+      "schemas",
+      "tests",
+      "examples"
+    ],
+    "note": "No runs, datasets, taxonomy or credentials copied",
+    "sha256": {
+      "README.md": "f4e696d77cbe54293b46a99a107a11ddd1d14b2acdb96369a3b90650af4d4828",
+      "run.py": "0d7fcaaff2dcb89d438d4f30caae716564d5a3d63226eb80ef747d2823750b29",
+      "requirements.txt": "56653781fa9ebb450b8d246aa273a0e246bdb0d3abf6615124374b9d1753e1d2",
+      "schemas/knowledge_point_standard.schema.json": "cc9026d75c8b7c726ad49c6aa4ac2bcf8a36f5f601958b9170068d8d83863914",
+      "scripts/rule_clean.py": "fa24cac5d3d7f4b9c7fac399084b69d61f9badfdfd232ce2725f98d2bdc88121",
+      "scripts/model_clean.py": "21d0a9ab0151aef8b8f96c790f72cb6c0eafb7034f7fb5c310a16df398262d4b",
+      "scripts/restore_language_only.py": "2104c96cf183ef5393c55277f2818688590bf6ed5af00de94a35a8e717febfa8",
+      "tests/test_run_all.py": "e7b413ece8365ed9f7ed515566e0e3fae02d56180c92cc112919a5b70b1d4e7d",
+      "tests/test_rule_clean.py": "50530ac5bb36fa646b877fe3b43b24dc4ceb7ac7339c349ffed3a3acd80c16fb",
+      "tests/test_model_clean.py": "813de2d89fcfcdcc9dbabc3f468012b3bb3867e0672d2a1b4ac1c70ef8c14f4f",
+      "examples/input_sample.jsonl": "abb58287f6fc3fc75ca4f951fd655c19b4a4deeff7e7d99c2ed7b5add8715694",
+      "prompts/model_clean_policy.md": "1596dabec3a3475d2f3d9b9204f3565c67c6001b6c2f7d1be59c945e40202771"
+    },
+    "integration_overrides": {
+      "date": "2026-10-08",
+      "reason": "Offline flow audit: require numbered layout references; preserve English terms",
+      "files": {
+        "scripts/rule_clean.py": {
+          "original_sha256": "fa24cac5d3d7f4b9c7fac399084b69d61f9badfdfd232ce2725f98d2bdc88121",
+          "current_sha256": "affbda74d484716d7c0b657245dd5e34d6be7f3523b39e3c2dd53c2f7009733f"
+        },
+        "scripts/model_clean.py": {
+          "original_sha256": "21d0a9ab0151aef8b8f96c790f72cb6c0eafb7034f7fb5c310a16df398262d4b",
+          "current_sha256": "a9ce86ed08be72412a76b8e8cbd2448a43c65dab81b98a4471e178587ab3c506"
+        },
+        "README.md": {
+          "original_sha256": "f4e696d77cbe54293b46a99a107a11ddd1d14b2acdb96369a3b90650af4d4828",
+          "current_sha256": "cf61a1ff1a279ab3896b9293cee7e55976648bef6afbc0f919f31d83fc80f4ae"
+        }
+      },
+      "original_source_directory_modified": false
+    }
+  },
+  "important_llm": {
+    "source": "/mnt/nas_data/deliver/book_extractor_handoff/20261008/book-extractor-handoff-20261008-r5",
+    "source_revision": "a629faa9dc86778ed4bcaa384307c41b3814f57c",
+    "copy_policy": "PACKAGE.json whitelist; no source venv, editable metadata, credentials, outputs or weights",
+    "files": 81,
+    "sha256": {
+      ".gitattributes": "8c77a10ce946898b814b0df808fd4dc8e1a86e9c56f8f74ab745ae333a82aa36",
+      ".gitignore": "0dfaa3411376ba1a159127aef4b7b0d8ed7269e02312ae874979ee99b9dfb81a",
+      "data/tokenizers/qwen3.8-27b/chat_template.jinja": "c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041",
+      "data/tokenizers/qwen3.8-27b/tokenizer.json": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3",
+      "data/tokenizers/qwen3.8-27b/tokenizer_config.json": "b11349aafa7cdc6a320767cf7ceb29ed82f7eda5d65e8e0819e76f0ce947bf27",
+      "docs/handoff/分词器文件说明.md": "ea0621f48125da3b3c49e9ee8c44186310f3d304057541098f0329b83b944198",
+      "docs/handoff/安装与运行.md": "4acc5adea760ca8a35da2eb66407f11538a2aa7229560101ffb48dc6aafceed7",
+      "docs/handoff/流程与运维.md": "f0e95fcd50f1884e6c2a2a970e79d719122c3c54b4ddc3a8981d43a4a80f1733",
+      "docs/handoff/管线接入.md": "ea93f480ecf01a40fb35e71066e73d3f97820a185b6d4fd0f94ccc5159e9d326",
+      "examples/books/chinese.md": "ef6fe98f0a2623c71f3c7a66fe61a243707aace9be3c329ea96e95beb160235c",
+      "examples/books/english.md": "3ad5f8a264b4336966b3e62ba7728963e285340840f045bb469fbf507501a847",
+      "examples/books.json": "fc03edfa147c87418aa9aebd7ab93b2004e769c97104478a30e6aa06aac64424",
+      "examples/candidates/chinese.jsonl": "42eb2bf63e4db0dda5a87b05a34bdbaf8545855f0a0c9b94f2c45b7975820046",
+      "examples/candidates/english.jsonl": "25ad10bb13daac5f374f80507f9248741d71deeb9e7de3753fa51289c6d68e43",
+      "examples/check_installation.py": "4fba7419d72f3da6afc749427e372832b1853e83e8eeb6a780d11faf143a1be5",
+      "examples/evidence/chinese.units.json": "1baf3cd8f129f36736634e230a9d94a6d5bc5a793ae0aa579758595ea49e1d6d",
+      "examples/evidence/english.units.json": "8edb49cd54a37fcf102cabd6566364a0b5c996aae91127cf4b6e4d0edee0cc09",
+      "examples/provenance.json": "bdfab5a00c6ff7e8865e5a74d6878238f5ee259d850fb628d6ecbac692673c47",
+      "examples/README.md": "dac3fcce0f6d8bd5fc7a107a47bdac06631edc5457cea6ef13224aa3bfea364a",
+      "examples/records/chinese.json": "cb5e88cb1dad4ef2c9cf401ed7a427eb616f5d00e6bbd0b0e16eb6cf1bbef4f9",
+      "examples/records/english.json": "730a1b975545a0cc5aa08a4f3b39a3542b1994b63cce3810b06a343cbc978515",
+      "examples/run_python.py": "4356527e1401b9d44c7d6938d13fdff973aaa040809f50e045d1d1d47d2c5dff",
+      "llm_services.example.json": "e5be48fd84d678b5ec946eebb726e85e4af33c1210da8c872391ea47a453ebbb",
+      "pyproject.toml": "abbd01c8e558251dfa112e69bd809f4c8ddafb3329175821590d25ab1733f2ed",
+      "README.md": "7ab15f54c092e97cc0d627b15c05af63b63469b51aabf65ddc1288299c6c6d8a",
+      "requirements.lock.txt": "26e38669c4483cc75b12638dafd053b2384b52c8459b910ed8ba1ba59eb94c83",
+      "schemas/book-manifest.schema.json": "3dff0ebb2069a6e30ae2514d0902edb33e231f0561e6d9871283701c72118428",
+      "schemas/md-candidate-v2.schema.json": "17230065542cf1db06495f3d1fbc3cf60ec5c0aa10384b1674c5924ba01320b8",
+      "schemas/md-record-v1.schema.json": "f255833e1cb19b6596b23ba52d9b88582f8e7fd5fe7671e4ab66d96951cd4419",
+      "scripts/build_handoff.py": "3b43b42cb382a8152934cb3c5d5779d2ebf88f1982cd50ca6c17d2770e491575",
+      "scripts/export_cleaning_delivery.py": "149feb32836e5e706345a06ccd3730312bc23bbe3f2447839150f96fb758f966",
+      "scripts/screen_book_languages.py": "42866b85ef3d28dff6a5b50859ac031e07bcf03776f7fae037fb84026be4ae36",
+      "scripts/summarize_md_runs.py": "315671b9c2d62ed17318e01be853fabf2cbde1601077ce879d73c6e923f1f5e9",
+      "scripts/validate_runs.py": "4099811d1e7fe484d45043687f2b24f86e5ffd7c75c0ddcb237f4b5a43e3dc1e",
+      "src/book_extractor/__init__.py": "4ce85ce1fff9ed92a593440893be7611e5eefe393a57e16a0e1095b34c3125cd",
+      "src/book_extractor/cli.py": "524bb47b7460e0b9ba23fc80d98b20a9dd7a1c19ef40b97f66f70c5d0a9208fc",
+      "src/book_extractor/llm.py": "76dc76c3323792679b179943ab3fe8cd88149b072dcbbca4380879e130fe3da0",
+      "src/book_extractor/markdown.py": "a6f0485a8c48952bf63281e746a4316eb91987f7738c202f859b3a8bada4967b",
+      "src/book_extractor/models.py": "250206637d3d762d678f4f655e09e578f7fc20f5a41c884a283073786de3accf",
+      "src/book_extractor/pipeline.py": "b9d2b40cf59bc963b54f70149b3173e700149de1792db4fe040c833ead77c921",
+      "src/book_extractor/prompts.py": "5d85b219fc33d8f437e1a16e4ace501bd6d791cc6058fa04f0859a3fc48e9307",
+      "src/book_extractor/rule_candidates.py": "bc772e1dd162b920e433969ded4a1dd649cb141b9deaa59c8a63a2d1f90bec1b",
+      "src/book_extractor/storage.py": "1e6ec4f082dd764d102fb8c2a20a19457383d182e0c82ff6b569303bba4df28e",
+      "src/book_extractor/synthesis.py": "6bb0e55a945b6a120037610bda851e5ef5507393c9fc55b08751aefdfc405bf7",
+      "src/book_extractor/telemetry.py": "105fdb4432d62869499caf562e5fc04b757e0e46b0bd2a3592b64e8aba4b8953",
+      "src/book_extractor/tokenization.py": "43abc3d4aaa60a93a1c872eba1238d1c73f757ce0e807f206e1c3a15fae18b8c",
+      "tests/fixtures/parallel_name_group.json": "ab97faa98c561553132938fbf4f1ab4ac4f2594b8689bfd5d393ed608d6ad859",
+      "tests/fixtures/rule_candidates/real_fragments.json": "7c244c18082253a1cfe87271c99f26a0ce90d39123ed9db2f278a7dfb3a89f05",
+      "tests/synthesis_fixtures.py": "136983551c8af44a13676e17da3437131c7df680e557b3ce7cb24f8c49a05a29",
+      "tests/test_budget.py": "8501a888a17d68de0675de36ad6b1db581228927ca45f00b6a90b34bb997b679",
+      "tests/test_cleaning_export.py": "b13ed64df08302a1c044b7a58e5fd22023c6e8e2a0f50336e0f2b3b60eaf883a",
+      "tests/test_cli.py": "cee94ff9944abed85c048d0f7556b7ca07cab0071f9d654ed45c7d4e71b26e3e",
+      "tests/test_cli_services_resume.py": "f5e5d7c7e09fd89c794f690a60c463adb9397fca07114ae35c270ad481d11ec0",
+      "tests/test_context.py": "8f1a5efa23a818453958d3d8c8f669e49ed2bf0ca03ffda6e59ef824c2123767",
+      "tests/test_diagnostics.py": "f33058735abff6f02f0d25b1a1b09814ac062b0d578b281065addae4c1eb052a",
+      "tests/test_discovery_crash.py": "47c8a46ba3b8af3c4ca9ca2b7fd3d93e57a297c7dbf3330e6c58ab9fe14ad6e7",
+      "tests/test_evidence_support.py": "ce9340099dc0ff8c7df29711f236332fd33b062eeb5210dd9c02eade5ef417bd",
+      "tests/test_independent_synthesis.py": "3fa5cdb95919d4ed86cbccebb049aed0dece2c394cdb3a3ed0418c6af8c95c2d",
+      "tests/test_llm.py": "b92b1c3c99ecb13fc07945556ca1330a144a76f296c34de751665962d2c61233",
+      "tests/test_markdown.py": "6e0584576db4caea14e3b1ce1094f6ec43b8a90816c89000163db0976aa093b9",
+      "tests/test_member_sources.py": "8db60e0b3c9a6794ed847aee7f6affd2a531adce7893e04470f45be49db06ea5",
+      "tests/test_models.py": "d95d9609d2d88f1aa773c5a0c46142b7d42a88be645d5e22238cd0c5b88aa899",
+      "tests/test_name_decisions.py": "60d9698030c02b1b360a6a0438bfebc834109e0a66ca8ebdd8806e9f19c56e85",
+      "tests/test_pipeline.py": "9e0521c25ce535fd505590e00932dc4c34034381640a077844420668752882a4",
+      "tests/test_regions.py": "1a5f8be0da837eb52caab407ca4d307e0cb3f582a9bd69e7ec61953f6b8356ad",
+      "tests/test_resume_in_place.py": "25c4707b16a53a1481c6ad94b6793393c20950d95c276e41bbbd0394bdf6c46e",
+      "tests/test_rule_candidates.py": "4e11e929a9cf6a637bba5a7afdd4394e9c48ac14b07a493b9cd1bf487a0794fe",
+      "tests/test_scheduling.py": "7db24fab41f5544107a222194c20c374f4fe3f5914831a1c58eda501c0b7d6e2",
+      "tests/test_service_config.py": "cd656164b3d876332431927e9bb839f066273e4f688b9f23d855cc0fbf807cdf",
+      "tests/test_storage.py": "b0f79d291478b05c01c5b6477d22d39c7f355f0093cc291bbd4c668b187efee7",
+      "tests/test_summarize_md_runs.py": "592bf5d0c02c09e1690311d8b68488a97b4fadc6dcba43d3f59830d752dd9194",
+      "tests/test_synthesis.py": "4f46cbf231d3c891a2b5b79dfd269123464f5ee59bf61675e2a50293ff00698d",
+      "tests/test_synthesis_packing.py": "adc92f5ad3864b817833c02cb22fcf665ca60f391080c200ba85feaafdcf7719",
+      "tests/test_synthesis_parallel.py": "5a2d424b7130a3810902c8109a1ed62b5d640eacf27913973a136d2b87cdff19",
+      "tests/test_synthesis_transport.py": "ffc60db0994b47a2f9cfdab8357b393ce30431339cabc92e28170de2cd598fb8",
+      "tests/test_telemetry.py": "7b58a08eb875a6db0b64b5c338641e9580cd55d415bba461ce78ca26bcfe4588",
+      "tests/test_tokenization.py": "5e7a5d0487fd5435f47a4f1b2a37a389d140d3187dc38909071aea0369e8d129",
+      "tests/test_validation_split.py": "2e4a1bcbf40de8893a16c16fc480a40ff5fe928660f3fa89a6ac931329059d2d",
+      "tests/test_verification.py": "0ab7a0e6311846d7f24e3882cdd141de7a415af835102575f0044a7841c0acef",
+      "tests/test_verification_parallel.py": "21f557f993944284a40f4bbb5dec5f2c2d5093d254508da1c9610854c6520fe5",
+      "PACKAGE.json": "cdf6233bd7abf02ab55ff143b3a568e01ad6f6b5adf5102fd3022938786262d9"
+    },
+    "differences_from_upstream_manifest": []
+  }
+}

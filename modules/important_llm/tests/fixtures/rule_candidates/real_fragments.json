@@ -1,0 +1,94 @@
+[
+  {
+    "case_id": "book_00_75",
+    "source": "/mnt/nas_data/deliver/core_books/mechanical_engineering/MD/aacid__duxiu_files__20240613T221025Z__S6DRBHE7Cp5NDawQewnCGf.md",
+    "source_sha256": "0002af2e7ab8ddd5bae1234f067fd533bd1fed1eae6e5f1f84df83cb3b19217f",
+    "source_start_line": 75,
+    "source_end_line": 101,
+    "text": "## 目录\n\n概述 …… 1\n\n第一章 液压传动水力学基础 …… 5\n\n§ 1-1 液体的主要物理性质及液压油的选用 …… 5\n\n一、液体的主要物理性质 …… 5\n\n二、液压油的性能和选用 …… 9\n\n§ 1-2 水静力学 …… 14\n\n一、水静压力及其特性 …… 14\n\n二、水静力学基本方程式 …… 16\n\n三、水静力学基本方程式的应用 …… 20\n\n四、液体作用在曲面上的总压力计算 …… 27\n\n§ 1-3 水动力学 …… 23\n\n一、几个基本概念 …… 23\n\n二、液体流动的连续方程式 …… 26\n",
+    "expected_names": [
+      "液体的主要物理性质及液压油的选用",
+      "液体的主要物理性质"
+    ]
+  },
+  {
+    "case_id": "book_02_185",
+    "source": "/mnt/nas_data/deliver/core_books/mechanical_engineering/MD/aacid__duxiu_files__20240613T175418Z__Kq82XXGtbpnAQgJa47AwQA.md",
+    "source_sha256": "ad40d1308ee6c2328d26478325826c572e65cb1a3d3a94e141babcabe59ffb62",
+    "source_start_line": 185,
+    "source_end_line": 212,
+    "text": "## 目录\n\n第一章 滑动轴承概述 …… (1)\n\n第一节 滑动轴承的分类 …… (1)\n\n一、滑动轴承的分类 …… (2)\n\n二、滑动轴承的性能比较 …… (2)\n\n三、滑动轴承的类型选择 …… (3)\n\n第二节 滑动轴承的典型结构 …… (3)\n\n一、径向滑动轴承 …… (3)\n\n二、普通推力滑动轴承 …… (5)\n\n三、可倾瓦轴承 …… (6)\n\n第三节 滑动轴承的结构 …… (7)\n\n一、滑动轴承的轴瓦结构 …… (7)\n\n二、滑动轴承的油孔及油槽 …… (8)\n\n第四节 滑动轴承的材料 …… (9)\n\n",
+    "expected_names": [
+      "径向滑动轴承"
+    ]
+  },
+  {
+    "case_id": "book_07_185",
+    "source": "/mnt/nas_data/deliver/core_books/architectue/MD/aacid__duxiu_files__20240613T222432Z__f6tjzPMezg2DfNYAAbhk8J/aacid__duxiu_files__20240613T222432Z__f6tjzPMezg2DfNYAAbhk8J.md",
+    "source_sha256": "ff7ef5cfc954c2d6e76f7d49dc9cc0f1d535a040df06b2f43ff5b518126341e5",
+    "source_start_line": 185,
+    "source_end_line": 214,
+    "text": "## 目录\n\n1 专业概论 ..... (1)\n\n1.1 室内设计的含义和任务 ..... (1)\n\n1.1.1 室内设计的含义 ..... (1)\n\n1.1.2 室内设计的任务 ..... (1)\n\n1.1.3 室内设计行业 ..... (2)\n\n1.1.4 室内设计师 ..... (3)\n\n1.1.5 室内设计专业 ..... (3)\n\n1.2 室内设计的内容和范畴 ..... (4)\n\n1.2.1 室内设计的内容 ..... (4)\n\n1.2.2 室内设计及相关学科 ..... (6)\n\n1.2.3 室内设计的基本理念 ..... (9)\n\n1.3 室内设计的历史和发展 ..... (12)\n\n1.3.1 历史的回顾 ..... (12)\n\n1.3.2 设计风格 ..... (35)\n\n",
+    "expected_names": [
+      "室内设计的含义"
+    ]
+  },
+  {
+    "case_id": "book_06_7045",
+    "source": "/mnt/nas_data/deliver/core_books/architectue/MD/aacid__ia2_acsmpdf_files__20241105T000934Z__guvmDPEdjQARZQg5BC7JR9.md",
+    "source_sha256": "b179c78c6afa1dddc47c385779d99db5218f52b1e13a479ddf0ad423a3a84aa5",
+    "source_start_line": 7045,
+    "source_end_line": 7070,
+    "text": "## Glossary\n\nAesthetic: concerned with beauty and good taste; relating to the appreciation of beauty\n\nAggregate: material in the form of grains or particles, such as sand, gravel or crushed stone\n\nApproved Code of Practice (ACOP): a set of written directions and methods of work, issued by an official body or professional association and approved by the HSE, that provides practical advice on how to comply with the law\n\nAqueduct: an artificial channel in the form of a bridge carrying water across a valley\n\nArchitrave: the shaped or moulded timber trim surrounding a door frame\n\nArea: the space occupied by a flat shape or the surface of an object\n\nArtifacts: ornaments or other objects made by humans that are of cultural or historical interest\n\nAssets: items of value owned by a company\n\nAttenuation ponds: storage ponds that manage storm water by releasing it slowly\n\nBaffle: a device that controls or restrains the flow of a liquid or a gas\n\nBankruptcy: a legal process to deal with a person or business that is unable to repay outstanding debts\n\nBespoke: purpose-made for a particular customer\n\n",
+    "expected_names": [
+      "Aesthetic",
+      "Aggregate"
+    ]
+  },
+  {
+    "case_id": "book_06_7311",
+    "source": "/mnt/nas_data/deliver/core_books/architectue/MD/aacid__ia2_acsmpdf_files__20241105T000934Z__guvmDPEdjQARZQg5BC7JR9.md",
+    "source_sha256": "b179c78c6afa1dddc47c385779d99db5218f52b1e13a479ddf0ad423a3a84aa5",
+    "source_start_line": 7311,
+    "source_end_line": 7340,
+    "text": "## INDEX\n\n## A\n\nAbernodwydd farmhouse 7\n\nabutments 18\n\naccess equipment 159–65\n\naccessibility 13\n\naccidents 129–30, 140–4, 149, 172–3\n\naesthetic value 8\n\naggregate 64\n\nagricultural buildings 11\n\nair-conditioning systems 44\n\nair pollution 178\n\nair transport 16\n\nalarm systems 99\n\nAlcantara Bridge 18\n\n",
+    "expected_names": [
+      "abutments",
+      "access equipment"
+    ]
+  },
+  {
+    "case_id": "book_14_183",
+    "source": "/mnt/nas_data/deliver/core_books/economy/MD/aacid__duxiu_files__20240613T171955Z__HTAWmgZ3ZhiGBxXxux5ApG.md",
+    "source_sha256": "a89192a371f88e4c37d400847cc8cedf940520d070a822bda0df7e1c04cef57d",
+    "source_start_line": 183,
+    "source_end_line": 195,
+    "text": "## —— Contents ——\n\nPreface vi-vii\n\nList of Contributors viii\n\nDictionary Entries A-Z 1–206\n\nIndex 207\n\n\n\n## Contributors\n",
+    "expected_names": [
+      "Dictionary Entries A-Z"
+    ]
+  },
+  {
+    "case_id": "book_35_51",
+    "source": "/mnt/nas_data/deliver/hq_dictionaries/architecture/MD/0027_Building and civil engineering - Vocabulary - Part 7_ Services.md",
+    "source_sha256": "029f84b16cb33f6046ad7187a83e72355647b1e1fb9cfb9a238999ff4fee1b06",
+    "source_start_line": 51,
+    "source_end_line": 80,
+    "text": "## Contents\n\n## Foreword iii\n\n1 Scope 1\n\n2 Vocabulary structure 1\n\n3 Energy sources and distribution (07 1xxxx) 2\n\n4 Internal communication (07 2xxxx) 13\n\n5 Internal transport (07 3xxxx) 16\n\n6 Sanitation (07 4xxxx) 18\n\n7 Lighting (07 5xxxx) 48\n\nBibliography 56\n\n## Summary of pages\n\nThis document comprises a front cover, an inside front cover, pages i to iv, pages 1 to 57 and a back cover.\n\n\n\n\n\n## Foreword\n\n",
+    "expected_names": [
+      "Energy sources and distribution (07 1xxxx)"
+    ]
+  },
+  {
+    "case_id": "book_48_9205",
+    "source": "/mnt/nas_data/deliver/hq_dictionaries/history/MD/f5d15db8efda4044bd1e899a789bfc59.md",
+    "source_sha256": "69c36a339edd8fe1d25091c4232155dfb8a4c1bcfa62741ed19d53dfc9b15015",
+    "source_start_line": 9205,
+    "source_end_line": 9230,
+    "text": "## Index\n\nItalic page numbers indicate pictures; bold page numbers indicate main encyclopedia entries.\n\nAbelson, Philip, 10, 362\n\nAbyssinian War, 50\n\nAcademy of Sciences of the USSR, 1–2, 360 and S. Vavilov, 329, 330\n\nAcquired characteristics, 105\n\nActinium, 73\n\nAdler, Alfred, 117, 256\n\nAdvisory Committee on X-Ray and Radium Protection, 273\n\nAEC. See Atomic Energy Commission\n\nAgassiz, Alexander, 227\n\nAge of the earth, xxi, 2–4, 124–125 and Boltwood, 36, 355\n\nAgriculture Academy (USSR), 188–189\n\n",
+    "expected_names": [
+      "Abelson, Philip",
+      "Actinium"
+    ]
+  }
+]

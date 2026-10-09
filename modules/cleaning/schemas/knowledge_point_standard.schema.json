@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Standard subject knowledge point",
+  "type": "object",
+  "required": [
+    "id",
+    "knowledge_point",
+    "name",
+    "definition",
+    "en_definition",
+    "description",
+    "en_description",
+    "main_tags",
+    "related_tags",
+    "source"
+  ],
+  "properties": {
+    "id": {"type": ["integer", "string"]},
+    "knowledge_point": {"type": "string"},
+    "name": {"type": "string"},
+    "definition": {"type": "string"},
+    "en_definition": {"type": "string"},
+    "description": {"type": "string"},
+    "en_description": {"type": "string"},
+    "main_tags": {"type": "string"},
+    "related_tags": {"type": "array", "items": {"type": "string"}},
+    "source": {"type": "string"}
+  },
+  "anyOf": [
+    {"properties": {"name": {"minLength": 1}}},
+    {"properties": {"knowledge_point": {"minLength": 1}}}
+  ],
+  "additionalProperties": false
+}

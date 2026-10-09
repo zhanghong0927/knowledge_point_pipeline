@@ -1,0 +1,9 @@
+{
+  "subjects": [
+    {
+      "subject": "education",
+      "slug": "education",
+      "inputs": ["input.json"]
+    }
+  ]
+}

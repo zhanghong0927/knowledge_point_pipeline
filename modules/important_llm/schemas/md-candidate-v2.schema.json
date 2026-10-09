@@ -1,0 +1,112 @@
+{
+  "$defs": {
+    "EvidenceSpan": {
+      "additionalProperties": false,
+      "description": "原始 Unit.text 中的字符半开区间；综合入口另校验所属单元和实际长度。",
+      "properties": {
+        "unit_id": {
+          "title": "Unit Id",
+          "type": "string"
+        },
+        "start": {
+          "minimum": 0,
+          "title": "Start",
+          "type": "integer"
+        },
+        "end": {
+          "exclusiveMinimum": 0,
+          "title": "End",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "unit_id",
+        "start",
+        "end"
+      ],
+      "title": "EvidenceSpan",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "逐书名称和来源锚点；不包含生成释义，名称出处与释义证据分开保存。",
+  "properties": {
+    "candidate_id": {
+      "title": "Candidate Id",
+      "type": "string"
+    },
+    "chunk_id": {
+      "title": "Chunk Id",
+      "type": "string"
+    },
+    "scope": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Scope",
+      "type": "array"
+    },
+    "name": {
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "aliases": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Aliases",
+      "type": "array"
+    },
+    "issues": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "origins": {
+      "items": {
+        "enum": [
+          "body",
+          "toc",
+          "index",
+          "glossary"
+        ],
+        "type": "string"
+      },
+      "title": "Origins",
+      "type": "array"
+    },
+    "name_evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Name Evidence Ids",
+      "type": "array"
+    },
+    "evidence_spans": {
+      "items": {
+        "$ref": "#/$defs/EvidenceSpan"
+      },
+      "title": "Evidence Spans",
+      "type": "array"
+    }
+  },
+  "required": [
+    "candidate_id",
+    "chunk_id",
+    "scope",
+    "name",
+    "evidence_ids"
+  ],
+  "title": "Candidate",
+  "type": "object"
+}

@@ -1,0 +1,29 @@
+[
+  {
+    "command": [
+      "/usr/bin/python3",
+      "/home/wangqiyuan/work/mount_pipeline_package_20260929/pipeline/runner.py",
+      "--help"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/usr/bin/python3",
+      "/home/wangqiyuan/work/mount_pipeline_package_20260929/pipeline/generate_semantic_boundaries.py",
+      "--help"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  },
+  {
+    "command": [
+      "/usr/bin/python3",
+      "/home/wangqiyuan/work/mount_pipeline_package_20260929/mapping_runtime/scripts/hierarchical-knowledge-labeling-beam-v3.py",
+      "--help"
+    ],
+    "exit_code": 0,
+    "stderr": ""
+  }
+]

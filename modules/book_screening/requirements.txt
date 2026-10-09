@@ -1,0 +1,2 @@
+# Core pipeline and offline tests use the Python standard library.
+# Python >= 3.10

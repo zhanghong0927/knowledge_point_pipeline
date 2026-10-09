@@ -1,0 +1,141 @@
+{
+  "subject_name": "心理学",
+  "subject_slug": "psychology",
+  "boundary": {
+    "aliases": [
+      "心理学",
+      "psychology"
+    ],
+    "direct_subject_labels": [
+      "心理学"
+    ],
+    "adjacent_subject_labels": [
+      "医学",
+      "教育学",
+      "社会学",
+      "管理学",
+      "生物医学工程",
+      "神经科学",
+      "体育学",
+      "军事学"
+    ],
+    "strong_terms": [
+      "心理咨询",
+      "心理治疗",
+      "心理测量",
+      "心理评估",
+      "心理诊断",
+      "心理健康",
+      "认知心理",
+      "发展心理",
+      "社会心理",
+      "教育心理",
+      "临床心理",
+      "健康心理",
+      "人格心理",
+      "工业心理",
+      "组织心理",
+      "犯罪心理",
+      "神经心理",
+      "实验心理",
+      "变态心理",
+      "运动心理",
+      "心理统计",
+      "psychological",
+      "psychotherapy",
+      "psychometrics",
+      "psychometric",
+      "neuropsychology",
+      "psychopathology",
+      "cognitive psychology",
+      "developmental psychology",
+      "social psychology",
+      "educational psychology",
+      "clinical psychology",
+      "health psychology",
+      "personality psychology",
+      "industrial psychology",
+      "organizational psychology",
+      "counseling psychology",
+      "experimental psychology"
+    ],
+    "weak_terms": [
+      "认知",
+      "情绪",
+      "人格",
+      "行为",
+      "知觉",
+      "记忆",
+      "动机",
+      "注意",
+      "焦虑",
+      "抑郁",
+      "创伤",
+      "心理",
+      "cognition",
+      "emotion",
+      "personality",
+      "behavior",
+      "behaviour",
+      "perception",
+      "memory",
+      "motivation",
+      "attention",
+      "anxiety",
+      "depression",
+      "trauma",
+      "mental health",
+      "counseling"
+    ],
+    "cooccurrence_groups": [
+      [
+        "认知",
+        "行为"
+      ],
+      [
+        "情绪",
+        "调节"
+      ],
+      [
+        "人格",
+        "测量"
+      ],
+      [
+        "精神",
+        "健康"
+      ],
+      [
+        "学习",
+        "动机"
+      ],
+      [
+        "mental",
+        "health"
+      ],
+      [
+        "cognitive",
+        "behavior"
+      ],
+      [
+        "emotion",
+        "regulation"
+      ],
+      [
+        "personality",
+        "assessment"
+      ],
+      [
+        "human",
+        "behavior"
+      ]
+    ],
+    "exclude_phrases": [
+      "心理惊悚小说",
+      "心理悬疑小说",
+      "读心术",
+      "成功学",
+      "psychological thriller",
+      "psychological horror"
+    ]
+  }
+}

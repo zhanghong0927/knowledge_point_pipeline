@@ -1,0 +1,46 @@
+{
+  "subject": {
+    "slug": "mechanical_engineering",
+    "name": "机械工程",
+    "description": "按实际知识树范围审核，允许明确、直接的交叉知识。"
+  },
+  "track": "important",
+  "important_extraction": "llm",
+  "important_llm": {
+    "python": "{root}/.venv_important_llm/bin/python",
+    "workers": 4,
+    "book_workers": 1,
+    "max_connections": 4,
+    "chunk_tokens": 4000,
+    "max_output_tokens": 8192,
+    "timeout": 180,
+    "transport_failure_limit": 2
+  },
+  "model": {"api_url": "http://MODEL_HOST:8000", "name": "EXACT_MODEL_ID"},
+  "paths": {
+    "run": "../runs/example_important_llm",
+    "catalog": "../inputs/catalog.csv",
+    "screening_scope": "{root}/modules/book_screening/configs/audit_compatible/mechanical_engineering.json",
+    "books": "../inputs/screened_important_books.json",
+    "screening_result": "",
+    "md_root": "",
+    "pdf_root": "",
+    "approved_books": "",
+    "classification_model_config": "model.example.json",
+    "important_llm_services": "important_llm_services.example.json",
+    "taxonomy_dir": "{root}/../Books_textbooks_cleaning_pipeline/taxonomy",
+    "taxonomy": "{taxonomy_dir}/mechanical_engineering_taxonomy.json",
+    "knowledge_input": ""
+  },
+  "screening_workers": 20,
+  "classification_workers": 4,
+  "cleaning_workers": 32,
+  "cleaning_batch_size": 8,
+  "cleaning_context_chars": 3000,
+  "run_md_quality_audit": true,
+  "book_manifest": {"enabled": true, "allow_partial": false, "assume_track": false, "path_maps": []},
+  "mounting": {"threshold": 0.85, "min_depth": 2, "max_depth": 5, "max_related": 2, "workers": 16, "max_tokens": 4096, "timeout": 600, "limit": 0, "api_key_env": ""},
+  "screening_environment": {},
+  "hooks": {"mounting": null},
+  "dedup_inputs": []
+}

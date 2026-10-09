@@ -1,0 +1,128 @@
+{
+  "provenance": "semantic_25ed272/semantic_probe/parallel_names/revised; response unchanged; context restricted to fields used by all-rejected identity validation",
+  "context": {
+    "draft_ids": [
+      "rule-32899ff2868bcf69",
+      "rule-2a91b87cb00132a8",
+      "rule-dab79236e6a81f34",
+      "rule-689685727e0a461f",
+      "rule-97a7c65ac4d97d1b",
+      "rule-2a0b85498620ee37"
+    ],
+    "candidate_groups": [
+      [
+        "rule-32899ff2868bcf69",
+        "rule-2a91b87cb00132a8",
+        "rule-dab79236e6a81f34",
+        "rule-689685727e0a461f",
+        "rule-97a7c65ac4d97d1b",
+        "rule-2a0b85498620ee37"
+      ]
+    ],
+    "evidence_ids": [
+      "u000226",
+      "u001041",
+      "u001043",
+      "u001045",
+      "u001047",
+      "u001109",
+      "u001067",
+      "u003409",
+      "u003375",
+      "u003435"
+    ],
+    "candidate_evidence_ids": {
+      "rule-32899ff2868bcf69": [
+        "u001043",
+        "u001045",
+        "u001047",
+        "u001041",
+        "u000226",
+        "u001041"
+      ],
+      "rule-2a91b87cb00132a8": [
+        "u001043",
+        "u001041",
+        "u000226",
+        "u001041"
+      ],
+      "rule-dab79236e6a81f34": [
+        "u001045",
+        "u001041",
+        "u000226",
+        "u001041"
+      ],
+      "rule-689685727e0a461f": [
+        "u001109",
+        "u001067",
+        "u000226",
+        "u001041"
+      ],
+      "rule-97a7c65ac4d97d1b": [
+        "u003409",
+        "u003375",
+        "u000226",
+        "u001041"
+      ],
+      "rule-2a0b85498620ee37": [
+        "u003435",
+        "u003375",
+        "u000226",
+        "u001041"
+      ]
+    }
+  },
+  "response": {
+    "name_decisions": [
+      {
+        "candidate_id": "rule-32899ff2868bcf69",
+        "decision": "reject",
+        "reason": "原文明确指出“油膜涡动和油膜振荡是两个不同的概念”，标题仅为章节并列讨论，并非独立关系概念。",
+        "evidence_ids": [
+          "u001109"
+        ]
+      },
+      {
+        "candidate_id": "rule-2a91b87cb00132a8",
+        "decision": "reject",
+        "reason": "原文明确指出“油膜涡动和油膜振荡是两个不同的概念”，标题仅为章节并列讨论，并非独立关系概念。",
+        "evidence_ids": [
+          "u001109"
+        ]
+      },
+      {
+        "candidate_id": "rule-dab79236e6a81f34",
+        "decision": "reject",
+        "reason": "原文明确指出“油膜涡动和油膜振荡是两个不同的概念”，标题仅为章节并列讨论，并非独立关系概念。",
+        "evidence_ids": [
+          "u001109"
+        ]
+      },
+      {
+        "candidate_id": "rule-689685727e0a461f",
+        "decision": "reject",
+        "reason": "原文明确指出“油膜涡动和油膜振荡是两个不同的概念”，标题仅为章节并列讨论，并非独立关系概念。",
+        "evidence_ids": [
+          "u001109"
+        ]
+      },
+      {
+        "candidate_id": "rule-97a7c65ac4d97d1b",
+        "decision": "reject",
+        "reason": "原文明确指出“油膜涡动和油膜振荡是两个不同的概念”，标题仅为章节并列讨论，并非独立关系概念。",
+        "evidence_ids": [
+          "u001109"
+        ]
+      },
+      {
+        "candidate_id": "rule-2a0b85498620ee37",
+        "decision": "reject",
+        "reason": "原文明确指出“油膜涡动和油膜振荡是两个不同的概念”，标题仅为章节并列讨论，并非独立关系概念。",
+        "evidence_ids": [
+          "u001109"
+        ]
+      }
+    ],
+    "findings": []
+  }
+}

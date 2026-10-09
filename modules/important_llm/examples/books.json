@@ -1,0 +1,20 @@
+{
+  "books": [
+    {
+      "book_id": "sample-8fa6adaca25e1002",
+      "local_name": "books/chinese.md",
+      "title": "滨海拦污设施水动力响应试验研究（原文节选）",
+      "subject": "hydraulic_engineering",
+      "language": "zh",
+      "sha256": "ef6fe98f0a2623c71f3c7a66fe61a243707aace9be3c329ea96e95beb160235c"
+    },
+    {
+      "book_id": "sample-31a0902085a64869",
+      "local_name": "books/english.md",
+      "title": "Variable Features on Mars, 2, Mariner 9 Global Results（原文节选）",
+      "subject": "astronomy",
+      "language": "en",
+      "sha256": "3ad5f8a264b4336966b3e62ba7728963e285340840f045bb469fbf507501a847"
+    }
+  ]
+}

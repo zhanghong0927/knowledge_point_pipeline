@@ -1,0 +1,8 @@
+{
+  "api_url": "http://MODEL_HOST:8000",
+  "model": "EXACT_MODEL_ID",
+  "context_limit": 32768,
+  "max_tokens": 8192,
+  "timeout": 600,
+  "chat_template_kwargs": {"enable_thinking": false}
+}

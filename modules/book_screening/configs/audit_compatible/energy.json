@@ -1,0 +1,241 @@
+{
+  "subject_name": "能源",
+  "subject_slug": "energy",
+  "boundary": {
+    "core_scope": "研究能源资源、转换、传输、储存、利用、系统工程、经济政策与环境影响，覆盖石油天然气、热能动力、电力、新能源、储能氢能、核能、节能和能源经济等可用于抽取能源学科知识点的内容。\n原配置L1范围：能源基础与系统工程；石油、天然气与石化工程；热能、动力与制冷工程；电力与综合能源系统；新能源与可再生能源；储能与氢能；核能科学与工程；节能与终端用能；能源经济、政策与环境",
+    "aliases": [
+      "能源",
+      "能源科学",
+      "能源工程",
+      "energy science",
+      "energy engineering"
+    ],
+    "direct_subject_labels": [
+      "能源",
+      "能源科学",
+      "能源工程",
+      "动力工程及工程热物理"
+    ],
+    "adjacent_subject_labels": [
+      "石油与天然气工程",
+      "化学工程",
+      "电气工程",
+      "核科学与技术",
+      "环境科学与工程",
+      "机械工程",
+      "材料科学与工程",
+      "经济学",
+      "管理学",
+      "地质资源与地质工程",
+      "水利工程",
+      "交通运输工程"
+    ],
+    "accepted_adjacent": [
+      "明确服务于能源开发、转换、储运、系统运行和终端用能的相邻学科知识",
+      "围绕能源安全、能源经济、碳排放和能源环境影响的政策与管理知识",
+      "新能源、储能、氢能和核能相关的材料、器件、装备与系统知识"
+    ],
+    "strong_terms": [
+      "能源系统工程",
+      "能源转换",
+      "能源利用",
+      "石油工程",
+      "天然气工程",
+      "油气工程",
+      "油气勘探",
+      "油气开发",
+      "石油化工",
+      "热能工程",
+      "动力工程",
+      "制冷工程",
+      "热泵技术",
+      "电力系统",
+      "综合能源系统",
+      "新能源",
+      "可再生能源",
+      "太阳能",
+      "风能",
+      "生物质能",
+      "地热能",
+      "海洋能",
+      "储能技术",
+      "电化学储能",
+      "氢能",
+      "燃料电池",
+      "核能工程",
+      "核反应堆",
+      "节能技术",
+      "能源效率",
+      "能源经济",
+      "能源政策",
+      "能源安全",
+      "能源环境",
+      "energy systems engineering",
+      "energy conversion",
+      "petroleum engineering",
+      "natural gas engineering",
+      "oil and gas engineering",
+      "petrochemical engineering",
+      "thermal engineering",
+      "power engineering",
+      "refrigeration engineering",
+      "power system",
+      "integrated energy system",
+      "renewable energy",
+      "solar energy",
+      "wind energy",
+      "bioenergy",
+      "geothermal energy",
+      "energy storage",
+      "hydrogen energy",
+      "fuel cell",
+      "nuclear energy",
+      "energy efficiency",
+      "energy economics",
+      "energy policy",
+      "energy security"
+    ],
+    "weak_terms": [
+      "能源",
+      "能量转换",
+      "油气",
+      "石油",
+      "天然气",
+      "炼油",
+      "热能",
+      "动力",
+      "制冷",
+      "供热",
+      "电力",
+      "发电",
+      "新能源",
+      "可再生",
+      "光伏",
+      "风电",
+      "水电",
+      "生物质",
+      "地热",
+      "储能",
+      "电池",
+      "氢能",
+      "核能",
+      "节能",
+      "能效",
+      "碳排放",
+      "energy",
+      "petroleum",
+      "oil and gas",
+      "natural gas",
+      "thermal power",
+      "refrigeration",
+      "electric power",
+      "power generation",
+      "renewable",
+      "photovoltaic",
+      "wind power",
+      "hydropower",
+      "bioenergy",
+      "geothermal",
+      "battery",
+      "hydrogen",
+      "nuclear power",
+      "energy conservation",
+      "carbon emission"
+    ],
+    "cooccurrence_groups": [
+      [
+        "能源",
+        "系统"
+      ],
+      [
+        "能源",
+        "转换"
+      ],
+      [
+        "油气",
+        "工程"
+      ],
+      [
+        "热能",
+        "动力"
+      ],
+      [
+        "电力",
+        "系统"
+      ],
+      [
+        "可再生",
+        "能源"
+      ],
+      [
+        "储能",
+        "系统"
+      ],
+      [
+        "氢能",
+        "燃料电池"
+      ],
+      [
+        "核能",
+        "工程"
+      ],
+      [
+        "节能",
+        "技术"
+      ],
+      [
+        "energy",
+        "system"
+      ],
+      [
+        "energy",
+        "conversion"
+      ],
+      [
+        "oil",
+        "gas"
+      ],
+      [
+        "renewable",
+        "energy"
+      ],
+      [
+        "energy",
+        "storage"
+      ],
+      [
+        "energy",
+        "efficiency"
+      ]
+    ],
+    "excluded_scope": [
+      "仅在日常语言中提到精力、力量或能量而不涉及能源科学与工程的内容",
+      "仅讨论金融、文学、体育或健康中的energy概念且无能源知识的内容",
+      "纯材料或纯化学研究且未说明能源器件、能源过程或能源系统用途的内容"
+    ],
+    "exclude_phrases": [
+      "正能量",
+      "负能量",
+      "人体能量",
+      "生命能量",
+      "心灵能量",
+      "能量疗法",
+      "能量医学",
+      "energy healing",
+      "spiritual energy",
+      "human energy",
+      "personal energy"
+    ],
+    "l1_scope_names": [
+      "能源基础与系统工程",
+      "石油、天然气与石化工程",
+      "热能、动力与制冷工程",
+      "电力与综合能源系统",
+      "新能源与可再生能源",
+      "储能与氢能",
+      "核能科学与工程",
+      "节能与终端用能",
+      "能源经济、政策与环境"
+    ]
+  }
+}

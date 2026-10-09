@@ -1,0 +1,34 @@
+# Python environments and caches
+.venv*/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Local secrets and machine-specific configuration
+.env
+.env.*
+!.env.example
+*.local.json
+*.local.yaml
+*.local.yml
+
+# Local input data, generated runs, and original delivery archives
+/inputs/
+/runs/
+/validation_logs/
+/origin_zip/
+
+# Logs and runtime databases
+*.log
+*.sqlite
+*.sqlite-*
+
+# Editor and operating system artifacts
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

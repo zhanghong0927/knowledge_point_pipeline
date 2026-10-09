@@ -1,0 +1,23 @@
+{
+  "evidence_ids": [
+    "u000017"
+  ],
+  "name": "dark collar",
+  "aliases": [],
+  "category": "surface feature",
+  "support_reason": "The source proposes a mechanism for the dark collar observed following the retreat of the north polar cap on Mars.",
+  "definition_supported": true,
+  "definition": "The dark collar is a feature observed following the north polar cap on Mars during its retreat. It is proposed to be produced by the scouring of bright overlying dust from the polar peripheral ground by winds driven by temperature differences between frosted and unfrosted terrain.",
+  "confidence": "high",
+  "conditions": [],
+  "issues": [],
+  "record_id": "r7ac059efbee2afafd6e9",
+  "book_id": "31a0902085a64869",
+  "run_id": "0ee090405da23ad24c7e",
+  "candidate_ids": [
+    "c000001-86d894d27393c5a4d67b"
+  ],
+  "scope": [
+    "Variable Features on Mars, 2, Mariner 9 Global Results"
+  ]
+}

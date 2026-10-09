@@ -1,0 +1,10 @@
+[
+  {
+    "identifier": "book001",
+    "title": "原书书名",
+    "md_path": "/mnt/nas2/path/book001.md",
+    "pdf_path": "/mnt/nas2/path/book001.pdf",
+    "subject_slug": "education",
+    "scope_config": "/mnt/nas2/path/toolkit/scope_configs/education.scope.json"
+  }
+]

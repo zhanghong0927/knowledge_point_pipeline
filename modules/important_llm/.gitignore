@@ -1,0 +1,10 @@
+.venv/
+.llm_services.json
+.env*
+work/
+outputs/
+dist/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ruff_cache/

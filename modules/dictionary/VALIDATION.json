@@ -1,0 +1,157 @@
+{
+  "live_model_calls": false,
+  "suites": [
+    {
+      "name": "extract_clean_adapters",
+      "exit_code": 0,
+      "tests": 342,
+      "skipped": 3,
+      "seconds": 7.757
+    },
+    {
+      "name": "classification",
+      "exit_code": 0,
+      "tests": 72,
+      "skipped": 0,
+      "seconds": 0.58
+    },
+    {
+      "name": "screening",
+      "exit_code": 0,
+      "tests": 67,
+      "skipped": 0,
+      "seconds": 0.241
+    }
+  ],
+  "cli": [
+    {
+      "script": "portable_pipeline.py",
+      "exit_code": 0
+    },
+    {
+      "script": "src/run_fullbook_v5.py",
+      "exit_code": 0
+    },
+    {
+      "script": "src/fullbook_llm_v5.py",
+      "exit_code": 0
+    },
+    {
+      "script": "src/fullbook_llm_v5_retry16.py",
+      "exit_code": 0
+    },
+    {
+      "script": "classification/scripts/classify_books.py",
+      "exit_code": 0
+    },
+    {
+      "script": "screening/dictionary_md_audit.py",
+      "exit_code": 0
+    },
+    {
+      "script": "name_filters/01_name_title_quality.py",
+      "exit_code": 0
+    },
+    {
+      "script": "name_filters/02_subject_scope_filter.py",
+      "exit_code": 0
+    }
+  ],
+  "scope_configs": [
+    {
+      "file": "agriculture.scope.json",
+      "valid": true
+    },
+    {
+      "file": "architecture_scope_config.json",
+      "valid": true
+    },
+    {
+      "file": "art.scope.json",
+      "valid": true
+    },
+    {
+      "file": "automation.scope.json",
+      "valid": true
+    },
+    {
+      "file": "biomedical_engineering.scope.json",
+      "valid": true
+    },
+    {
+      "file": "civil_engineering.scope.json",
+      "valid": true
+    },
+    {
+      "file": "economy.scope.json",
+      "valid": true
+    },
+    {
+      "file": "education.scope.json",
+      "valid": true
+    },
+    {
+      "file": "electricengineering.scope.json",
+      "valid": true
+    },
+    {
+      "file": "energy.scope.json",
+      "valid": true
+    },
+    {
+      "file": "history.scope.json",
+      "valid": true
+    },
+    {
+      "file": "integrated_circuit.scope.json",
+      "valid": true
+    },
+    {
+      "file": "literature.scope.json",
+      "valid": true
+    },
+    {
+      "file": "management.scope.json",
+      "valid": true
+    },
+    {
+      "file": "mechanical_engineering.scope.json",
+      "valid": true
+    },
+    {
+      "file": "medicine.scope.json",
+      "valid": true
+    },
+    {
+      "file": "military.scope.json",
+      "valid": true
+    },
+    {
+      "file": "ocean_engineering.scope.json",
+      "valid": true
+    },
+    {
+      "file": "philosophy.scope.json",
+      "valid": true
+    },
+    {
+      "file": "sociology.scope.json",
+      "valid": true
+    }
+  ],
+  "checks": {
+    "source_hashes_match": true,
+    "source_files_verified": 49,
+    "python_syntax_errors": [],
+    "possible_secret_files": []
+  },
+  "reference_only_configs": [
+    "scope_configs/reference_only/psychology.book_screening.json"
+  ],
+  "offline_verified": true,
+  "limitations": [
+    "No live model batch or semantic quality certification",
+    "Historical data-dependent fixtures may be explicitly skipped",
+    "Optional tokenizer and Node Excel exporter are not installed by this validation"
+  ]
+}

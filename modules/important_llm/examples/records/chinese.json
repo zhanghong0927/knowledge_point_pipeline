@@ -1,0 +1,24 @@
+{
+  "evidence_ids": [
+    "u000342",
+    "u000344"
+  ],
+  "name": "狄克逊准则",
+  "aliases": [],
+  "category": "原理",
+  "support_reason": "原文将狄克逊准则列为网衣物理模拟的相似准则之一，并给出了其对网面模型比尺的具体数值要求及应用场景。",
+  "definition_supported": true,
+  "definition": "狄克逊准则是针对网衣物理模拟提出的一种相似准则。该准则要求网面的模型比尺控制在8以内，较多地应用于尺度较大的拖网试验中。",
+  "confidence": "high",
+  "conditions": [],
+  "issues": [],
+  "record_id": "rbe999c9d3c76ab41026f",
+  "book_id": "8fa6adaca25e1002",
+  "run_id": "1c89466b6df093cd7068",
+  "candidate_ids": [
+    "c000002-c49da6b33a6ff314d4a8"
+  ],
+  "scope": [
+    "2.3 模型网衣设计原则"
+  ]
+}

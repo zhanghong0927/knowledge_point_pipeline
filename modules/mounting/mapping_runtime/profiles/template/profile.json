@@ -1,0 +1,9 @@
+{
+  "profile_version": "1.0",
+  "subject_name": "请填写学科名称",
+  "subject_scope": "请用一至三句话说明该学科收录范围及明确排除范围。",
+  "knowledge_tree": "data/knowledge_tree.json",
+  "semantic_cards": "data/semantic_cards.jsonl",
+  "prompt_module": "prompts/hierarchical_mapping_prompt_v3.py",
+  "routing_constraints": "routing_constraints.py"
+}

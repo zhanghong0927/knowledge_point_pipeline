@@ -1,0 +1,5 @@
+{
+  "api_url": "http://YOUR_MODEL_HOST:8000",
+  "model": "YOUR_EXACT_MODEL_ID",
+  "context_limit": 100000
+}

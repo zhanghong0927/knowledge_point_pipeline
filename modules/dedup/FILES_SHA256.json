@@ -1,0 +1,16 @@
+{
+  "build_package.py": "6be16255b92e0b148a59ce6c5245ae6ac98a2c4a731042e017d30523fb0ab2b1",
+  "dedup.py": "aece3f9fb3d471e44d362ca2cf3488b3e6dfb3d009480f688dd54e6f025e9f0c",
+  "legacy_helpers.py": "571f9223ee153592f5233d556282de1fffe2caabb2acead98daab88ec150b955",
+  "legacy_rules.py": "644ceb62cb266b35787be7b858b83c7c49f8364d2fa0c433ff100178d89ccc3f",
+  "README.md": "678f4b6f34e8102304fa21bf2f4d68bf0932904d3a5d63bcf15acc2e3b1abd19",
+  "requirements.txt": "a120fa5e5b867fed78ae99b6774b74e7a0ebb3fd93b693c4a368531d2a9fabf4",
+  "SOURCE_PROVENANCE.json": "089f6f448687cb889ea172ece87b2d7264326f9256fc41df6ea4226694b3f92d",
+  "validate_offline.py": "ca95c985bfae13dd49240568ba6257b38ee2fec45bef67b64d331872f01733c0",
+  "VALIDATION.json": "565f6ac0445337ba1036e0133038573de62dd268a6b42e5c68768c3336c924aa",
+  "verify_package.py": "0a728db7d9da3399d3594563c006ab59fe8c6ce6c99143237893e07a6a7452e1",
+  "examples/batch.example.json": "9b50bbf187fa0abcbe6d55a06b0c17d5d3b501390769ccc124b0f47d29e2680d",
+  "examples/input.json": "20da6df9ea3248b04f556b0dd7910e5ed299e5ad1f421673d5e7f7eb02bc40f1",
+  "tests/test_cli.py": "ceaaf8b27e159548dde0c647132c81ef7943ac6ed4a11a74b515f1aa04003a0c",
+  "tests/test_dedup.py": "823cd7f814f4dc0d94970cfcd85e49f0466f1fbb27649f52916d5f4d00079330"
+}

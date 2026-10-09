@@ -1,0 +1,4 @@
+# 可选 PDF 版面提取使用 PyMuPDF；N3 名称词性筛选使用 jieba。
+PyMuPDF>=1.24,<2
+
+jieba==0.42.1

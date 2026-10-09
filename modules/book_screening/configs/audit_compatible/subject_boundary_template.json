@@ -1,0 +1,21 @@
+{
+  "subject_name": "替换为学科中文名称",
+  "subject_slug": "replace_with_subject_slug",
+  "boundary": {
+    "core_scope": "概括本学科必须召回的核心对象、理论、方法和应用领域",
+    "accepted_adjacent": [
+      "与本学科存在实质知识交叉、可以保留的相邻领域"
+    ],
+    "excluded_scope": [
+      "仅词面相似、仅偶然提及或明确属于其他学科的范围"
+    ]
+  },
+  "l1_nodes": [
+    {
+      "name": "宽口径一级方向名称",
+      "path": "学科/宽口径一级方向名称",
+      "node_definition": "该方向覆盖的研究对象和知识内容",
+      "node_boundary": "应包含的内容、可接受交叉范围和需要排除的歧义"
+    }
+  ]
+}

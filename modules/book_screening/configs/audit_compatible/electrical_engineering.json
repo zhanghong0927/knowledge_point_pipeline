@@ -1,0 +1,135 @@
+{
+  "subject_name": "电气工程",
+  "subject_slug": "electrical_engineering",
+  "boundary": {
+    "core_scope": "研究电能产生、变换、传输、控制和利用，覆盖电磁场、电机、电力系统、高电压、电力电子、电工材料、测量仪器、储能及交叉电气技术。\n原配置L1范围：电工理论与电磁场；电机与电工磁性机械；电力系统及其自动化；高电压与绝缘技术；电力电子与电气传动；电工材料与器件；微电子学与半导体器件；电路与电子系统；信号处理与通信传输；控制科学与自动化系统；光电子学与光纤技术；电气测量与智能仪器仪表；新兴能源与储能技术；交叉电气技术与前沿应用",
+    "aliases": [
+      "电气工程",
+      "电工技术",
+      "electrical engineering",
+      "electrotechnics"
+    ],
+    "direct_subject_labels": [
+      "电气工程",
+      "电气",
+      "电工"
+    ],
+    "adjacent_subject_labels": [
+      "电子信息",
+      "自动化",
+      "能源",
+      "机械",
+      "材料",
+      "物理学",
+      "集成电路"
+    ],
+    "accepted_adjacent": [
+      "围绕电能、电磁、电机、电网、电力变换、测量和储能的工程知识",
+      "明确服务于电气系统的电子、控制、材料、通信和计算技术"
+    ],
+    "strong_terms": [
+      "电工理论",
+      "电磁场",
+      "电机学",
+      "电力系统",
+      "电力系统自动化",
+      "高电压技术",
+      "绝缘技术",
+      "电力电子",
+      "电气传动",
+      "电工材料",
+      "电气测量",
+      "智能电网",
+      "储能技术",
+      "electrical engineering",
+      "electromagnetic field",
+      "electric machines",
+      "power systems",
+      "power system automation",
+      "high voltage engineering",
+      "insulation technology",
+      "power electronics",
+      "electric drives",
+      "electrical measurements",
+      "smart grid",
+      "energy storage"
+    ],
+    "weak_terms": [
+      "发电",
+      "输电",
+      "配电",
+      "变电",
+      "电网",
+      "变压器",
+      "电动机",
+      "发电机",
+      "继电保护",
+      "电能质量",
+      "power generation",
+      "power transmission",
+      "power distribution",
+      "transformer",
+      "electric motor",
+      "generator",
+      "relay protection",
+      "power quality"
+    ],
+    "cooccurrence_groups": [
+      [
+        "电力",
+        "系统"
+      ],
+      [
+        "高压",
+        "绝缘"
+      ],
+      [
+        "电气",
+        "传动"
+      ],
+      [
+        "电能",
+        "变换"
+      ],
+      [
+        "power",
+        "system"
+      ],
+      [
+        "high",
+        "voltage"
+      ],
+      [
+        "electric",
+        "drive"
+      ]
+    ],
+    "excluded_scope": [
+      "仅讲消费电子、家居装修或产品使用而无电气工程原理的内容",
+      "仅偶然涉及电力或电器但主体属于其他学科的内容"
+    ],
+    "exclude_phrases": [
+      "家电选购",
+      "电器维修入门",
+      "家庭装修布线",
+      "electrical appliance shopping",
+      "home decoration wiring"
+    ],
+    "l1_scope_names": [
+      "电工理论与电磁场",
+      "电机与电工磁性机械",
+      "电力系统及其自动化",
+      "高电压与绝缘技术",
+      "电力电子与电气传动",
+      "电工材料与器件",
+      "微电子学与半导体器件",
+      "电路与电子系统",
+      "信号处理与通信传输",
+      "控制科学与自动化系统",
+      "光电子学与光纤技术",
+      "电气测量与智能仪器仪表",
+      "新兴能源与储能技术",
+      "交叉电气技术与前沿应用"
+    ]
+  }
+}

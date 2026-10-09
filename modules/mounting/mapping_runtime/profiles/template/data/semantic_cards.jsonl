@@ -1,0 +1,3 @@
+{"node_code":"SUBJECT","semantic_card":"目标学科根节点。请说明总体收录范围和排除范围。","seed_examples":[]}
+{"node_code":"SUBJECT-L1-01","semantic_card":"示例一级分类。请说明该方向的核心对象、方法、边界以及与同级节点的区别。","seed_examples":[]}
+{"node_code":"SUBJECT-L2-01","semantic_card":"示例二级分类。请说明应收录和不应收录的知识点，并给出少量已核验术语。","seed_examples":[{"term":"示例术语"}]}

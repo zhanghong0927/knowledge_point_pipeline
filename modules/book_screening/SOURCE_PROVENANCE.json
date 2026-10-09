@@ -1,0 +1,378 @@
+[
+  {
+    "file": "scripts/prepare_post_metadata_md_audit.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\scripts\\prepare_post_metadata_md_audit.py",
+    "sha256": "fc43d1ae3204a6285574fda1f3a61243bbc6a679140e325d04a9c9cefe329019",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "scripts/prepare_post_metadata_md_input.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\scripts\\prepare_post_metadata_md_input.py",
+    "sha256": "6e345445be0f5c3447a2e1d2defc120a9d2ed89b431eefc2107b172713372322",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "scripts/llm_refine_important_book_metadata.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\scripts\\llm_refine_important_book_metadata.py",
+    "sha256": "cdc5fd0af9fd42fd151cb0c305d5fa17bb2f75162a0883d6ed48a32b15ab80cd",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "scripts/screen_mechanical_reference_books.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\scripts\\screen_mechanical_reference_books.py",
+    "sha256": "36506cd4a93c0effa6d5d157c7cac739886753436dfe166a493a6140fb263173",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "scripts/screen_subject_reference_books.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\scripts\\screen_subject_reference_books.py",
+    "sha256": "4f4394507b2d7f908e87f7a78930c73c34c205a3a21f5bcb5bd484e9bb3ec4b2",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "scripts/general_book_screening_pipeline.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\scripts\\general_book_screening_pipeline.py",
+    "sha256": "e03c24459e1ed3362aab9befb911ccdf810ff406304b91e7c2a80d4d4c2f05f3",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "scripts/merge_sharded_recall_outputs.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\scripts\\merge_sharded_recall_outputs.py",
+    "sha256": "b63bf2f25233a78223c9bf0f720f0d614481fac7567c7af4dc150c3e019b459b",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "scripts/stream_subject_recall_0611.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\scripts\\stream_subject_recall_0611.py",
+    "sha256": "b55fa5e3ea50102d5988409a51d9e78d88029c33af6b24a389ac496b6b65c089",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "tests/test_stream_subject_recall_0611.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\tests\\test_stream_subject_recall_0611.py",
+    "sha256": "6dcc7931315bdde905ce1b3c0d6a2c20b12d6f2dcd5d59bc9aa8435d4c87034c",
+    "kind": "python310_nul_test_fixture_compatibility",
+    "source_sha256": "76b26d161bcd7d0a469930130429b44ad2f72585faf4460644333c33d5831586"
+  },
+  {
+    "file": "tests/test_merge_sharded_recall_outputs.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\tests\\test_merge_sharded_recall_outputs.py",
+    "sha256": "d7918ed6703e3676802ecb0be1633e1175af3e878b365556e57a50a4d2a7cb45",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "tests/test_general_book_screening_pipeline.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\tests\\test_general_book_screening_pipeline.py",
+    "sha256": "cbb54e3b60adfbee71cb9cb41975f6be43a8f9bcbcb592548cbd572500124670",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "tests/test_screen_subject_reference_books.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\tests\\test_screen_subject_reference_books.py",
+    "sha256": "81915a409327b69ab3ae1062e862c53c849bab3832c87a4b1397402cfacafb53",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "tests/test_screen_mechanical_reference_books.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\tests\\test_screen_mechanical_reference_books.py",
+    "sha256": "8ef92057906023999982beb3bf74675f08a846013967bbdd6843e5db6cbba610",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "tests/test_llm_refine_important_book_metadata.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\tests\\test_llm_refine_important_book_metadata.py",
+    "sha256": "506cd7cd39c52012fa5508fbccc7be43afed8a488d4de5f9d23320e253897d11",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "tests/test_prepare_post_metadata_md_input.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\tests\\test_prepare_post_metadata_md_input.py",
+    "sha256": "ddff6098c4b097fbee21c0179b9a892e1897d6f3a32cbab64de204686c256553",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "tests/test_prepare_post_metadata_md_audit.py",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\tests\\test_prepare_post_metadata_md_audit.py",
+    "sha256": "380114f2d4dd57d619c5c73ba3739f10fa20b7fa4c19ff7ebc995a00a90cce1a",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "scripts/run_post_metadata_md_audit.sh",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\scripts\\run_post_metadata_md_audit.sh",
+    "sha256": "932b6c2c44206a46a6ec75f3d2af12aa5594ad0b8d189ffef28508e9b43d904f",
+    "kind": "historical_reference_for_tests"
+  },
+  {
+    "file": "configs/subject_recall/aerospace_engineering.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\aerospace_engineering.json",
+    "sha256": "cc910f5e871768a20090ef77d5e11eeecc1fa91d5a471bc4acb00c322627eb29",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/agriculture.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\agriculture.json",
+    "sha256": "da479153f62991cf98d2b5ad3b7b86f52982915f6ed6054536575edc85755f95",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/automation.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\automation.json",
+    "sha256": "73c50d854eb9ff7c6bfe6fc2ea0c020cbb21796a0555f465d3a0d10c93cb55eb",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/biomedical_engineering.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\biomedical_engineering.json",
+    "sha256": "65b8a53275dc9137f7e2ac0c6dd1871468fe8326b58c467c5ccc1d35ebad2ec5",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/civil_engineering.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\civil_engineering.json",
+    "sha256": "12413decfd69c824757587bf18f3acc3d927b668c6960f723131bc98dc17c9d0",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/electrical_engineering.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\electrical_engineering.json",
+    "sha256": "4b836816380ee5caaaa4f3ee99bd1527a070fd76ce6e39a3b5e3371e334e6467",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/electronic_information.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\electronic_information.json",
+    "sha256": "2d0ef87beb8259f02bbe7ac7c147e781e599820991dcf7a14b20e96e8c2ca6e3",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/hydraulic_engineering.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\hydraulic_engineering.json",
+    "sha256": "152abe3a2453d8c326ebde3056cb013f60e450675314fb4e1465678cdc669ccb",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/integrated_circuits.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\integrated_circuits.json",
+    "sha256": "c094cefecef0e07f72d429eacb4165f11dbdd6dd4cc5de9ae9baf82c836e1212",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/mechanical_engineering.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\mechanical_engineering.json",
+    "sha256": "8d82ddca91bc56182f2d22f18862657601c429f740bed0bb0a7911e8b75c401e",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/ocean_engineering.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\ocean_engineering.json",
+    "sha256": "bb38dad174c606a4051c2791e420ccc5bb41c10ce8a0b9c5903eb6a2bd935099",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/psychology.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\psychology.json",
+    "sha256": "334aeec1261723599a3c15d07535217acb9d112f33c723304f222c16a8502c5a",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/README.md",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\README.md",
+    "sha256": "0766915d1a8fe7d2d186b1d92c250ddc0072005d3d3074372998b7651aaf72b8",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/subject_boundary_template.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\subject_recall\\subject_boundary_template.json",
+    "sha256": "77660a1e0437177fa7c6c5fae412ced32f48a3e1e6381806bac76e101b30a709",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/energy.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\energy_transport_dictionary_20260908\\energy.json",
+    "sha256": "e80df2cdfd047f6d1466ba368cee2d5de0c6bfa1cf93bc5a799f7fed6407e25a",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/subject_recall/transportation.json",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\configs\\energy_transport_dictionary_20260908\\transportation.json",
+    "sha256": "b1dfa2ba70746ecf6af3840d82463d4c1f80341319cd00f64fcbdadb5c48e2f1",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "configs/audit_compatible/aerospace_engineering.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\aerospace_engineering.json",
+    "sha256": "79402c01255ff89180111e4b7c1a4077a943aedfdcdcdb2d732a2f57f417d923",
+    "source_sha256": "cc910f5e871768a20090ef77d5e11eeecc1fa91d5a471bc4acb00c322627eb29",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/agriculture.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\agriculture.json",
+    "sha256": "66cb7d6fa1d3ff2a4e8694b30d01e57d7bbf616edfe082e5c8869049238475c8",
+    "source_sha256": "da479153f62991cf98d2b5ad3b7b86f52982915f6ed6054536575edc85755f95",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/automation.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\automation.json",
+    "sha256": "5cb80ff5ead69c168ee8cac657048467f996e1623d15c93f6df947f602daa156",
+    "source_sha256": "73c50d854eb9ff7c6bfe6fc2ea0c020cbb21796a0555f465d3a0d10c93cb55eb",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/biomedical_engineering.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\biomedical_engineering.json",
+    "sha256": "a0c8555bc6dd4958945f0fa1a8720b1f003514e0c55c4fb54c4dfcb3024c1afe",
+    "source_sha256": "65b8a53275dc9137f7e2ac0c6dd1871468fe8326b58c467c5ccc1d35ebad2ec5",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/civil_engineering.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\civil_engineering.json",
+    "sha256": "4248b1ee097ca273eb8c7fb0db3881b3c5cb4e415125983cb96583e452d2ab22",
+    "source_sha256": "12413decfd69c824757587bf18f3acc3d927b668c6960f723131bc98dc17c9d0",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/electrical_engineering.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\electrical_engineering.json",
+    "sha256": "2e4f60276fef5e7ed3b105e516e0bdf1dc88f4d4720471cd304e16993783129f",
+    "source_sha256": "4b836816380ee5caaaa4f3ee99bd1527a070fd76ce6e39a3b5e3371e334e6467",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/electronic_information.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\electronic_information.json",
+    "sha256": "aa7bc17cb6ad648e6138d71135ec8f3ad2f0bd9dcb215784cdf7c0984df8a5d3",
+    "source_sha256": "2d0ef87beb8259f02bbe7ac7c147e781e599820991dcf7a14b20e96e8c2ca6e3",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/energy.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\energy.json",
+    "sha256": "1e1f18a89722c40f5a48f6abb6eba09a68a489135d39fbf1a02b3ae21659b17f",
+    "source_sha256": "e80df2cdfd047f6d1466ba368cee2d5de0c6bfa1cf93bc5a799f7fed6407e25a",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/hydraulic_engineering.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\hydraulic_engineering.json",
+    "sha256": "b7b66245ec51856b67305ae573b83697eba0c823cc67f67b2b6eaff5f2f84684",
+    "source_sha256": "152abe3a2453d8c326ebde3056cb013f60e450675314fb4e1465678cdc669ccb",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/integrated_circuits.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\integrated_circuits.json",
+    "sha256": "0939bde80fce786f94a57afa6face168bf40fb6c471dd56aae89c711dcb542c3",
+    "source_sha256": "c094cefecef0e07f72d429eacb4165f11dbdd6dd4cc5de9ae9baf82c836e1212",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/mechanical_engineering.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\mechanical_engineering.json",
+    "sha256": "5aa27821bdf2c3ab76c9bd0ef01e2b456a6ed05d498010508b3a5aed1cc4981e",
+    "source_sha256": "8d82ddca91bc56182f2d22f18862657601c429f740bed0bb0a7911e8b75c401e",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/ocean_engineering.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\ocean_engineering.json",
+    "sha256": "a62de1135a35af3cff97e8f50a1f7651a18acb518674d8f9e2f843a4fe776d74",
+    "source_sha256": "bb38dad174c606a4051c2791e420ccc5bb41c10ce8a0b9c5903eb6a2bd935099",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/psychology.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\psychology.json",
+    "sha256": "094d9018593fb2262b28ce14943ba07f28e2714cdf8f7ae082528d4123a70776",
+    "source_sha256": "334aeec1261723599a3c15d07535217acb9d112f33c723304f222c16a8502c5a",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/subject_boundary_template.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\subject_boundary_template.json",
+    "sha256": "975b9e13b31f056d1c368c91292b127151e1c93832bdb6a98f5378c318bee115",
+    "source_sha256": "77660a1e0437177fa7c6c5fae412ced32f48a3e1e6381806bac76e101b30a709",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "configs/audit_compatible/transportation.json",
+    "original": "D:\\七月工作\\outputs\\book_screening_toolkit_20261008\\configs\\subject_recall\\transportation.json",
+    "sha256": "3973fb6383dd2b0ba3e44869865b16964627c81acff6f056c73b4c4f6cd30f17",
+    "source_sha256": "b1dfa2ba70746ecf6af3840d82463d4c1f80341319cd00f64fcbdadb5c48e2f1",
+    "kind": "l1_name_list_schema_compatibility"
+  },
+  {
+    "file": "docs/通用书籍MD筛选脚本说明_辞海与重要书籍_20260904.md",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\docs\\通用书籍MD筛选脚本说明_辞海与重要书籍_20260904.md",
+    "sha256": "2b43834167e0a906752635938241b0c607cc3f16cf181be8440aaba4c525b39b",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "docs/0611全库学科宽召回与MD筛选使用说明_20260903.md",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\docs\\0611全库学科宽召回与MD筛选使用说明_20260903.md",
+    "sha256": "64da2c50453354b1eac1eb9dd2cfed77e4bcbd2779135bd5249b9da37f1be285",
+    "kind": "original_unchanged"
+  },
+  {
+    "file": "dictionary_md_v3/",
+    "original": "D:\\七月工作\\多学科辞海可用性分析\\脚本包_20260907\\通用书籍MD质量筛选_PASS反证复核_v3.zip",
+    "sha256": "839d755a4c2b5e278eb825b3cbdb8edda3f97c86321e3290d88d5c19fcb8cd5f",
+    "kind": "original_archive_expanded"
+  },
+  {
+    "file": "screening_io.py",
+    "original": "D:\\七月工作\\book_screening_packaging_20261008\\screening_io.py",
+    "sha256": "a7d283cf87e9607e3a4d6e380c462e0f2498cb6c98d66752a9478f4905429ed8",
+    "kind": "packaging_adapter_or_document"
+  },
+  {
+    "file": "README.md",
+    "original": "D:\\七月工作\\book_screening_packaging_20261008\\README.md",
+    "sha256": "0e000e04e8f6d96d468bd24595c7e62d1c82571f9f668679734d56d40f3eda5e",
+    "kind": "packaging_adapter_or_document"
+  },
+  {
+    "file": "开发机访问与文件传输说明.md",
+    "original": "D:\\七月工作\\book_screening_packaging_20261008\\开发机访问与文件传输说明.md",
+    "sha256": "9ac3f0633abc6e5d9430c1bfad30a17f2a45ccd9a908b25020a966dcacdefa79",
+    "kind": "packaging_adapter_or_document"
+  },
+  {
+    "file": "requirements.txt",
+    "original": "D:\\七月工作\\book_screening_packaging_20261008\\requirements.txt",
+    "sha256": "1837e8678f8a7bbd578537940bdd7c5df58ef9d4398e298ae974b075d924f3a3",
+    "kind": "packaging_adapter_or_document"
+  },
+  {
+    "file": "requirements-oss.txt",
+    "original": "D:\\七月工作\\book_screening_packaging_20261008\\requirements-oss.txt",
+    "sha256": "7e3900d429515eca41d63b6c4cde2c96afd09b188bc364369ef626c617aec7ad",
+    "kind": "packaging_adapter_or_document"
+  },
+  {
+    "file": "verify_package.py",
+    "original": "D:\\七月工作\\book_screening_packaging_20261008\\verify_package.py",
+    "sha256": "f738bc4f5b5fc2dc3f9de4eb0a9323325feb9fa1c37c1039979ab6c101e449e8",
+    "kind": "packaging_adapter_or_document"
+  },
+  {
+    "file": "validate_offline.py",
+    "original": "D:\\七月工作\\book_screening_packaging_20261008\\validate_offline.py",
+    "sha256": "ad3942ae52a294f7f225e51e22cd7118f51ff4b3df152c595fac9936f7d84234",
+    "kind": "packaging_adapter_or_document"
+  },
+  {
+    "file": "tests/test_screening_io.py",
+    "original": "D:\\七月工作\\book_screening_packaging_20261008\\tests\\test_screening_io.py",
+    "sha256": "5515150d948194be3a32555070a95d8544ba5e09c7c4534bf8d209be2eabb109",
+    "kind": "packaging_adapter_or_document"
+  },
+  {
+    "file": "examples/run_stages.sh",
+    "original": "D:\\七月工作\\book_screening_packaging_20261008\\examples\\run_stages.sh",
+    "sha256": "b1322fbcd0008aef343af324914c1cc04ab6da7dd2826dfcbcec453abacd284d",
+    "kind": "packaging_adapter_or_document"
+  }
+]

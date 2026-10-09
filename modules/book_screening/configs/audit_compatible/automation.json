@@ -1,0 +1,133 @@
+{
+  "subject_name": "自动化",
+  "subject_slug": "automation",
+  "boundary": {
+    "core_scope": "研究系统建模、检测、控制、决策和自主运行，覆盖控制理论、系统工程、导航制导、智能制造、机器人及人工智能驱动自动化。\n原配置L1范围：控制理论与技术；控制系统与应用；系统建模理论与仿真技术；系统工程理论与技术；生物、医学信息系统与技术；自动化检测技术与装置；导航、制导与控制；智能制造自动化系统理论与技术；机器人学与智能系统；人工智能驱动的自动化；新兴领域的自动化理论与技术",
+    "aliases": [
+      "自动化工程",
+      "控制科学与工程",
+      "automation engineering",
+      "control engineering",
+      "industrial automation"
+    ],
+    "direct_subject_labels": [
+      "自动化",
+      "控制科学与工程",
+      "控制工程"
+    ],
+    "adjacent_subject_labels": [
+      "机械",
+      "电气工程",
+      "电子信息",
+      "计算机",
+      "航空航天",
+      "生物医学工程",
+      "系统科学"
+    ],
+    "accepted_adjacent": [
+      "以检测、建模、反馈控制、规划决策或自主运行为核心的跨学科系统",
+      "明确用于制造、交通、能源、医学和流程工业的自动化技术"
+    ],
+    "strong_terms": [
+      "控制理论",
+      "自动控制",
+      "控制系统",
+      "系统建模与仿真",
+      "系统工程",
+      "过程控制",
+      "自动化检测",
+      "导航制导与控制",
+      "智能制造自动化",
+      "机器人学",
+      "智能控制",
+      "自主系统",
+      "control theory",
+      "automatic control",
+      "control system",
+      "system modeling and simulation",
+      "systems engineering",
+      "process control",
+      "automation instrumentation",
+      "guidance navigation and control",
+      "industrial automation",
+      "robotics",
+      "intelligent control",
+      "autonomous systems"
+    ],
+    "weak_terms": [
+      "自动化",
+      "控制器",
+      "反馈控制",
+      "PLC",
+      "DCS",
+      "SCADA",
+      "机器人控制",
+      "运动控制",
+      "导航控制",
+      "automation",
+      "controller",
+      "feedback control",
+      "programmable logic controller",
+      "robot control",
+      "motion control"
+    ],
+    "cooccurrence_groups": [
+      [
+        "系统",
+        "控制"
+      ],
+      [
+        "建模",
+        "仿真"
+      ],
+      [
+        "检测",
+        "装置"
+      ],
+      [
+        "导航",
+        "制导"
+      ],
+      [
+        "智能",
+        "制造"
+      ],
+      [
+        "system",
+        "control"
+      ],
+      [
+        "modeling",
+        "simulation"
+      ],
+      [
+        "industrial",
+        "control"
+      ]
+    ],
+    "excluded_scope": [
+      "仅介绍办公软件、企业流程或家庭消费产品而无控制与自动化原理的内容",
+      "仅使用自动化一词描述普通信息处理而无检测、建模或控制知识的内容"
+    ],
+    "exclude_phrases": [
+      "办公自动化",
+      "办公室自动化",
+      "office automation",
+      "desktop automation",
+      "marketing automation guide"
+    ],
+    "l1_scope_names": [
+      "控制理论与技术",
+      "控制系统与应用",
+      "系统建模理论与仿真技术",
+      "系统工程理论与技术",
+      "生物、医学信息系统与技术",
+      "自动化检测技术与装置",
+      "导航、制导与控制",
+      "智能制造自动化系统理论与技术",
+      "机器人学与智能系统",
+      "人工智能驱动的自动化",
+      "新兴领域的自动化理论与技术"
+    ]
+  }
+}

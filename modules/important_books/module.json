@@ -1,0 +1,25 @@
+{
+  "module_id": "book_layout_classifier_n1_n5",
+  "module_version": "2.0.1",
+  "name": "非辞海书籍 N1、N3、其他类版型分类",
+  "runtime": "python>=3.10",
+  "entrypoint": "scripts/layout_model_validation.py:run_module",
+  "public_classes": ["N1", "N3", "OTHER"],
+  "auto_extract_classes": ["N1", "N3"],
+  "shipped_extractors": ["scripts/n1_heading_extractor.py", "scripts/n3_rules_extractor.py"],
+  "other_subtypes_without_extractors": ["N2", "N4", "N5"],
+  "input": {
+    "books": [
+      {
+        "identifier": "unique_ascii_id",
+        "title": "optional display title",
+        "md_path": "absolute path to UTF-8 Markdown",
+        "pdf_path": "optional absolute PDF path"
+      }
+    ],
+    "config": "model config object; use api_key_env for credentials"
+  },
+  "output": "N1/N3/OTHER classification with N2/N4/N5 other_subtype; only N1/N3 extraction JSON under output_dir/extraction/results and combined knowledge_points.csv",
+  "side_effects": ["reads supplied MD/PDF", "calls configured model service", "writes prepared samples and classification artifacts under output_dir"],
+  "dependencies": "requirements.txt"
+}

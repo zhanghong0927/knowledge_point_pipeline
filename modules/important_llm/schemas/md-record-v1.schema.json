@@ -1,0 +1,142 @@
+{
+  "additionalProperties": false,
+  "description": "逐书交付后置清洗的记录；保留运行、原候选和来源身份，不宣称全库唯一或已清洗。",
+  "properties": {
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "name": {
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "aliases": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Aliases",
+      "type": "array"
+    },
+    "category": {
+      "minLength": 1,
+      "title": "Category",
+      "type": "string"
+    },
+    "support_reason": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Support Reason"
+    },
+    "definition_supported": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Definition Supported"
+    },
+    "definition": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Only source-supported knowledge about the object. Never include commentary such as what the source does not provide, cannot define, or merely mentions: put all such limitations in support_reason/issues. Use null when definition_supported is false.",
+      "title": "Definition"
+    },
+    "confidence": {
+      "anyOf": [
+        {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Confidence"
+    },
+    "conditions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Conditions",
+      "type": "array"
+    },
+    "issues": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Issues",
+      "type": "array"
+    },
+    "record_id": {
+      "title": "Record Id",
+      "type": "string"
+    },
+    "book_id": {
+      "title": "Book Id",
+      "type": "string"
+    },
+    "run_id": {
+      "title": "Run Id",
+      "type": "string"
+    },
+    "candidate_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Candidate Ids",
+      "type": "array"
+    },
+    "scope": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Scope",
+      "type": "array"
+    }
+  },
+  "required": [
+    "evidence_ids",
+    "name",
+    "aliases",
+    "category",
+    "definition",
+    "conditions",
+    "issues",
+    "record_id",
+    "book_id",
+    "run_id",
+    "candidate_ids",
+    "scope"
+  ],
+  "title": "Record",
+  "type": "object"
+}

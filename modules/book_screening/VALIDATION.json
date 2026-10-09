@@ -1,0 +1,188 @@
+{
+  "offline_checks_passed": true,
+  "live_model_calls": 0,
+  "live_oss_calls": 0,
+  "semantic_quality_approved": false,
+  "elapsed_seconds": 4.84,
+  "configs": [
+    {
+      "file": "aerospace_engineering.json",
+      "compatible_file": "configs\\audit_compatible\\aerospace_engineering.json",
+      "subject": "航空航天工程",
+      "slug": "aerospace_engineering",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "agriculture.json",
+      "compatible_file": "configs\\audit_compatible\\agriculture.json",
+      "subject": "农学",
+      "slug": "agriculture",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "automation.json",
+      "compatible_file": "configs\\audit_compatible\\automation.json",
+      "subject": "自动化",
+      "slug": "automation",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "biomedical_engineering.json",
+      "compatible_file": "configs\\audit_compatible\\biomedical_engineering.json",
+      "subject": "生物医学工程",
+      "slug": "biomedical_engineering",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "civil_engineering.json",
+      "compatible_file": "configs\\audit_compatible\\civil_engineering.json",
+      "subject": "土木工程",
+      "slug": "civil_engineering",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "electrical_engineering.json",
+      "compatible_file": "configs\\audit_compatible\\electrical_engineering.json",
+      "subject": "电气工程",
+      "slug": "electrical_engineering",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "electronic_information.json",
+      "compatible_file": "configs\\audit_compatible\\electronic_information.json",
+      "subject": "电子信息",
+      "slug": "electronic_information",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "energy.json",
+      "compatible_file": "configs\\audit_compatible\\energy.json",
+      "subject": "能源",
+      "slug": "energy",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "hydraulic_engineering.json",
+      "compatible_file": "configs\\audit_compatible\\hydraulic_engineering.json",
+      "subject": "水利",
+      "slug": "hydraulic_engineering",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "integrated_circuits.json",
+      "compatible_file": "configs\\audit_compatible\\integrated_circuits.json",
+      "subject": "集成电路",
+      "slug": "integrated_circuits",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "mechanical_engineering.json",
+      "compatible_file": "configs\\audit_compatible\\mechanical_engineering.json",
+      "subject": "机械工程",
+      "slug": "mechanical_engineering",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "ocean_engineering.json",
+      "compatible_file": "configs\\audit_compatible\\ocean_engineering.json",
+      "subject": "海洋工程",
+      "slug": "ocean_engineering",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "psychology.json",
+      "compatible_file": "configs\\audit_compatible\\psychology.json",
+      "subject": "心理学",
+      "slug": "psychology",
+      "template": false,
+      "ready_to_run": true
+    },
+    {
+      "file": "subject_boundary_template.json",
+      "template": true,
+      "ready_to_run": false
+    },
+    {
+      "file": "transportation.json",
+      "compatible_file": "configs\\audit_compatible\\transportation.json",
+      "subject": "交通运输",
+      "slug": "transportation",
+      "template": false,
+      "ready_to_run": true
+    }
+  ],
+  "checks": [
+    {
+      "check": "shared_and_adapter_tests",
+      "exit_code": 0,
+      "output": "{\"done\": 1, \"pending\": 1, \"completed\": 1}\n{\"event\": \"split_malformed_batch\", \"batch_size\": 4, \"record_ids\": [\"r0\", \"r1\", \"r2\", \"r3\"], \"error\": \"duplicate record_id\"}\n.......................................................................................................................................\n----------------------------------------------------------------------\nRan 135 tests in 0.963s\n\nOK"
+    },
+    {
+      "check": "dictionary_v3_tests",
+      "exit_code": 0,
+      "output": "{\"subject\": \"测试学科\", \"stage\": \"pass_challenge\", \"done\": 1, \"pending_total\": 1, \"ok\": 1, \"failed\": 0}\n...................................................................\n----------------------------------------------------------------------\nRan 67 tests in 0.082s\n\nOK"
+    },
+    {
+      "check": "general_book_screening_pipeline.py --help",
+      "exit_code": 0,
+      "output": "usage: general_book_screening_pipeline.py [-h] --input-csv INPUT_CSV\n                                          [--l1-config L1_CONFIG]\n                                          [--subject-config SUBJECT_CONFIG]\n                                          --output OUTPUT [--subject SUBJECT]\n                                          [--sample-size SAMPLE_SIZE]\n                                          [--audit-track {全部,辞海类,其他重要书籍}]\n                                          [--audit-all] [--seed SEED]\n                                          [--workers WORKERS]\n                                          [--sample-count SAMPLE_COUNT]\n                                          [--chunk-chars CHUNK_CHARS]\n                                          [--api-url API_URL] [--model MODEL]\n                                          [--timeout TIMEOUT]\n                                          [--retries RETRIES]\n                                          [--max-tokens MAX_TOKENS]\n                                          [--path-map PATH_MAP]\n                                          [--cache-dir CACHE_DIR]\n                                          [--ossutil-config OSSUTIL_CONFIG]\n                                          [--source-oss-endpoint SOURCE_OSS_ENDPOINT]\n                                          {metadata,audit,materialize,all}\n\n通用学科书目初筛与 Markdown 质量审核\n\npositional arguments:\n  {metadata,audit,materialize,all}\n\noptions:\n  -h, --help            show this help message and exit\n  --input-csv INPUT_CSV\n  --l1-config L1_CONFIG\n  --subject-config SUBJECT_CONFIG\n  --output OUTPUT\n  --subject SUBJECT\n  --sample-size SAMPLE_SIZE\n  --audit-track {全部,辞海类,其他重要书籍}\n  --audit-all\n  --seed SEED\n  --workers WORKERS\n  --sample-count SAMPLE_COUNT\n  --chunk-chars CHUNK_CHARS\n  --api-url API_URL\n  --model MODEL\n  --timeout TIMEOUT\n  --retries RETRIES\n  --max-tokens MAX_TOKENS\n  --path-map PATH_MAP   可重复：OSS_PREFIX=LOCAL_ROOT\n  --cache-dir CACHE_DIR\n  --ossutil-config OSSUTIL_CONFIG\n  --source-oss-endpoint SOURCE_OSS_ENDPOINT"
+    },
+    {
+      "check": "llm_refine_important_book_metadata.py --help",
+      "exit_code": 0,
+      "output": "usage: llm_refine_important_book_metadata.py [-h] --input-csv INPUT_CSV\n                                             --subject-config SUBJECT_CONFIG\n                                             --output-dir OUTPUT_DIR\n                                             [--api-url API_URL]\n                                             [--model MODEL]\n                                             [--sample-size SAMPLE_SIZE]\n                                             [--seed SEED]\n                                             [--batch-size BATCH_SIZE]\n                                             [--workers WORKERS]\n                                             [--timeout TIMEOUT]\n                                             [--retries RETRIES]\n                                             [--max-tokens MAX_TOKENS]\n\n使用可插拔学科边界对重要书籍元数据做大模型精筛\n\noptions:\n  -h, --help            show this help message and exit\n  --input-csv INPUT_CSV\n  --subject-config SUBJECT_CONFIG\n  --output-dir OUTPUT_DIR\n  --api-url API_URL\n  --model MODEL\n  --sample-size SAMPLE_SIZE\n                        0 表示全量；测试建议 1000\n  --seed SEED\n  --batch-size BATCH_SIZE\n  --workers WORKERS\n  --timeout TIMEOUT\n  --retries RETRIES\n  --max-tokens MAX_TOKENS"
+    },
+    {
+      "check": "merge_sharded_recall_outputs.py --help",
+      "exit_code": 0,
+      "output": "usage: merge_sharded_recall_outputs.py [-h] --shards-root SHARDS_ROOT --output\n                                       OUTPUT --config CONFIG\n                                       --expected-shards EXPECTED_SHARDS\n\n合并流式学科宽召回的记录分片\n\noptions:\n  -h, --help            show this help message and exit\n  --shards-root SHARDS_ROOT\n  --output OUTPUT\n  --config CONFIG\n  --expected-shards EXPECTED_SHARDS"
+    },
+    {
+      "check": "prepare_post_metadata_md_audit.py --help",
+      "exit_code": 0,
+      "output": "usage: prepare_post_metadata_md_audit.py [-h] --dictionary-csv DICTIONARY_CSV\n                                         --important-csv IMPORTANT_CSV\n                                         --metadata-results-csv\n                                         METADATA_RESULTS_CSV --output-csv\n                                         OUTPUT_CSV\n                                         [--summary-json SUMMARY_JSON]\n\n合并辞海候选与字段大模型 KEEP 重要书籍，生成 MD 全量审核输入\n\noptions:\n  -h, --help            show this help message and exit\n  --dictionary-csv DICTIONARY_CSV\n  --important-csv IMPORTANT_CSV\n  --metadata-results-csv METADATA_RESULTS_CSV\n  --output-csv OUTPUT_CSV\n  --summary-json SUMMARY_JSON"
+    },
+    {
+      "check": "prepare_post_metadata_md_input.py --help",
+      "exit_code": 0,
+      "output": "usage: prepare_post_metadata_md_input.py [-h] --dictionary-csv DICTIONARY_CSV\n                                         --important-csv IMPORTANT_CSV\n                                         --llm-result-csv LLM_RESULT_CSV\n                                         --output-csv OUTPUT_CSV\n                                         --summary-json SUMMARY_JSON\n                                         [--smoke-output-csv SMOKE_OUTPUT_CSV]\n                                         [--smoke-per-track SMOKE_PER_TRACK]\n\nCombine dictionary candidates with metadata-LLM KEEP books for MD audit\n\noptions:\n  -h, --help            show this help message and exit\n  --dictionary-csv DICTIONARY_CSV\n  --important-csv IMPORTANT_CSV\n  --llm-result-csv LLM_RESULT_CSV\n  --output-csv OUTPUT_CSV\n  --summary-json SUMMARY_JSON\n  --smoke-output-csv SMOKE_OUTPUT_CSV\n  --smoke-per-track SMOKE_PER_TRACK"
+    },
+    {
+      "check": "screen_mechanical_reference_books.py --help",
+      "exit_code": 0,
+      "output": "usage: screen_mechanical_reference_books.py [-h] [--input INPUT]\n                                            [--output-dir OUTPUT_DIR]\n\n机械学科工具书筛选兼容入口。\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT\n  --output-dir OUTPUT_DIR"
+    },
+    {
+      "check": "screen_subject_reference_books.py --help",
+      "exit_code": 0,
+      "output": "usage: screen_subject_reference_books.py [-h]\n                                         (--input INPUT | --input-dir INPUT_DIR)\n                                         [--output-dir OUTPUT_DIR]\n                                         [--subject-name SUBJECT_NAME]\n                                         [--identifier-column IDENTIFIER_COLUMN]\n                                         [--title-column TITLE_COLUMN]\n                                         [--pattern PATTERN]\n                                         [--overrides OVERRIDES]\n\n通用学科辞海、词典、百科和术语型工具书筛选。\n\noptions:\n  -h, --help            show this help message and exit\n  --input INPUT         单个学科 CSV。\n  --input-dir INPUT_DIR\n                        包含多个学科 CSV 的目录。\n  --output-dir OUTPUT_DIR\n  --subject-name SUBJECT_NAME\n                        单文件模式下的学科名，默认使用文件名。\n  --identifier-column IDENTIFIER_COLUMN\n  --title-column TITLE_COLUMN\n  --pattern PATTERN     批量模式文件匹配规则。\n  --overrides OVERRIDES\n                        可选的人工待复核 JSON 配置。"
+    },
+    {
+      "check": "stream_subject_recall_0611.py --help",
+      "exit_code": 0,
+      "output": "usage: stream_subject_recall_0611.py [-h] --input-csv INPUT_CSV --config\n                                     CONFIG --output OUTPUT [--limit LIMIT]\n                                     [--progress-every PROGRESS_EVERY]\n                                     [--shard-index SHARD_INDEX]\n                                     [--shard-count SHARD_COUNT]\n\n从 0611 总表流式召回一个或多个学科书目\n\noptions:\n  -h, --help            show this help message and exit\n  --input-csv INPUT_CSV\n  --config CONFIG\n  --output OUTPUT\n  --limit LIMIT\n  --progress-every PROGRESS_EVERY\n  --shard-index SHARD_INDEX\n  --shard-count SHARD_COUNT"
+    },
+    {
+      "check": "screening_io.py --help",
+      "exit_code": 0,
+      "output": "usage: screening_io.py [-h]\n                       {split,dictionary-prepare,dictionary-finalize,merge-results}\n                       ...\n\nFile-only bridges between 0611 book lists and the existing dictionary MD\naudit.\n\npositional arguments:\n  {split,dictionary-prepare,dictionary-finalize,merge-results}\n\noptions:\n  -h, --help            show this help message and exit"
+    },
+    {
+      "check": "dictionary_md_v3/dictionary_md_audit.py --help",
+      "exit_code": 0,
+      "output": "usage: dictionary_md_audit.py [-h] [--root ROOT] [--output OUTPUT]\n                              [--config CONFIG] [--subject SUBJECTS]\n                              [--api-url API_URL] [--model MODEL]\n                              [--workers WORKERS]\n                              [--parallel-subjects PARALLEL_SUBJECTS]\n                              [--timeout TIMEOUT] [--retries RETRIES]\n                              [--max-tokens MAX_TOKENS]\n                              [--sample-count SAMPLE_COUNT]\n                              [--chunk-chars CHUNK_CHARS]\n                              [--strict-text-quality]\n                              [--max-generic-headword-ratio MAX_GENERIC_HEADWORD_RATIO]\n                              [--min-candidate-headwords MIN_CANDIDATE_HEADWORDS]\n                              [--knowledge-value-mode]\n                              [--max-nonknowledge-headword-ratio MAX_NONKNOWLEDGE_HEADWORD_RATIO]\n                              [--drop-nonknowledge-headword-ratio DROP_NONKNOWLEDGE_HEADWORD_RATIO]\n                              [--min-headword-evidence MIN_HEADWORD_EVIDENCE]\n                              [--limit LIMIT] [--pending-limit PENDING_LIMIT]\n                              [--skip-priority-workbook]\n                              [--symlink-classified] [--pass-challenge]\n                              [--challenge-sample-count CHALLENGE_SAMPLE_COUNT]\n                              {prepare,run,challenge,materialize,all}\n\n跨学科知识型书籍 Markdown 三级 LLM 审核\n\npositional arguments:\n  {prepare,run,challenge,materialize,all}\n\noptions:\n  -h, --help            show this help message and exit\n  --root ROOT\n  --output OUTPUT\n  --config CONFIG       学科与书籍目录 JSON 配置；省略时使用内置十学科配置\n  --subject SUBJECTS    可重复；默认 all\n  --api-url API_URL\n  --model MODEL\n  --workers WORKERS\n  --parallel-subjects PARALLEL_SUBJECTS\n  --timeout TIMEOUT\n  --retries RETRIES\n  --max-tokens MAX_TOKENS\n  --sample-count SAMPLE_COUNT\n  --chunk-chars CHUNK_CHARS\n  --strict-text-quality\n                        启用正文零明确错误、正文语言和候选词头质量硬门槛\n  --max-generic-headword-ratio MAX_GENERIC_HEADWORD_RATIO\n                        严格模式允许的泛化或非知识点候选词头最大比例\n  --min-candidate-headwords MIN_CANDIDATE_HEADWORDS\n                        严格模式允许 PASS 所需的最少候选词头证据量\n  --knowledge-value-mode\n                        启用主体知识可用性判断、带上下文抽样和原文证据核对，不使用词头比例门槛\n  --max-nonknowledge-headword-ratio MAX_NONKNOWLEDGE_HEADWORD_RATIO\n                        旧参数，仅兼容命令行；定性模式不使用比例门槛\n  --drop-nonknowledge-headword-ratio DROP_NONKNOWLEDGE_HEADWORD_RATIO\n                        旧参数，仅兼容命令行；定性模式不使用比例门槛\n  --min-headword-evidence MIN_HEADWORD_EVIDENCE\n                        旧参数，仅兼容命令行；定性模式不使用词头个数门槛\n  --limit LIMIT\n  --pending-limit PENDING_LIMIT\n                        每次只处理指定数量的未完成书目，便于按 API 限额分批续跑\n  --skip-priority-workbook\n                        仅生成 CSV 与三级分类，不生成重点问题 MD 段落工作簿\n  --symlink-classified  三级目录使用指向原 MD 的符号链接，避免重复复制大文件\n  --pass-challenge      对可疑 PASS 启用独立反证复核；all 会运行该阶段，materialize 会覆盖其结果\n  --challenge-sample-count CHALLENGE_SAMPLE_COUNT\n                        PASS 反证复核的最大样本数，默认 8"
+    }
+  ]
+}

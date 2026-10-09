@@ -1,0 +1,19 @@
+[
+  {
+    "file": "legacy_rules.py",
+    "source": "D:\\七月工作\\non_dictionary_closeout_20260930\\closeout_core.py",
+    "source_sha256": "644ceb62cb266b35787be7b858b83c7c49f8364d2fa0c433ff100178d89ccc3f",
+    "sha256": "644ceb62cb266b35787be7b858b83c7c49f8364d2fa0c433ff100178d89ccc3f"
+  },
+  {
+    "file": "legacy_helpers.py",
+    "source": "D:\\七月工作\\机械工程知识点抽取\\交付\\跨学科知识点同义去重工具包_20260820\\scripts\\02_llm_review_and_fuse.py",
+    "source_sha256": "2b2d70cbc0d6e4439eaf64d17be4c58079c05975aa93166000930fda044c92af",
+    "functions": [
+      "normalize_api_url",
+      "extract_json_object",
+      "normalize_partition"
+    ],
+    "sha256": "571f9223ee153592f5233d556282de1fffe2caabb2acead98daab88ec150b955"
+  }
+]

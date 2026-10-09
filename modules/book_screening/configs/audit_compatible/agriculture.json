@@ -1,0 +1,223 @@
+{
+  "subject_name": "农学",
+  "subject_slug": "agriculture",
+  "boundary": {
+    "core_scope": "研究农业生物生产、资源环境、工程技术、食品加工及农村经济管理，覆盖作物、种业、园艺、植保、畜牧、兽医、林草、水产、农业资源环境、农业工程、食品科学和农业经济等可用于抽取农学知识点的内容。\n原配置L1范围：农业基础与综合；作物与种业；园艺与设施农业；植物保护；畜牧与动物生产；兽医与动物健康；林业与草业；水产与渔业；农业资源与环境；农业工程与智慧农业；食品科学与农产品加工；农业经济、政策与农村发展",
+    "aliases": [
+      "农学",
+      "农业科学",
+      "agricultural science",
+      "agricultural sciences"
+    ],
+    "direct_subject_labels": [
+      "农学",
+      "农业",
+      "农业科学"
+    ],
+    "adjacent_subject_labels": [
+      "生物学",
+      "生态学",
+      "环境科学",
+      "食品科学",
+      "经济学",
+      "管理学",
+      "机械",
+      "水利",
+      "地学",
+      "地理学",
+      "动物学",
+      "植物学"
+    ],
+    "accepted_adjacent": [
+      "明确服务于农业生产的生物学、生态学、环境科学、机械、水利、信息技术和经济管理知识",
+      "围绕农产品质量、加工、贮藏、安全和农业产业链的食品科学知识",
+      "围绕林草、水产、动物健康和农村发展的交叉知识"
+    ],
+    "strong_terms": [
+      "农业基础",
+      "农业综合",
+      "作物科学",
+      "作物栽培",
+      "作物育种",
+      "种业",
+      "种子科学",
+      "园艺学",
+      "设施农业",
+      "植物保护",
+      "植物病理学",
+      "农业昆虫学",
+      "农药学",
+      "畜牧学",
+      "动物生产",
+      "兽医学",
+      "动物健康",
+      "林业科学",
+      "草业科学",
+      "水产养殖",
+      "渔业科学",
+      "农业资源与环境",
+      "农业土壤学",
+      "农业生态学",
+      "农业工程",
+      "农业机械",
+      "智慧农业",
+      "精准农业",
+      "农业机器人",
+      "农产品加工",
+      "食品科学",
+      "食品工程",
+      "农业经济",
+      "农业政策",
+      "农村发展",
+      "crop science",
+      "crop production",
+      "agronomy",
+      "plant breeding",
+      "seed science",
+      "horticulture",
+      "protected agriculture",
+      "plant protection",
+      "plant pathology",
+      "agricultural entomology",
+      "animal husbandry",
+      "animal production",
+      "veterinary medicine",
+      "animal health",
+      "forestry science",
+      "grassland science",
+      "aquaculture",
+      "fisheries science",
+      "agricultural resources and environment",
+      "agricultural soil science",
+      "agroecology",
+      "agricultural engineering",
+      "agricultural machinery",
+      "smart agriculture",
+      "precision agriculture",
+      "agricultural robotics",
+      "food science",
+      "food engineering",
+      "agricultural economics",
+      "agricultural policy",
+      "rural development"
+    ],
+    "weak_terms": [
+      "农业",
+      "农艺",
+      "作物",
+      "育种",
+      "种子",
+      "园艺",
+      "植保",
+      "农药",
+      "畜牧",
+      "养殖",
+      "兽医",
+      "林业",
+      "草业",
+      "水产",
+      "渔业",
+      "土壤肥料",
+      "农机",
+      "农产品",
+      "食品加工",
+      "农村",
+      "agriculture",
+      "agricultural",
+      "crop",
+      "breeding",
+      "seed",
+      "horticultural",
+      "livestock",
+      "veterinary",
+      "forestry",
+      "grassland",
+      "fishery",
+      "soil fertility",
+      "farm machinery",
+      "food processing",
+      "rural"
+    ],
+    "cooccurrence_groups": [
+      [
+        "作物",
+        "栽培"
+      ],
+      [
+        "植物",
+        "保护"
+      ],
+      [
+        "动物",
+        "生产"
+      ],
+      [
+        "农业",
+        "资源"
+      ],
+      [
+        "农业",
+        "工程"
+      ],
+      [
+        "农产品",
+        "加工"
+      ],
+      [
+        "农业",
+        "经济"
+      ],
+      [
+        "crop",
+        "production"
+      ],
+      [
+        "plant",
+        "breeding"
+      ],
+      [
+        "animal",
+        "production"
+      ],
+      [
+        "agricultural",
+        "engineering"
+      ],
+      [
+        "food",
+        "processing"
+      ]
+    ],
+    "excluded_scope": [
+      "仅含农业机构名称、银行业务、房地产项目、文学作品或新闻报道而无农业知识的内容",
+      "仅偶然提到植物、动物、食品或农村但主体属于其他学科的书籍",
+      "家庭宠物护理、普通烹饪和旅游休闲内容，除非包含系统农学或食品科学知识"
+    ],
+    "exclude_phrases": [
+      "农业银行",
+      "农业银行管理",
+      "农场小说",
+      "田园小说",
+      "乡村旅游指南",
+      "宠物故事",
+      "agricultural bank",
+      "farm novel",
+      "rural tourism guide",
+      "pet stories"
+    ],
+    "l1_scope_names": [
+      "农业基础与综合",
+      "作物与种业",
+      "园艺与设施农业",
+      "植物保护",
+      "畜牧与动物生产",
+      "兽医与动物健康",
+      "林业与草业",
+      "水产与渔业",
+      "农业资源与环境",
+      "农业工程与智慧农业",
+      "食品科学与农产品加工",
+      "农业经济、政策与农村发展"
+    ]
+  }
+}

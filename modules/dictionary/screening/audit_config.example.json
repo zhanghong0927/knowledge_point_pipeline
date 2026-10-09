@@ -1,0 +1,26 @@
+{
+  "subjects": [
+    {
+      "name": "经济学",
+      "code": "ECO",
+      "sources": [
+        "staging/economy"
+      ],
+      "book_type_hint": "仅接收辞海、辞典、术语表、百科式工具书；必须由反复出现的独立词条及明确释义构成，普通教材、专著和连续长篇正文不合格",
+      "extraction_focus": "经济学概念、金融与商业术语、政策与管理概念的独立词条及其明确定义或解释",
+      "sample_count": 16,
+      "chunk_chars": 1400
+    },
+    {
+      "name": "管理学",
+      "code": "MGT",
+      "sources": [
+        "staging/management"
+      ],
+      "book_type_hint": "仅接收辞海、辞典、术语表、百科式工具书；必须由反复出现的独立词条及明确释义构成，普通教材、专著和连续长篇正文不合格",
+      "extraction_focus": "管理学、组织、运营、战略、人力资源和公共管理概念的独立词条及其明确定义或解释",
+      "sample_count": 16,
+      "chunk_chars": 1400
+    }
+  ]
+}

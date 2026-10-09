@@ -1,0 +1,38 @@
+[
+  {
+    "id": "example_1",
+    "knowledge_point": "Operant conditioning",
+    "name": "操作性条件作用",
+    "definition": "通过行为后果改变行为出现概率的学习过程。",
+    "en_definition": "",
+    "description": "",
+    "en_description": "",
+    "main_tags": "示例教育学/教育心理学/学习理论",
+    "related_tags": [],
+    "source": "示例书目ID_1；示例书名；第10页"
+  },
+  {
+    "id": "example_2",
+    "knowledge_point": "Operant conditioning",
+    "name": "操作性条件作用",
+    "definition": "操作性条件作用是行为因其后果而发生改变的学习过程，强化与惩罚会影响行为再次发生的概率。",
+    "en_definition": "",
+    "description": "",
+    "en_description": "",
+    "main_tags": "示例教育学/教育心理学/学习理论",
+    "related_tags": [],
+    "source": "示例书目ID_2；另一示例书名；第20页"
+  },
+  {
+    "id": "example_3",
+    "knowledge_point": "Operant conditioning",
+    "name": "操作性条件作用",
+    "definition": "通过行为后果改变行为出现概率的学习过程。",
+    "en_definition": "",
+    "description": "",
+    "en_description": "",
+    "main_tags": "示例教育学/其他分支",
+    "related_tags": [],
+    "source": "示例书目ID_3；第三示例书名；第30页"
+  }
+]

@@ -1,0 +1,138 @@
+{
+  "date": "2026-10-08",
+  "scope": "initial_integration_offline_only",
+  "archive_integrity": {
+    "archives_extracted": 5,
+    "original_archive_files_compared": 340,
+    "byte_mismatches": 0
+  },
+  "tests": {
+    "integration": {
+      "passed": 41,
+      "failed": 0
+    },
+    "current_cleaning_regression": {
+      "passed": 57,
+      "failed": 0
+    },
+    "important_llm_native_regression": {
+      "ran": 214,
+      "passed": 212,
+      "skipped": 2,
+      "failed": 0,
+      "skip_reason": "Windows file sharing tests on Linux"
+    },
+    "important_llm_standalone_export_test": {
+      "passed": 1,
+      "failed": 0
+    },
+    "total_passed": 311
+  },
+  "native_help_checks": {
+    "dictionary/portable_pipeline.py": 0,
+    "dictionary/classification/scripts/classify_books.py": 0,
+    "dictionary/src/run_fullbook_v5.py": 0,
+    "important_books/scripts/layout_model_validation.py": 0,
+    "mounting/pipeline/runner.py": 0,
+    "dedup/dedup.py": 0
+  },
+  "integration_exercised": [
+    "Pure English name and body moved to English fields without translation",
+    "Chinese important-book knowledge_point interpreted as original-language heading",
+    "Conflicting bilingual values preserved for review",
+    "Original structured source restored through trace sidecar",
+    "Duplicate IDs rejected before final normalized output is committed",
+    "Normalized input passed through actual local rule cleaner",
+    "Two synthetic mounted inputs merged and same-path deduplicated by native final dedup module",
+    "First mounting, evidence-gated review and standard mounted export wired into pipeline",
+    "PASS book manifest conversion, relative paths and exact filename resolution",
+    "OSS prefix mapping without network access or downloads",
+    "Ambiguous files and duplicate identifiers quarantined",
+    "Dictionary scope configuration required by downstream contract",
+    "Partial and technical failures reported separately from content exclusions",
+    "Generated manifest connected to classification; no PDF quality task scheduled",
+    "Dictionary classification decisions revalidated from raw responses and original MD evidence",
+    "Approved dictionary books wired from stage 02 to stage 03",
+    "Changed MD, missing result and tampered classification excluded from automatic approval",
+    "Important-book N1/N3 routing to an optional LLM extraction branch",
+    "Native LLM export -> immutable snapshot consolidation -> bilingual field normalization",
+    "Native empty-definition exclusion preserved; API calls zero during integration checks",
+    "Run status, source hash, evidence IDs and snapshot checksums validated before cleaning handoff"
+  ],
+  "not_executed": [
+    "Full corpus screening or extraction",
+    "Dictionary fullbook real-model extraction in this test (source was REVIEW)",
+    "Production throughput and semantic accuracy benchmark"
+  ],
+  "pdf_quality_policy": "Assumed acceptable by user instruction; independent PDF quality screening removed",
+  "important_book_scope": [
+    "N1",
+    "N3"
+  ],
+  "latest_offline_flow_audit": {
+    "model_api_calls": 0,
+    "integration_tests_passed": 41,
+    "cleaning_tests_passed": 57,
+    "three_branch_dependency_checks": "passed",
+    "all_six_stage_interfaces_connected": true,
+    "production_run_validated": false,
+    "blocker": null,
+    "report": "validation_logs/offline_flow/report.json",
+    "readable_report": "validation_logs/offline_flow/report.md",
+    "fixes": [
+      "Declared intermediate artifacts and dependencies",
+      "Numbered-reference regex preserves normal English words",
+      "Subprocess launch failure recorded as failed"
+    ],
+    "model_and_mounting_decisions_in_tests": "explicit synthetic fixtures"
+  },
+  "important_llm_port": {
+    "upstream": "/mnt/nas_data/deliver/book_extractor_handoff/20261008/book-extractor-handoff-20261008-r5",
+    "destination": "modules/important_llm",
+    "files_copied": 81,
+    "upstream_manifest_mismatches": 0,
+    "source_files_changed": 0,
+    "copied_core_files_changed": 0,
+    "offline_installation_check": "passed",
+    "test_environment": "Upstream's existing Python 3.12 environment used read-only; PYTHONPATH points to copied src; bytecode writes disabled",
+    "runtime_environment": "Configure a separate Python 3.12 interpreter and install the copied locked dependencies",
+    "logs": [
+      "validation_logs/important_llm_installation.log",
+      "validation_logs/important_llm_tests.log"
+    ],
+    "real_model_calls_in_initial_port_validation": 0
+  },
+  "mounting_interface": {
+    "taxonomy_files_normalized_offline": 23,
+    "missing_taxonomy_subjects": [
+      "hydraulic_engineering"
+    ],
+    "default_threshold": 0.85,
+    "default_levels": [
+      2,
+      5
+    ],
+    "profile_smoke_records": 20,
+    "profile_smoke_dir": "runs/mounting_smoke_20_20261008",
+    "smoke_status": "prepared_only_no_API_calls",
+    "taxonomy_preflight_report": "validation_logs/mounting_taxonomy_preflight.json"
+  },
+  "expected_example_check": "Interfaces connected; provide catalogs/local MD inputs, installed dependencies and actual model service configuration before production execution",
+  "note": "Exit-code and structural checks do not establish semantic accuracy; native modules retain their own validation reports.",
+  "real_model_smoke_test": {
+    "date": "2026-10-08",
+    "model": "Qwen3.8-27B (service-advertised ID)",
+    "input_md": 2,
+    "book_review_hold": 1,
+    "important_N1_llm_full_chain_completed": true,
+    "dictionary_fullbook_not_executed": true,
+    "candidates": 104,
+    "extracted_records": 80,
+    "cleaning_keep": 71,
+    "final_retained": 70,
+    "final_technical_failures": 0,
+    "targeted_review_retries": 2,
+    "not_mounted": 1,
+    "report": "runs/mechanical_e2e_20261008/END_TO_END_REPORT.json"
+  }
+}

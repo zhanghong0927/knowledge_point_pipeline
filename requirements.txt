@@ -1,0 +1,9 @@
+# Linux / Python >= 3.10. OCR backends and model serving are external.
+-r modules/dictionary/requirements.txt
+-r modules/important_books/requirements.txt
+-r modules/cleaning/requirements.txt
+
+# Optional: modules/book_screening/requirements-oss.txt
+# Optional: modules/dictionary/requirements-tokenizer.txt
+# Important-book LLM uses a separate Python 3.12 environment:
+# install modules/important_llm/requirements.lock.txt there (conflicting markdown-it-py pin).
