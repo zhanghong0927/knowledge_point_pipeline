@@ -279,6 +279,8 @@ def plan(config, v):
 
     tasks = stage("05", "Taxonomy mounting and reviewed standard export")
     mount = config.get('mounting', {})
+    boundaries = mount.get('boundaries', {})
+    generate_boundaries = boundaries.get('enabled', False)
     mounting_inputs = mount.get('inputs', ['{run}/04_cleaning/export/records.jsonl'])
     if not isinstance(mounting_inputs, list) or not mounting_inputs or any(not isinstance(s, str) or not s for s in mounting_inputs):
         raise ValueError("mounting.inputs must be a nonempty list of cleaned record paths")
@@ -286,6 +288,8 @@ def plan(config, v):
     if any(not Path(p).is_absolute() for p in mounting_inputs) or len({str(Path(p).resolve()) for p in mounting_inputs}) != len(mounting_inputs):
         raise ValueError("mounting.inputs must be distinct absolute paths or use {run}/{root}")
     if config.get('hooks', {}).get('mounting'):
+        if generate_boundaries:
+            raise ValueError('Semantic boundaries require the built-in mounting bridge, not a custom hook')
         if len(mounting_inputs) != 1:
             raise ValueError("Multiple mounting inputs require the built-in mounting bridge, not a custom hook")
         hook(tasks, "mounting", [run / "05_mounting/mounted_standard.jsonl"],
@@ -303,14 +307,31 @@ def plan(config, v):
             command += ['--taxonomy',v['taxonomy']]
         if v.get('taxonomy_dir'):
             command += ['--taxonomy-dir',v['taxonomy_dir']]
+        if generate_boundaries:
+            command.append('--require-boundaries')
         task(tasks,'prepare_mounting',command,mounting_inputs,[mount_dir/'PREPARED.json'])
         api = ['--api-url',mount.get('api_url') or v['chat_url'],'--model',mount.get('model') or v['model'],
                '--workers',mount.get('workers',16),'--timeout',mount.get('timeout',600),
                '--max-tokens',mount.get('max_tokens',4096)]
         if mount.get('api_key_env'):
             api += ['--api-key-env',mount['api_key_env']]
+        routing_inputs = [mount_dir/'PREPARED.json']
+        if generate_boundaries:
+            boundary_api = ['--api-url', boundaries.get('api_url') or mount.get('api_url') or v['chat_url'],
+                            '--model', boundaries.get('model') or mount.get('model') or v['model'],
+                            '--workers', boundaries.get('workers', mount.get('workers', 16)),
+                            '--timeout', boundaries.get('timeout', mount.get('timeout', 600)),
+                            '--max-tokens', boundaries.get('max_tokens', 8192),
+                            '--boundary-context-bytes', boundaries.get('max_context_bytes', 50000)]
+            if mount.get('api_key_env'):
+                boundary_api += ['--api-key-env', mount['api_key_env']]
+            task(tasks, 'generate_mounting_boundaries', [py, bridge, 'generate-boundaries', '--out', mount_dir, *boundary_api],
+                 [mount_dir/'PREPARED.json'], [mount_dir/'BOUNDARIES_GENERATED.json'])
+            task(tasks, 'verify_mounting_boundaries', [py, bridge, 'verify-boundaries', '--out', mount_dir],
+                 [mount_dir/'PREPARED.json', mount_dir/'BOUNDARIES_GENERATED.json'], [mount_dir/'BOUNDARIES_VERIFIED.json'])
+            routing_inputs.append(mount_dir/'BOUNDARIES_VERIFIED.json')
         task(tasks,'route_mounting',[py,bridge,'route','--out',mount_dir,*api],
-             [mount_dir/'PREPARED.json'],[mount_dir/'ROUTED.json'])
+             routing_inputs,[mount_dir/'ROUTED.json'])
         task(tasks,'review_mounting',[py,bridge,'review','--out',mount_dir,*api],
              [mount_dir/'ROUTED.json'],[mount_dir/'REVIEWED.json',mount_dir/'review_responses.jsonl'])
         task(tasks,'export_mounting',[py,bridge,'export','--out',mount_dir],

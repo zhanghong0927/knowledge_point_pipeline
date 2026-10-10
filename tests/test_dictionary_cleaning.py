@@ -255,6 +255,7 @@ class DictionaryCleaningTests(unittest.TestCase):
         cfg, values = pipeline.load_config(ROOT / 'configs/pipeline.example.json')
         cfg['mounting']['inputs'] = ['{root}/first.jsonl', '{root}/second.jsonl']
         cfg['hooks']['mounting'] = [['echo', 'fixture']]
+        cfg['mounting']['boundaries'] = {'enabled': False}
         with self.assertRaisesRegex(ValueError, 'custom hook'):
             pipeline.plan(cfg, values)
 

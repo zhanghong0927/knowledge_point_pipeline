@@ -45,7 +45,7 @@
   04 分轨清洗
        辞海轨：v22名称格式 → v9学科范围 → V46正文/定义/对应检查 → 标准导出
        重要书籍轨：字段规范化 → 通用规则 → 模型清洗 → 恢复来源与tag
-  05 同学科清洗结果合流 → 整理已有边界 → 首次路由 → 路径复核 → 标准导出
+  05 同学科清洗结果合流 → 全树语义边界生成与复核 → 首次路由 → 路径复核 → 标准导出
   06 去重与合并：同学科多个输入 → 同完整主路径同名去重 → 验收
 ```
 
@@ -153,6 +153,22 @@ OSS下载依赖、tokenizer依赖分别按需求安装；OCR/EPUB转MD和模型�
 - `paths.knowledge_input`：可选，直接从已有抽取数据启动第4步。辞海必须提供原生已核验 `INPUT.json`，格式为dictionary，不能使用丢失原文范围的standard记录替代。
 - `paths.cleaning_books`：辞海只执行第4步时，可指定与输入相匹配的原生书单（含MD、学科及scope_config）；默认使用第3步source_prepared/books.json。
 - `mounting.inputs`：可选，同一学科已清洗JSONL的非空路径数组；默认只读取本次04_cleaning/export/records.jsonl。多输入需使用内置挂载入口；见合流说明。
+- `mounting.boundaries.enabled`：新示例为true，第5步自动生成全树语义边界并复核后再挂载。未含该配置的旧配置保持原行为，只读取已有树信息；false明确关闭补充生成。
+- `mounting.boundaries.workers/max_tokens/max_context_bytes/timeout`：生成及复核的并发、输出token上限、原生上下文UTF-8字节上限和请求超时；字节数不等于token数，需要匹配实际服务窗口。可单独配置api_url/model，否则沿用挂载服务。
+
+### 挂载前自动补充语义边界
+
+开启后，第5步依次执行：`prepare_mounting` → `generate_mounting_boundaries` → `verify_mounting_boundaries` → `route_mounting` → `review_mounting` → `export_mounting`。
+
+生成复用原生 `modules/mounting/pipeline/generate_semantic_boundaries.py`，保留节点code、名称、路径、父子关系及原树已有边界，按父层到子层生成。使用strict模式与逐节点祖先一致性复核；覆盖全树，不按知识点样本仅补少数节点。
+
+`BOUNDARIES_GENERATED.json`仅表示生成进程已结束，不表示通过。只有完整节点覆盖、全部严格复核及跨层检查通过、源树未变，才产生`BOUNDARIES_VERIFIED.json`并将`cross_validated_cards.jsonl`接入实际挂载profile。首次路由读取生成卡片，路径复核同时读取当前节点与祖先卡片。技术失败、待修订或缺卡会阻止后续挂载，不自动回退到无边界模式。模型复核通过不等于专家审核或知识点语义验收。
+
+开启边界时，首次路由使用`--semantic-card-chars 0`保留完整卡片，避免旧700字符限制截掉收录/排除条件；旧独立路由默认仍为700。验收核对原生逐组生成与同级复核记录、逐节点祖先复核记录，不只相信汇总状态。清洗证明的学科还必须与记录tag及目标学科一致，不能通过回填tag改换学科。
+
+生成任务技术中断后，显式`--retry-failed`可让原生生成器按其严格输入/配置/代码指纹恢复已有检查点。若中断发生在卡片激活过程中，可能因资产哈希不一致阻止重试；保留现场，使用新目录，不删除证据或直接放行。
+
+重复前面的书目阶段没有必要：使用新的`paths.run`，把`mounting.inputs`指向上一轮`04_cleaning/export/records.jsonl`，执行`--stages 05`即可。仍要求原清洗出口及其证据哈希通过检查；不会修改原运行目录、原知识点ID或正文。不能在旧运行目录改配置后续跑。自定义`hooks.mounting`与自动边界生成不能同时启用。
 
 `paths` 中相对路径以配置文件所在目录为基准；可以使用 `{root}` 指向整合目录。`books.json` 里面的MD/PDF/scope路径按照原模块要求填写绝对路径。只复制根目录至其他环境即可携带逻辑代码，但必须重配数据、模型、知识树及依赖。
 
