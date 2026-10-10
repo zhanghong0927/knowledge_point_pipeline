@@ -232,7 +232,10 @@ def run(nodes, out, base, model, workers, max_bytes, policy='empty', rewrite_rou
                                                      reason=card['fallback_reason']) for card in fallback])
     b.atomic_json(out / 'node_status.json', [dict(node_code=node['code'], path=node['path'], depth=node['depth'],
                                                status=states.get(node['code'], 'blocked_by_parent')) for node in nodes])
-    b.atomic_json(out / 'cross_issues.json', [issue for review in reviews if review['result'] for issue in review['result']['issues']])
+    b.atomic_json(out / 'cross_issues.json', [issue for review in reviews if review['result']
+        for issue in review['result']['issues']+review['result'].get('self_issues',[])])
+    b.atomic_json(out / 'cross_warnings.json', [warning for review in reviews if review['result']
+        for warning in review['result'].get('warnings',[])])
     def export(code):
         node = by[code]
         return dict(code=code, name_zh=node['name_zh'], name_en=node['name_en'], path=node['path'],

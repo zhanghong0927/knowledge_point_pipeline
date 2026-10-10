@@ -101,7 +101,7 @@ def verify(args):
         expected_status = {'accepted_candidate': len(normal_codes)} if normal_codes else {}
         if fallback_codes:
             expected_status[recovery.EMPTY] = len(fallback_codes)
-        expected_cross = {node['code'] for node in nodes if node['parent_code'] is not None and node['code'] in normal_codes}
+        expected_cross = normal_codes
         if (summary.get('accepted_candidate_cards') != len(normal_codes)
                 or summary.get('status_counts') != expected_status
                 or summary.get('cross_groups') != len(expected_cross)

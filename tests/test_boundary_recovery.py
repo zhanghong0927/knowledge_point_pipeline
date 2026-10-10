@@ -53,11 +53,13 @@ class Service:
             if bad:
                 ancestor = payload['ancestors'][-1]
                 issues = [{'ancestor_code': ancestor['node']['code'], 'descendant_code': code,
+                           'conflict_type': 'ancestor_restriction',
                            'ancestor_field': 'excludes', 'ancestor_quote': ancestor['card']['excludes'][0],
                            'descendant_field': 'includes', 'descendant_quote': 'Subject objects',
                            'reason': 'Specific exclusions conflict with the named child scope.'}]
             obj = {'verdict': 'needs_revision' if bad else 'pass', 'checked_codes': [code],
-                   'issues': issues, 'ancestor_checks': checks}
+                   'issues': issues, 'ancestor_checks': checks, 'self_issues': [],
+                   'self_checks': [{'node_code': code, 'verdict': 'pass', 'reason': 'Internally consistent.'}]}
         elif prompt.startswith(boundary.REVIEW_PROMPT):
             obj = {'verdict': 'pass', 'checked_codes': codes, 'issues': []}
         else:
@@ -198,7 +200,7 @@ class BoundaryRecoveryTests(unittest.TestCase):
             result = self.recover(Path(d) / 'current', service, reuse=prior)
             self.assertTrue(result['runtime_release'])
             self.assertEqual(service.generations, [])
-            self.assertEqual(set(service.cross_reviews), {'a', 'b', 'a1', 'a2'})
+            self.assertEqual(set(service.cross_reviews), {'r', 'a', 'b', 'a1', 'a2'})
 
     def test_strict_failed_ancestor_rewrite_invalidates_previously_accepted_children(self):
         service = Service(cross_bad='a1')

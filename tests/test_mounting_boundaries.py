@@ -48,10 +48,10 @@ def generated_fixture(args, verdict='pass', missing=False, fallback=False):
                 bridge.dump(groups / (hashlib.sha256(key.encode()).hexdigest()[:24] + '.json'),
                             {'payload': payload, 'output': result})
         for node in nodes:
-            if node['parent_code'] is None:
-                continue
             payload = generator.single_cross_payload(nodes, node['code'], by_code)
             result = {'verdict': 'pass', 'checked_codes': [node['code']], 'issues': [],
+                      'self_issues': [], 'self_checks': [{'node_code': node['code'],
+                                                        'verdict': 'pass', 'reason': 'Card is internally consistent.'}],
                       'ancestor_checks': [{'ancestor_code': ancestor['node']['code'],
                                            'verdict': 'pass', 'reason': 'Scope is compatible.'}
                                           for ancestor in payload['ancestors']]}
@@ -63,7 +63,7 @@ def generated_fixture(args, verdict='pass', missing=False, fallback=False):
         'source_unchanged': True, 'expert_approved': False,
         'status_counts': {'accepted_candidate': len(cards)}, 'advisory_nodes': 0,
         'cross_review': 'on', 'review_mode': 'strict',
-        'cross_groups': len(index) - 1, 'cross_verdict_counts': {verdict: len(index) - 1},
+        'cross_groups': len(index), 'cross_verdict_counts': {verdict: len(index)},
         'cross_validated_release': verdict == 'pass' and not missing,
     })
     if fallback:
@@ -89,7 +89,7 @@ def generated_fixture(args, verdict='pass', missing=False, fallback=False):
             for card in cards if card.get('provenance') == recovery.EMPTY])
         summary = bridge.read(destination / 'summary.json')
         summary.update(accepted_candidate_cards=2, status_counts={'accepted_candidate': 2, recovery.EMPTY: 2},
-                       cross_groups=1, cross_verdict_counts={'pass': 1}, cross_validated_release=False,
+                       cross_groups=2, cross_verdict_counts={'pass': 2}, cross_validated_release=False,
                        runtime_release=True, failure_policy='empty', empty_boundary_nodes=2,
                        semantic_quality_degraded=True)
         bridge.dump(destination / 'summary.json', summary)
