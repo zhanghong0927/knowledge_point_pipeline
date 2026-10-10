@@ -153,17 +153,25 @@ OSS下载依赖、tokenizer依赖分别按需求安装；OCR/EPUB转MD和模型�
 - `paths.knowledge_input`：可选，直接从已有抽取数据启动第4步。辞海必须提供原生已核验 `INPUT.json`，格式为dictionary，不能使用丢失原文范围的standard记录替代。
 - `paths.cleaning_books`：辞海只执行第4步时，可指定与输入相匹配的原生书单（含MD、学科及scope_config）；默认使用第3步source_prepared/books.json。
 - `mounting.inputs`：可选，同一学科已清洗JSONL的非空路径数组；默认只读取本次04_cleaning/export/records.jsonl。多输入需使用内置挂载入口；见合流说明。
-- `mounting.boundaries.enabled`：新示例为true，第5步自动生成全树语义边界并复核后再挂载。未含该配置的旧配置保持原行为，只读取已有树信息；false明确关闭补充生成。
+- `mounting.boundaries.enabled`：新示例为true，第5步自动生成全树语义边界并校验运行资产后再挂载。未含该配置的旧配置保持原行为，只读取已有树信息；false明确关闭补充生成。
 - `mounting.boundaries.workers/max_tokens/max_context_bytes/timeout`：生成及复核的并发、输出token上限、原生上下文UTF-8字节上限和请求超时；字节数不等于token数，需要匹配实际服务窗口。可单独配置api_url/model，否则沿用挂载服务。
 - `mounting.boundaries.failure_policy`：`strict`表示有未通过描述即停止（旧配置默认）；`empty`表示有限修复后将未解决分组及受影响后代的语义描述置空，保留原节点名称、路径、身份并继续挂载。新示例采用用户指定的`empty`。空边界不是语义复核通过。
+- `mounting.boundaries.review_mode`：未配置时保持旧默认`strict`，执行同级及跨层模型复核；新示例按当前运行口径设为`off`，仅逐层生成卡片，跳过边界语义复核和语义重写。字段、身份、完整覆盖和实际生成证据仍校验，技术失败仍可按`failure_policy=empty`兜底；最终知识点路径复核不取消。未审卡片单独统计为`unreviewed_nodes`，路径复核上下文标为`model_generated_unreviewed`，不冒称已通过模型审核。
 - `mounting.boundaries.rewrite_rounds`：语义修订及跨层重写上限，默认2，可设0至5；每次请求仍最多三次结构重试。多目标组失败时，自动逐目标生成（不减少同级和祖先上下文），合并后还须联合复核，不接受advisory结果。
 - `mounting.boundaries.reuse_from`：可选，上一轮`05_mounting`的绝对目录。只复用源树与提示词相同、当前祖先上下文相同且原始生成/复核证据仍通过的组；失败、空边界、上下文变化的组重新处理。旧目录只读，改动和历史复核保存在新目录。
+- `mounting.boundaries.cache_dir`：可选的独立分类树资产库，可用`{run}`或`{root}`占位。新示例保存到运行目录外的`taxonomy_assets/`。不能与`reuse_from`同时使用。首次运行在边界资产校验后发布，后续自动查找同一学科、原树、生成输入、模型、服务地址、上下文及输出预算、重写/超时/并发配置、边界模式、失败政策及脚本版本的资产；命中时不再调用边界模型，但仍执行本次完整资产核验和知识点路径复核。改变这些配置会生成新版本；同版本文件损坏则停止，不静默放行或覆盖。
+
+### 保存和复用补好的分类树
+
+分类树资产位于`cache_dir/{subject_slug}/{asset_key}/`，包含`taxonomy_original.json`、补入语义字段但不改节点身份的`taxonomy_enriched.json`、`boundaries/`中的卡片与完整生成证据，以及`MANIFEST.json`校验清单。不包含知识点输入或API密钥。新运行只需继续指定原树`paths.taxonomy`及同一个`cache_dir`，无需手动找旧运行目录或再次补边界。
+
+`taxonomy_enriched.json`保留规范化的code、名称、路径及父子结构，各节点增加`semantic_boundary`、`semantic_card`和`boundary_status`。`model_generated_unreviewed`只表示已生成，`empty_boundary_fallback`仍为空；缓存不是人工审核，也不会把空边界升级为已审核。发布只接受约定的边界证据文件，以新版本目录原子完成，已有版本不覆盖。同键并发生成不同内容时，后发布结果另存`{asset_key}--{content_hash}`，本轮报告指向自己的内容版本；后续自动命中首个已验证版本。资产库与书目中间结果分开：从0611重新跑时，仅复用树，不复用旧筛选、抽取或清洗结论。
 
 ### 挂载前自动补充语义边界
 
 开启后，第5步依次执行：`prepare_mounting` → `generate_mounting_boundaries` → `verify_mounting_boundaries` → `route_mounting` → `review_mounting` → `export_mounting`。
 
-生成复用原生 `modules/mounting/pipeline/generate_semantic_boundaries.py`，保留节点code、名称、路径、父子关系及原树已有边界，按父层到子层生成。使用strict模式与逐节点祖先一致性复核；覆盖全树，不按知识点样本仅补少数节点。
+生成复用原生 `modules/mounting/pipeline/generate_semantic_boundaries.py`，保留节点code、名称、路径、父子关系及原树已有边界，按父层到子层生成。覆盖全树，不按知识点样本仅补少数节点；`strict`执行同级及逐节点祖先一致性复核，`off`不调用这些复核步骤。
 
 `BOUNDARIES_GENERATED.json`仅表示生成进程已结束，不表示通过。`strict`模式要求完整覆盖及全部复核通过后，才安装`cross_validated_cards.jsonl`。`empty`模式安装`runtime_cards.jsonl`：非空描述仍须同级及逐祖先复核通过，未解决项只能使用可审计的空字段。`BOUNDARIES_VERIFIED.json`此时确认的是运行资产、正常卡片证据和兜底一致性，不代表空边界通过语义审核；报告分开给出`verified_nodes`与`fallback_nodes`，并标记`boundary_quality_degraded`。首次路由与路径复核均读取相同卡片；空卡片仅按原树名称及路径判断，不补造描述。模型复核通过不等于专家审核或知识点语义验收。
 
@@ -484,7 +492,16 @@ python adapters/mounting_bridge.py export --out runs/mounting_smoke_20_20261008
 
 初版整合层默认分类4、清洗32并发、清洗batch-size=8；不同学科和轨道顺序运行，由各模块内部并发。它们不是全流程统一限流器。
 
-辞海全书抽取原包内部轮次固定为 **1024→256→64**，`book_workers`只是同时处理书籍数，不会把HTTP请求并发限制到4。后续重试轮依赖 `/metrics`；分类可能要求 `/tokenize` 和 `/v1/models`。内置新挂载接口默认16并发，不调用历史1024并发边界生成总runner。真实部署前检查接口、服务容量及模型上下文，不沿用历史10万token窗口。
+辞海全书抽取轮次默认 **1024→256→64**，可通过 `dictionary_extraction.round_workers` 设置首轮及两轮重试的请求并发，必须为三个正整数。`book_workers`只是同时处理书籍数，不会把HTTP请求并发限制到4。后续重试轮依赖 `/metrics`；分类可能要求 `/tokenize` 和 `/v1/models`。内置新挂载接口默认16并发，不调用历史1024并发边界生成总runner。真实部署前检查接口、服务容量及模型上下文，不沿用历史10万token窗口。
+
+8卡服务可从 `configs/pipeline.8card.example.json` 开始配置：书目筛选、分类、清洗、边界生成、挂载及路径复核的请求并发上限均为256，抽取为 **256→64→16**。这只是从32卡配置缩减到四分之一的起始上限，不代表吞吐量按卡数线性变化，也不是跨进程的共享限流器；多个管线共用API时需要分配总并发。示例自动筛选第一类辞海书，并隔离未解决项，仅将已验证结果送入清洗。替换模型、输入及学科树路径后，先生成计划核对：
+
+```bash
+python pipeline.py plan --config configs/pipeline.8card.example.json
+python pipeline.py run --config configs/pipeline.8card.example.json
+```
+
+已启动任务保留其冻结配置和检查点；新配置用于新任务，不通过热改配置取消已提交请求。并发参数变化也会使严格匹配的分类树缓存键变化，不应把新配置下的重新生成误报为缓存复用。
 
 未进行本批次吞吐基准测试，不能提供可靠全量耗时。可用2–5本代表性书籍记录各阶段耗时、token、API失败和实际并发，再按MD字符数/抽取条数分层估算；不同版型差异较大。
 

@@ -135,6 +135,11 @@ def prepare(args):
                 "max_related": args.max_related, "groups": {}}
     manifest['require_semantic_boundaries'] = bool(getattr(args, 'require_boundaries', False))
     manifest['boundary_failure_policy'] = getattr(args, 'boundary_failure_policy', 'strict')
+    manifest['boundary_review_mode'] = getattr(args, 'boundary_review_mode', 'strict')
+    cache_dir = getattr(args, 'boundary_cache_dir', None)
+    manifest['boundary_cache_dir'] = str(cache_dir.resolve()) if cache_dir else None
+    if manifest['boundary_review_mode'] not in ('strict', 'off'):
+        raise ValueError('Invalid boundary review mode')
     if len(inputs) == 1:
         manifest.update(input=str(inputs[0]), input_sha256=input_info[0]['sha256'])
     for slug, group in groups.items():
@@ -331,6 +336,7 @@ def review_plan(out, config):
                                 {'node_code': code, 'path': index[code]['path'],
                                  'semantic_card': semantic_cards[code]['semantic_card'],
                                  'boundary_status': ('empty_boundary_fallback' if semantic_cards[code].get('provenance') == 'empty_boundary_fallback'
+                                                     else 'model_generated_unreviewed' if config.get('boundary_review_mode') == 'off'
                                                      else 'model_reviewed')}
                                 for code in index[c['codes'][-1]]['chain_codes']]
                             decision.setdefault('empty_boundary_codes_in_candidates', [])
@@ -475,6 +481,8 @@ def export(args):
     if config.get('require_semantic_boundaries'):
         report['semantic_boundaries'] = {
             'failure_policy': config.get('boundary_failure_policy', 'strict'),
+            'review_mode': config.get('boundary_review_mode', 'strict'),
+            'model_reviewed': config.get('boundary_model_reviewed', config.get('boundary_review_mode', 'strict') == 'strict'),
             'empty_boundary_nodes': config.get('boundary_fallback_nodes', 0),
             'quality_degraded': config.get('boundary_quality_degraded', False),
             'mounted_with_empty_boundary_in_candidates': sum(
@@ -494,8 +502,11 @@ def main():
     p.add_argument('--require-boundaries', action='store_true', help='Block routing until full-tree generated boundaries pass verification')
     p.add_argument('--boundary-context-bytes', type=int, default=50000)
     p.add_argument('--boundary-failure-policy', choices=('strict', 'empty'), default='strict')
+    p.add_argument('--boundary-review-mode', choices=('strict', 'off'), default='strict',
+                   help='Off skips boundary model review only; identity checks and final path review remain')
     p.add_argument('--boundary-rewrite-rounds', type=int, default=2)
     p.add_argument('--boundary-reuse-root', type=Path)
+    p.add_argument('--boundary-cache-dir', type=Path, help='Save and automatically reuse checksum-verified taxonomy assets')
     p.add_argument('--taxonomy',type=Path)
     p.add_argument('--taxonomy-dir',type=Path,default=ROOT.parent/'Books_textbooks_cleaning_pipeline/taxonomy')
     p.add_argument('--registry',type=Path,default=REGISTRY)

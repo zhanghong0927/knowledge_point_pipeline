@@ -170,11 +170,16 @@ def plan(config, v):
         allow_partial = extraction_options.get("allow_partial", False)
         if not isinstance(allow_partial, bool):
             raise ValueError("dictionary_extraction.allow_partial must be boolean")
+        round_workers = extraction_options.get("round_workers", [1024, 256, 64])
+        if (not isinstance(round_workers, list) or len(round_workers) != 3
+                or any(type(value) is not int or value <= 0 for value in round_workers)):
+            raise ValueError("dictionary_extraction.round_workers must be three positive integers")
         task(tasks, "extract_fullbook", [py, ROOT / "adapters/dictionary_extraction.py",
              *(["--allow-partial"] if allow_partial else []), "--manifest", source / "books.json",
              "--out", extraction / "raw", "--api-url", v["api_root"], "--model", v["model"],
              "--context", config.get("context_limit", 32768), "--server-context", config.get("context_limit", 32768),
              "--output-tokens", config.get("extraction_max_tokens", 8192),
+             "--round-workers", *round_workers,
              "--book-workers", config.get("book_workers", 4)], [source / "books.json"],
              [extraction / "raw", extraction / "raw/HANDOFF.json", extraction / "raw/UNRESOLVED.jsonl"])
         task(tasks, "verify_extraction_sources", [py, dictionary / "portable_pipeline.py", "clean-prepare",
@@ -281,6 +286,13 @@ def plan(config, v):
     mount = config.get('mounting', {})
     boundaries = mount.get('boundaries', {})
     generate_boundaries = boundaries.get('enabled', False)
+    boundary_review_mode = boundaries.get('review_mode', 'strict')
+    boundary_cache = (str(Path(boundaries['cache_dir'].format_map(v)).expanduser().resolve())
+                      if boundaries.get('cache_dir') else None)
+    if boundary_cache and boundaries.get('reuse_from'):
+        raise ValueError('Configure mounting.boundaries.cache_dir or reuse_from, not both')
+    if boundary_review_mode not in ('strict', 'off'):
+        raise ValueError('mounting.boundaries.review_mode must be strict or off')
     mounting_inputs = mount.get('inputs', ['{run}/04_cleaning/export/records.jsonl'])
     if not isinstance(mounting_inputs, list) or not mounting_inputs or any(not isinstance(s, str) or not s for s in mounting_inputs):
         raise ValueError("mounting.inputs must be a nonempty list of cleaned record paths")
@@ -308,7 +320,10 @@ def plan(config, v):
         if v.get('taxonomy_dir'):
             command += ['--taxonomy-dir',v['taxonomy_dir']]
         if generate_boundaries:
-            command += ['--require-boundaries', '--boundary-failure-policy', boundaries.get('failure_policy', 'strict')]
+            command += ['--require-boundaries', '--boundary-failure-policy', boundaries.get('failure_policy', 'strict'),
+                        '--boundary-review-mode', boundary_review_mode]
+            if boundary_cache:
+                command += ['--boundary-cache-dir', boundary_cache]
         task(tasks,'prepare_mounting',command,mounting_inputs,[mount_dir/'PREPARED.json'])
         api = ['--api-url',mount.get('api_url') or v['chat_url'],'--model',mount.get('model') or v['model'],
                '--workers',mount.get('workers',16),'--timeout',mount.get('timeout',600),
@@ -324,9 +339,12 @@ def plan(config, v):
                             '--max-tokens', boundaries.get('max_tokens', 8192),
                             '--boundary-context-bytes', boundaries.get('max_context_bytes', 50000),
                             '--boundary-failure-policy', boundaries.get('failure_policy', 'strict'),
+                            '--boundary-review-mode', boundary_review_mode,
                             '--boundary-rewrite-rounds', boundaries.get('rewrite_rounds', 2)]
             if boundaries.get('reuse_from'):
                 boundary_api += ['--boundary-reuse-root', boundaries['reuse_from']]
+            if boundary_cache:
+                boundary_api += ['--boundary-cache-dir', boundary_cache]
             if mount.get('api_key_env'):
                 boundary_api += ['--api-key-env', mount['api_key_env']]
             task(tasks, 'generate_mounting_boundaries', [py, bridge, 'generate-boundaries', '--out', mount_dir, *boundary_api],

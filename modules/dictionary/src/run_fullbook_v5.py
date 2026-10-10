@@ -1,4 +1,4 @@
-"""Run v5 in three serial, metrics-gated transport rounds (1024/256/64).
+"""Run v5 in three serial, metrics-gated transport rounds (default 1024/256/64).
 
 Exit codes: 0 completed; 2 normal partial; 3 blocked metrics/lock; 1 aborted.
 The runner owns all cache selection: this driver never deletes or edits caches.
@@ -181,7 +181,7 @@ class Orchestrator:
         self.status = {'run_id': self.history['run_id'], 'pid': os.getpid(),
                        'started_at': utc_now(), 'ended_at': None,
                        'manifest': str(args.manifest), 'out': str(args.out),
-                       'round_workers': list(WORKERS), 'book_workers': args.book_workers,
+                       'round_workers': list(args.round_workers), 'book_workers': args.book_workers,
                        'metrics_urls': args.metrics_url}
         self.started = time.monotonic()
 
@@ -310,7 +310,7 @@ class Orchestrator:
                 raise RunnerFailure('Manifest contains duplicate book identifiers')
             self.persist('running', manifest_sha256=hashlib.sha256(manifest_bytes).hexdigest())
             self.wait_idle('before_round_1', 1)
-            for round_number, workers in enumerate(WORKERS, 1):
+            for round_number, workers in enumerate(self.args.round_workers, 1):
                 if self.args.manifest.read_bytes() != manifest_bytes:
                     raise RunnerFailure('The manifest changed between transport rounds')
                 snapshot, outcome = self.run_round(round_number, workers, identifiers)
@@ -348,6 +348,9 @@ def parse_args(argv=None):
     parser.add_argument('--output-tokens', type=int, default=16000)
     parser.add_argument('--timeout', type=int, default=900)
     parser.add_argument('--book-workers', type=int, default=32)
+    parser.add_argument('--round-workers', type=int, nargs=3, default=WORKERS,
+                        metavar=('FIRST', 'RETRY_1', 'RETRY_2'),
+                        help='Request concurrency for each of the three transport rounds')
     parser.add_argument('--server-context', type=int)
     parser.add_argument('--tokenizer')
     parser.add_argument('--overlap', type=int, default=4)
@@ -358,7 +361,7 @@ def parse_args(argv=None):
     parser.add_argument('--metrics-poll-interval', type=float, default=15.)
     parser.add_argument('--metrics-timeout', type=float, default=10.)
     args = parser.parse_args(argv)
-    if min(args.book_workers, args.output_tokens, args.timeout) < 1 or args.overlap < 0 \
+    if min(args.book_workers, args.output_tokens, args.timeout, *args.round_workers) < 1 or args.overlap < 0 \
             or args.context <= args.output_tokens + 4096:
         parser.error('Invalid concurrency, timeout or token budget')
     if args.server_context is not None and args.server_context < args.context:

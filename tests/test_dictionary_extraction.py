@@ -95,6 +95,38 @@ class DictionaryExtractionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "boolean"):
             extraction()
 
+    def test_pipeline_passes_configured_retry_concurrency(self):
+        config, values = pipeline.load_config(ROOT / "configs/pipeline.example.json")
+        config["dictionary_extraction"]["round_workers"] = [256, 64, 16]
+        task = next(t for s in pipeline.plan(config, values) for t in s["tasks"]
+                    if t["name"] == "extract_fullbook")
+        command = task["command"]
+        position = command.index("--round-workers")
+        self.assertEqual(command[position + 1:position + 4], ["256", "64", "16"])
+
+    def test_pipeline_rejects_invalid_retry_concurrency(self):
+        config, values = pipeline.load_config(ROOT / "configs/pipeline.example.json")
+        for invalid in (None, [], [256, 64], [256, 64, 16, 8], [0, 64, 16],
+                        [256, True, 16], [256.0, 64, 16], "256,64,16"):
+            with self.subTest(round_workers=invalid):
+                config["dictionary_extraction"]["round_workers"] = invalid
+                with self.assertRaisesRegex(ValueError, "three positive integers"):
+                    pipeline.plan(config, values)
+
+    def test_eight_card_profile_keeps_all_api_limits_at_most_256(self):
+        config, values = pipeline.load_config(ROOT / "configs/pipeline.8card.example.json")
+        self.assertEqual(config["dictionary_extraction"]["round_workers"], [256, 64, 16])
+        for key in ("screening_workers", "classification_workers", "cleaning_workers"):
+            self.assertEqual(config[key], 256)
+        self.assertEqual(config["mounting"]["workers"], 256)
+        self.assertEqual(config["mounting"]["boundaries"]["workers"], 256)
+        self.assertEqual(config["paths"]["approved_books"], "")
+        for stage in pipeline.plan(config, values):
+            for task in stage["tasks"]:
+                command = task["command"]
+                if "--workers" in command:
+                    self.assertLessEqual(int(command[command.index("--workers") + 1]), 256)
+
 
 if __name__ == "__main__":
     unittest.main()
