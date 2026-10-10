@@ -61,7 +61,18 @@ starting production calls; do not manually execute intermediate stages.
 - Task 4: fresh run `_03` started once with 35 original 0611 rows. All three target
   dictionaries passed screening/MD audit; two passed classification admission and
   entered full-book extraction, while one remains in the review queue.
-- Task 5: actual-output acceptance and isolated no-model cache-reuse probe pending.
+- Task 5: frozen `_03` finished with one scheduler invocation and no manual
+  production-stage handoffs. Two admitted books were both partial: 3095 validated
+  extraction records advanced, while 83 unresolved items stayed isolated. Cleaning
+  retained 2976, mounting retained 1242, and same-branch dedup retained 1222 with
+  original IDs/payloads unchanged. Total wall time was 6908.514 seconds.
+- Task 5: source/code/input hashes, taxonomy identity and final dispositions passed
+  operational acceptance. The saved 1667-node taxonomy reused with zero new model
+  calls; 26 empty boundary fallbacks remain explicitly unreviewed. A balanced,
+  fixed-seed final sample of 24 records found 22 without obvious issues, one
+  cross-reference marker residue and one potentially over-narrow mounting path.
+  This is source-based Codex inspection, not independent human or full semantic
+  approval. Evidence/report is under the run's `acceptance/` directory.
 - Resource follow-up: the user reports the API now has eight cards. Add an
   optional extraction request-concurrency list and an eight-card profile with
   stage caps of 256 and retry rounds 256/64/16. Do not alter the running `_03`
