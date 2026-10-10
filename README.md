@@ -155,6 +155,9 @@ OSS下载依赖、tokenizer依赖分别按需求安装；OCR/EPUB转MD和模型�
 - `mounting.inputs`：可选，同一学科已清洗JSONL的非空路径数组；默认只读取本次04_cleaning/export/records.jsonl。多输入需使用内置挂载入口；见合流说明。
 - `mounting.boundaries.enabled`：新示例为true，第5步自动生成全树语义边界并复核后再挂载。未含该配置的旧配置保持原行为，只读取已有树信息；false明确关闭补充生成。
 - `mounting.boundaries.workers/max_tokens/max_context_bytes/timeout`：生成及复核的并发、输出token上限、原生上下文UTF-8字节上限和请求超时；字节数不等于token数，需要匹配实际服务窗口。可单独配置api_url/model，否则沿用挂载服务。
+- `mounting.boundaries.failure_policy`：`strict`表示有未通过描述即停止（旧配置默认）；`empty`表示有限修复后将未解决分组及受影响后代的语义描述置空，保留原节点名称、路径、身份并继续挂载。新示例采用用户指定的`empty`。空边界不是语义复核通过。
+- `mounting.boundaries.rewrite_rounds`：语义修订及跨层重写上限，默认2，可设0至5；每次请求仍最多三次结构重试。多目标组失败时，自动逐目标生成（不减少同级和祖先上下文），合并后还须联合复核，不接受advisory结果。
+- `mounting.boundaries.reuse_from`：可选，上一轮`05_mounting`的绝对目录。只复用源树与提示词相同、当前祖先上下文相同且原始生成/复核证据仍通过的组；失败、空边界、上下文变化的组重新处理。旧目录只读，改动和历史复核保存在新目录。
 
 ### 挂载前自动补充语义边界
 
@@ -162,7 +165,9 @@ OSS下载依赖、tokenizer依赖分别按需求安装；OCR/EPUB转MD和模型�
 
 生成复用原生 `modules/mounting/pipeline/generate_semantic_boundaries.py`，保留节点code、名称、路径、父子关系及原树已有边界，按父层到子层生成。使用strict模式与逐节点祖先一致性复核；覆盖全树，不按知识点样本仅补少数节点。
 
-`BOUNDARIES_GENERATED.json`仅表示生成进程已结束，不表示通过。只有完整节点覆盖、全部严格复核及跨层检查通过、源树未变，才产生`BOUNDARIES_VERIFIED.json`并将`cross_validated_cards.jsonl`接入实际挂载profile。首次路由读取生成卡片，路径复核同时读取当前节点与祖先卡片。技术失败、待修订或缺卡会阻止后续挂载，不自动回退到无边界模式。模型复核通过不等于专家审核或知识点语义验收。
+`BOUNDARIES_GENERATED.json`仅表示生成进程已结束，不表示通过。`strict`模式要求完整覆盖及全部复核通过后，才安装`cross_validated_cards.jsonl`。`empty`模式安装`runtime_cards.jsonl`：非空描述仍须同级及逐祖先复核通过，未解决项只能使用可审计的空字段。`BOUNDARIES_VERIFIED.json`此时确认的是运行资产、正常卡片证据和兜底一致性，不代表空边界通过语义审核；报告分开给出`verified_nodes`与`fallback_nodes`，并标记`boundary_quality_degraded`。首次路由与路径复核均读取相同卡片；空卡片仅按原树名称及路径判断，不补造描述。模型复核通过不等于专家审核或知识点语义验收。
+
+跨层冲突会将后代和冲突祖先同时带入修订，避免只清空后代而保留错误祖先；变化祖先的后代会在新上下文重新复核，仍正确的内容不重写。次数耗尽后，`strict`保留待修订并停止，`empty`保存`boundary_fallbacks.json`并将冲突双方分组及受影响后代置空。分组最多3个目标，不能把某一旧联合复核结论挪给已改变的卡片。`group_history/`与`cross_history/`保留替换前记录。原有知识点ID、正文、source和分类树不会因兜底改变；挂载结果另作正常对应关系复核。
 
 开启边界时，首次路由使用`--semantic-card-chars 0`保留完整卡片，避免旧700字符限制截掉收录/排除条件；旧独立路由默认仍为700。验收核对原生逐组生成与同级复核记录、逐节点祖先复核记录，不只相信汇总状态。清洗证明的学科还必须与记录tag及目标学科一致，不能通过回填tag改换学科。
 

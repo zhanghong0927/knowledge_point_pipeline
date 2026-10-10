@@ -308,7 +308,7 @@ def plan(config, v):
         if v.get('taxonomy_dir'):
             command += ['--taxonomy-dir',v['taxonomy_dir']]
         if generate_boundaries:
-            command.append('--require-boundaries')
+            command += ['--require-boundaries', '--boundary-failure-policy', boundaries.get('failure_policy', 'strict')]
         task(tasks,'prepare_mounting',command,mounting_inputs,[mount_dir/'PREPARED.json'])
         api = ['--api-url',mount.get('api_url') or v['chat_url'],'--model',mount.get('model') or v['model'],
                '--workers',mount.get('workers',16),'--timeout',mount.get('timeout',600),
@@ -322,7 +322,11 @@ def plan(config, v):
                             '--workers', boundaries.get('workers', mount.get('workers', 16)),
                             '--timeout', boundaries.get('timeout', mount.get('timeout', 600)),
                             '--max-tokens', boundaries.get('max_tokens', 8192),
-                            '--boundary-context-bytes', boundaries.get('max_context_bytes', 50000)]
+                            '--boundary-context-bytes', boundaries.get('max_context_bytes', 50000),
+                            '--boundary-failure-policy', boundaries.get('failure_policy', 'strict'),
+                            '--boundary-rewrite-rounds', boundaries.get('rewrite_rounds', 2)]
+            if boundaries.get('reuse_from'):
+                boundary_api += ['--boundary-reuse-root', boundaries['reuse_from']]
             if mount.get('api_key_env'):
                 boundary_api += ['--api-key-env', mount['api_key_env']]
             task(tasks, 'generate_mounting_boundaries', [py, bridge, 'generate-boundaries', '--out', mount_dir, *boundary_api],

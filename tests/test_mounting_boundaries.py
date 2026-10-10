@@ -13,7 +13,7 @@ from test_mounting_bridge import bridge, fake_routes, fixture
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def generated_fixture(args, verdict='pass', missing=False):
+def generated_fixture(args, verdict='pass', missing=False, fallback=False):
     group = args.out / 'groups/mechanical_engineering'
     destination = group / 'boundaries'
     destination.mkdir(parents=True)
@@ -66,27 +66,100 @@ def generated_fixture(args, verdict='pass', missing=False):
         'cross_groups': len(index) - 1, 'cross_verdict_counts': {verdict: len(index) - 1},
         'cross_validated_release': verdict == 'pass' and not missing,
     })
+    if fallback:
+        sys.path.insert(0, str(ROOT / 'modules/mounting/pipeline'))
+        import boundary_recovery as recovery
+        leaf_codes = {node['code'] for node in nodes if node['depth'] == 2}
+        cards = [recovery.empty_card(node, 'technical_failure') if node['code'] in leaf_codes
+                 else by_code[node['code']] for node in nodes]
+        for path in (destination / 'groups').glob('*.json'):
+            saved = bridge.read(path)
+            if saved['payload']['targets'][0]['code'] in leaf_codes:
+                group_cards = [card for card in cards if card['node_code'] in leaf_codes]
+                saved['output'] = {'status': recovery.EMPTY, 'reason': 'technical_failure',
+                                   'cards': group_cards, 'rounds': []}
+                bridge.dump(path, saved)
+        for path in cross.glob('*.json'):
+            if bridge.read(path)['payload']['cards'][0]['node_code'] in leaf_codes:
+                path.unlink()
+        bridge.write_rows(destination / 'runtime_cards.jsonl', cards)
+        bridge.write_rows(destination / 'cross_validated_cards.jsonl', [])
+        bridge.dump(destination / 'boundary_fallbacks.json', [
+            {'node_code': card['node_code'], 'path': card['node_path'], 'reason': card['fallback_reason']}
+            for card in cards if card.get('provenance') == recovery.EMPTY])
+        summary = bridge.read(destination / 'summary.json')
+        summary.update(accepted_candidate_cards=2, status_counts={'accepted_candidate': 2, recovery.EMPTY: 2},
+                       cross_groups=1, cross_verdict_counts={'pass': 1}, cross_validated_release=False,
+                       runtime_release=True, failure_policy='empty', empty_boundary_nodes=2,
+                       semantic_quality_degraded=True)
+        bridge.dump(destination / 'summary.json', summary)
 
 
 class MountingBoundaryTests(unittest.TestCase):
-    def prepare(self, root):
+    def prepare(self, root, policy='strict'):
         args, records = fixture(root)
         args.out = root / 'with_boundaries'
         args.require_boundaries = True
         args.boundary_context_bytes = 50000
+        args.boundary_failure_policy = policy
+        args.boundary_rewrite_rounds = 2
         bridge.prepare(args)
         return args, records
 
-    def generate(self, args, verdict='pass', missing=False):
+    def generate(self, args, verdict='pass', missing=False, fallback=False):
         def fake_native(command, **kwargs):
             self.assertIn('--cross-review', command)
             self.assertEqual(command[command.index('--cross-review') + 1], 'on')
             self.assertEqual(command[command.index('--review-mode') + 1], 'strict')
             self.assertEqual(command[command.index('--max-depth') + 1], '-1')
             self.assertEqual(kwargs['env']['BOUNDARY_MAX_TOKENS'], str(args.max_tokens))
-            generated_fixture(args, verdict, missing)
+            generated_fixture(args, verdict, missing, fallback)
         with patch.object(bridge.subprocess, 'run', side_effect=fake_native):
             return bridge.generate_boundaries(args)
+
+    def test_explicit_empty_fallback_activates_without_claiming_full_semantic_review(self):
+        with tempfile.TemporaryDirectory() as d:
+            args, _ = self.prepare(Path(d), policy='empty')
+            self.generate(args, fallback=True)
+            report = bridge.verify_boundaries(args)
+            self.assertEqual(report['verified_nodes'], 2)
+            self.assertEqual(report['fallback_nodes'], 2)
+            manifest = bridge.frozen(args.out)
+            self.assertTrue(manifest['boundary_quality_degraded'])
+            cards = bridge.rows(args.out / 'groups/mechanical_engineering/profile/data/semantic_cards.jsonl')
+            self.assertEqual(sum(card['semantic_card'] == '' for card in cards), 2)
+            fake_routes(args)
+            items, _ = bridge.review_plan(args.out, manifest)
+            contexts = items[0]['taxonomy_context']['node_semantic_cards']
+            self.assertEqual(contexts[-1]['boundary_status'], 'empty_boundary_fallback')
+            self.assertEqual(contexts[-1]['semantic_card'], '')
+
+    def test_strict_policy_never_accepts_empty_fallback_report(self):
+        with tempfile.TemporaryDirectory() as d:
+            args, _ = self.prepare(Path(d))
+            self.generate(args, fallback=True)
+            with self.assertRaisesRegex(ValueError, 'incomplete|policy|fallback'):
+                bridge.verify_boundaries(args)
+
+    def test_fallback_with_invented_text_is_rejected_even_when_hashes_match(self):
+        with tempfile.TemporaryDirectory() as d:
+            args, _ = self.prepare(Path(d), policy='empty')
+            self.generate(args, fallback=True)
+            path = args.out / 'groups/mechanical_engineering/boundaries/runtime_cards.jsonl'
+            values = bridge.rows(path)
+            values[-1]['semantic_card'] = 'Invented supposedly approved scope'
+            bridge.write_rows(path, values)
+            report = bridge.read(args.out / 'BOUNDARIES_GENERATED.json')
+            report['groups']['mechanical_engineering']['assets'][str(path.relative_to(args.out))] = bridge.sha(path)
+            for group_path in (path.parent / 'groups').glob('*.json'):
+                saved = bridge.read(group_path)
+                if saved['output']['status'] == 'empty_boundary_fallback':
+                    saved['output']['cards'][-1]['semantic_card'] = values[-1]['semantic_card']
+                    bridge.dump(group_path, saved)
+                    report['groups']['mechanical_engineering']['assets'][str(group_path.relative_to(args.out))] = bridge.sha(group_path)
+            bridge.dump(args.out / 'BOUNDARIES_GENERATED.json', report)
+            with self.assertRaisesRegex(ValueError, 'Fallback|fallback|identity|content'):
+                bridge.verify_boundaries(args)
 
     def test_pipeline_schedules_generation_and_verification_before_routing(self):
         spec = importlib.util.spec_from_file_location('boundary_pipeline', ROOT / 'pipeline.py')

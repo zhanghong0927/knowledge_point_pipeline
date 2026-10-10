@@ -20,6 +20,9 @@ def generate(args):
         raise FileExistsError('Boundary generation already ended; use a new run directory')
     base, key = bridge.api_settings(args) if manifest['groups'] else ('', '')
     report = {'groups': {}, 'expert_approved': False}
+    policy = manifest.get('boundary_failure_policy', 'strict')
+    if getattr(args, 'boundary_failure_policy', 'strict') != policy:
+        raise ValueError('Boundary failure policy changed after preparation')
     for slug in manifest['groups']:
         target = args.out / 'groups' / slug
         destination = target / 'boundaries'
@@ -27,7 +30,11 @@ def generate(args):
                    '--out', str(destination), '--base', base, '--model', args.model,
                    '--workers', str(args.workers), '--max-depth', '-1',
                    '--max-context-bytes', str(args.boundary_context_bytes),
-                   '--review-mode', 'strict', '--cross-review', 'on']
+                   '--review-mode', 'strict', '--cross-review', 'on', '--failure-policy', policy,
+                   '--rewrite-rounds', str(getattr(args, 'boundary_rewrite_rounds', 2))]
+        reuse_root = getattr(args, 'boundary_reuse_root', None)
+        if reuse_root:
+            command += ['--reuse-run', str(reuse_root / 'groups' / slug / 'boundaries')]
         if destination.exists():
             command.append('--resume')
         env = dict(os.environ, BOUNDARY_HTTP_TIMEOUT=str(args.timeout),
@@ -57,8 +64,11 @@ def verify(args):
     if not generated['groups']:
         raise ValueError('No boundary subject groups to verify')
     native = bridge.load_module(GENERATOR, 'mount_boundary_verifier')
+    sys.path.insert(0, str(GENERATOR.parent))
+    recovery = bridge.load_module(GENERATOR.with_name('boundary_recovery.py'), 'mount_boundary_recovery_verifier')
+    allow_empty = manifest.get('boundary_failure_policy', 'strict') == 'empty'
     selected = {}
-    report = {'groups': {}, 'verified_nodes': 0, 'expert_approved': False}
+    report = {'groups': {}, 'verified_nodes': 0, 'fallback_nodes': 0, 'operational_nodes': 0, 'expert_approved': False}
     # Validate every subject before replacing any runtime asset.
     for slug, generated_group in generated['groups'].items():
         for name, digest in generated_group['assets'].items():
@@ -70,27 +80,41 @@ def verify(args):
         count = len(nodes)
         summary = bridge.read(destination / 'summary.json')
         if (summary != generated_group['summary'] or not summary.get('full_tree_run')
-                or not summary.get('source_unchanged') or not summary.get('cross_validated_release')
+                or not summary.get('source_unchanged')
                 or summary.get('cross_review') != 'on' or summary.get('review_mode') != 'strict'
                 or summary.get('advisory_nodes') != 0
                 or summary.get('total_tree_nodes') != count or summary.get('selected_nodes') != count
-                or summary.get('accepted_candidate_cards') != count
-                or summary.get('status_counts') != {'accepted_candidate': count}
-                or summary.get('cross_groups') != count - 1
-                or summary.get('cross_verdict_counts') != ({'pass': count - 1} if count > 1 else {})):
+                or (not allow_empty and not summary.get('cross_validated_release'))
+                or (allow_empty and (summary.get('failure_policy') != 'empty' or not summary.get('runtime_release')))):
             raise ValueError('Semantic boundaries are incomplete or did not pass strict review: ' + slug)
         if (bridge.sha(destination / 'source_tree.json') != bridge.sha(target / 'boundary_input.json')
                 or bridge.read(destination / 'normalized_nodes.json') != nodes):
             raise ValueError('Semantic boundary taxonomy identity changed: ' + slug)
-        cards = bridge.rows(destination / 'cross_validated_cards.jsonl')
+        cards = bridge.rows(destination / ('runtime_cards.jsonl' if allow_empty else 'cross_validated_cards.jsonl'))
         by_code = {card.get('node_code'): card for card in cards}
         if len(by_code) != len(cards) or set(by_code) != {node['code'] for node in nodes}:
             raise ValueError('Semantic boundary node coverage mismatch: ' + slug)
-        for parent in dict.fromkeys(node['parent_code'] for node in nodes):
-            siblings = [node for node in nodes if node['parent_code'] == parent]
-            group_cards = [by_code[node['code']] for node in siblings]
-            if native.validate_cards({'cards': group_cards}, siblings) != group_cards:
-                raise ValueError('Semantic boundary card identity or content changed: ' + slug)
+        fallback_codes = {card['node_code'] for card in cards if card.get('provenance') == recovery.EMPTY}
+        if fallback_codes and not allow_empty:
+            raise ValueError('Empty boundary fallback is not authorized')
+        normal_codes = set(by_code) - fallback_codes
+        expected_status = {'accepted_candidate': len(normal_codes)} if normal_codes else {}
+        if fallback_codes:
+            expected_status[recovery.EMPTY] = len(fallback_codes)
+        expected_cross = {node['code'] for node in nodes if node['parent_code'] is not None and node['code'] in normal_codes}
+        if (summary.get('accepted_candidate_cards') != len(normal_codes)
+                or summary.get('status_counts') != expected_status
+                or summary.get('cross_groups') != len(expected_cross)
+                or summary.get('cross_verdict_counts') != ({'pass': len(expected_cross)} if expected_cross else {})):
+            raise ValueError('Semantic boundary coverage or review counts mismatch')
+        if allow_empty:
+            expected_fallbacks = [dict(node_code=card['node_code'], path=card['node_path'], reason=card['fallback_reason'])
+                                  for card in cards if card['node_code'] in fallback_codes]
+            if (summary.get('empty_boundary_nodes') != len(fallback_codes)
+                    or summary.get('semantic_quality_degraded') != bool(fallback_codes)
+                    or summary.get('cross_validated_release') != (not fallback_codes)
+                    or bridge.read(destination / 'boundary_fallbacks.json') != expected_fallbacks):
+                raise ValueError('Empty fallback ledger mismatch')
         expected_groups = {}
         for parent in dict.fromkeys(node['parent_code'] for node in nodes):
             for number, payload in enumerate(native.planned_groups(nodes, parent, by_code)):
@@ -104,14 +128,12 @@ def verify(args):
             saved = bridge.read(group_files[name])
             result = saved['output']
             group_cards = [by_code[node['code']] for node in payload['targets']]
-            rounds = result.get('rounds', [])
-            if (saved['payload'] != payload or result.get('status') != 'accepted_candidate'
-                    or result.get('cards') != group_cards or not rounds
-                    or rounds[-1].get('generation', {}).get('result') != group_cards):
+            if saved['payload'] != payload or result.get('cards') != group_cards:
                 raise ValueError('Semantic boundary group-generation evidence mismatch')
-            review = rounds[-1].get('review', {}).get('result')
-            if review is None or native.validate_review(review, [card['node_code'] for card in group_cards])['verdict'] != 'pass':
-                raise ValueError('Semantic boundary group review failed')
+            recovery.validate_group(payload, result, allow_empty=allow_empty)
+            if any(card['node_code'] in normal_codes for card in group_cards) and any(
+                    item['card'].get('provenance') == recovery.EMPTY for item in payload['ancestors']):
+                raise ValueError('Reviewed boundary cannot inherit an empty parent context')
         cross_reviews = list((destination / 'cross_reviews').glob('*.json'))
         reviewed = set()
         for path in cross_reviews:
@@ -126,19 +148,22 @@ def verify(args):
             if result is None or native.validate_pair_review(result, payload)['verdict'] != 'pass':
                 raise ValueError('Semantic boundary cross review failed')
             reviewed.add(code)
-        if reviewed != {node['code'] for node in nodes if node['parent_code'] is not None}:
+        if reviewed != expected_cross:
             raise ValueError('Semantic boundary cross-review coverage mismatch')
         selected[slug] = cards
         report['groups'][slug] = {'nodes': count, 'taxonomy_sha256': manifest['groups'][slug]['source_sha256'],
-                                  'cards_sha256': bridge.sha(destination / 'cross_validated_cards.jsonl'),
-                                  'cross_reviewed_nodes': len(reviewed)}
-        report['verified_nodes'] += count
+                                  'cards_sha256': bridge.sha(destination / ('runtime_cards.jsonl' if allow_empty else 'cross_validated_cards.jsonl')),
+                                  'cross_reviewed_nodes': len(reviewed), 'verified_nodes': len(normal_codes),
+                                  'fallback_nodes': len(fallback_codes)}
+        report['verified_nodes'] += len(normal_codes)
+        report['fallback_nodes'] += len(fallback_codes)
+        report['operational_nodes'] += count
     for slug, cards in selected.items():
         target = args.out / 'groups' / slug
         profile = target / 'profile'
         bridge.write_rows(profile / 'data/semantic_cards.jsonl', cards)
         group = manifest['groups'][slug]
-        group['semantic_cards'] = 'full-tree LLM generation; strict sibling and ancestor review; not expert approval'
+        group['semantic_cards'] = 'Reviewed generated boundaries; explicitly empty fallback nodes use original tree names and paths only; not expert approval'
         group['semantic_boundaries'] = report['groups'][slug]
         assets = dict(generated['groups'][slug]['assets'])
         assets.update({str(path.relative_to(args.out)): bridge.sha(path)
@@ -147,6 +172,8 @@ def verify(args):
     report['generation_report_sha256'] = bridge.sha(generated_path)
     bridge.dump(args.out / 'BOUNDARIES_VERIFIED.json', report)
     manifest.update(boundaries_verified=True,
+                    boundary_quality_degraded=report['fallback_nodes'] > 0,
+                    boundary_fallback_nodes=report['fallback_nodes'],
                     boundaries_verified_sha256=bridge.sha(args.out / 'BOUNDARIES_VERIFIED.json'),
                     boundary_generation_report_sha256=bridge.sha(generated_path))
     bridge.dump(args.out / 'PREPARED.json', manifest)

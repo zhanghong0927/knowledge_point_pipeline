@@ -134,6 +134,7 @@ def prepare(args):
                 "threshold": args.threshold, "min_depth": args.min_depth, "max_depth": args.max_depth,
                 "max_related": args.max_related, "groups": {}}
     manifest['require_semantic_boundaries'] = bool(getattr(args, 'require_boundaries', False))
+    manifest['boundary_failure_policy'] = getattr(args, 'boundary_failure_policy', 'strict')
     if len(inputs) == 1:
         manifest.update(input=str(inputs[0]), input_sha256=input_info[0]['sha256'])
     for slug, group in groups.items():
@@ -289,7 +290,7 @@ def review_plan(out, config):
         target = out/'groups'/slug
         originals, routed = validate_routes(target)
         index = read(target/'node_index.json')
-        semantic_cards = ({card['node_code']: card['semantic_card']
+        semantic_cards = ({card['node_code']: card
                            for card in rows(target/'profile/data/semantic_cards.jsonl')}
                           if config.get('boundaries_verified') else {})
         for rid, original in originals.items():
@@ -327,8 +328,16 @@ def review_plan(out, config):
                                     taxonomy_context={'exact_path_exists':True,'path_names':c['path_names'],'children_names':c['children_names']})
                         if semantic_cards:
                             item['taxonomy_context']['node_semantic_cards'] = [
-                                {'node_code': code, 'path': index[code]['path'], 'semantic_card': semantic_cards[code]}
+                                {'node_code': code, 'path': index[code]['path'],
+                                 'semantic_card': semantic_cards[code]['semantic_card'],
+                                 'boundary_status': ('empty_boundary_fallback' if semantic_cards[code].get('provenance') == 'empty_boundary_fallback'
+                                                     else 'model_reviewed')}
                                 for code in index[c['codes'][-1]]['chain_codes']]
+                            decision.setdefault('empty_boundary_codes_in_candidates', [])
+                            for context in item['taxonomy_context']['node_semantic_cards']:
+                                if (context['boundary_status'] == 'empty_boundary_fallback'
+                                        and context['node_code'] not in decision['empty_boundary_codes_in_candidates']):
+                                    decision['empty_boundary_codes_in_candidates'].append(context['node_code'])
                         items.append(item);decision['review_request_ids'].append(request_id)
                     decision.update(status='pending_review',candidates=candidates)
             decisions.append(decision)
@@ -463,6 +472,15 @@ def export(args):
             'count_conserved':True,'content_policy':'only main_tags/related_tags updated; absent tag filled from registry',
             'review_policy':'native evidence-gated review; unreasonable receives independent counter-review',
             'threshold':config['threshold'],'level_range':[config['min_depth'],config['max_depth']]}
+    if config.get('require_semantic_boundaries'):
+        report['semantic_boundaries'] = {
+            'failure_policy': config.get('boundary_failure_policy', 'strict'),
+            'empty_boundary_nodes': config.get('boundary_fallback_nodes', 0),
+            'quality_degraded': config.get('boundary_quality_degraded', False),
+            'mounted_with_empty_boundary_in_candidates': sum(
+                d['status'] == 'mounted' and bool(d.get('empty_boundary_codes_in_candidates')) for d in audit),
+            'empty_boundary_is_semantic_approval': False,
+        }
     dump(args.out/'SUMMARY.json',report)
     return report
 
@@ -475,6 +493,9 @@ def main():
     p.add_argument('--require-cleaned', action='store_true', help='Require hash-bound pass-only stage04 exports')
     p.add_argument('--require-boundaries', action='store_true', help='Block routing until full-tree generated boundaries pass verification')
     p.add_argument('--boundary-context-bytes', type=int, default=50000)
+    p.add_argument('--boundary-failure-policy', choices=('strict', 'empty'), default='strict')
+    p.add_argument('--boundary-rewrite-rounds', type=int, default=2)
+    p.add_argument('--boundary-reuse-root', type=Path)
     p.add_argument('--taxonomy',type=Path)
     p.add_argument('--taxonomy-dir',type=Path,default=ROOT.parent/'Books_textbooks_cleaning_pipeline/taxonomy')
     p.add_argument('--registry',type=Path,default=REGISTRY)
@@ -493,7 +514,7 @@ def main():
     p.add_argument('--retry-failed-reviews',action='store_true')
     a=p.parse_args()
     a.out=a.out.resolve()
-    if not 0<a.threshold<=1 or not 1<=a.min_depth<=a.max_depth or a.max_related<0 or a.limit<0 or min(a.workers,a.timeout,a.max_tokens,a.boundary_context_bytes)<1:
+    if not 0<a.threshold<=1 or not 1<=a.min_depth<=a.max_depth or a.max_related<0 or a.limit<0 or min(a.workers,a.timeout,a.max_tokens,a.boundary_context_bytes)<1 or not 0<=a.boundary_rewrite_rounds<=5:
         p.error('Invalid depth, score, worker or budget setting')
     if a.action=='prepare':
         if not a.input:p.error('--input required for prepare')
