@@ -176,7 +176,7 @@ def plan(config, v):
              "--context", config.get("context_limit", 32768), "--server-context", config.get("context_limit", 32768),
              "--output-tokens", config.get("extraction_max_tokens", 8192),
              "--book-workers", config.get("book_workers", 4)], [source / "books.json"],
-             [extraction / "raw/HANDOFF.json", extraction / "raw/UNRESOLVED.jsonl"])
+             [extraction / "raw", extraction / "raw/HANDOFF.json", extraction / "raw/UNRESOLVED.jsonl"])
         task(tasks, "verify_extraction_sources", [py, dictionary / "portable_pipeline.py", "clean-prepare",
              "--books", source / "books.json", "--extraction", extraction / "raw", "--out", extraction / "verified"],
              [source / "books.json", extraction / "raw"], [extraction / "verified/INPUT.json",
