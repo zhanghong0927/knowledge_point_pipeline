@@ -192,6 +192,9 @@ def prepare_cleaning(books, extraction, out):
     hashes = source_hashes(books)
     freeze_run(out, {'kind':'clean_preparation','books':books,'source_hashes':hashes,'extraction_files':files,'code':code_hashes()})
     if (out/'INPUT.json').exists():
+        prepared = read(out/'PREPARED.json')
+        if prepared.get('input_sha256') != digest(out/'INPUT.json'):
+            raise ValueError('Verified cleaning snapshot changed or lacks a digest; use a new output directory')
         return read(out/'INPUT.json')
     import clean_boundary_v46 as v46
     import fullbook_v5_structure as patch
@@ -271,6 +274,7 @@ def prepare_cleaning(books, extraction, out):
     write(out/'INPUT.json',rows)
     write(out/'EXCLUDED.json',excluded)
     write(out/'PREPARED.json',{'books':len(seen_books),'records':len(rows),'excluded':len(excluded),
+                             'input_sha256':digest(out/'INPUT.json'),
                              'empty_body':sum(not r['raw_content'].strip() for r in rows),
                              'partial_book_records':sum(r['source']['extraction_book_status']=='partial' for r in rows)})
     return rows

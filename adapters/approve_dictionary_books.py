@@ -10,7 +10,8 @@ import re
 import sys
 
 FAMILIES = {"entry_prose", "fixed_fields", "text_commentary"}
-POLICY = "dictionary_classification_admission_v1"
+POLICY = "dictionary_classification_admission_v2"
+DEFAULT_FAMILIES = ("entry_prose",)
 
 
 def read(path):
@@ -21,7 +22,15 @@ def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def disposition(result):
+def validate_families(values):
+    if (not isinstance(values, (list, tuple)) or not values
+            or any(not isinstance(v, str) or v not in FAMILIES for v in values)
+            or len(set(values)) != len(values)):
+        raise ValueError("allowed_families must be a nonempty, unique list of known dictionary families")
+    return list(values)
+
+
+def disposition(result, allowed_families=DEFAULT_FAMILIES):
     status = result.get("status")
     if status == "technical_failed":
         return "technical_failed", "classifier_technical_failed"
@@ -37,10 +46,13 @@ def disposition(result):
         return "review", "md_quality_requires_review"
     if result.get("applicability_status") != "model_considered_compatible":
         return "review", "applicability_not_confirmed"
+    if result["family"] not in allowed_families:
+        return "not_selected", "family_not_allowed_by_config"
     return "approved", "supported_structure_and_compatible_samples"
 
 
-def convert(books_path, classification):
+def convert(books_path, classification, allowed_families=DEFAULT_FAMILIES):
+    allowed_families = validate_families(allowed_families)
     books = read(books_path)
     if not isinstance(books, list) or not books:
         raise ValueError("books must be a nonempty JSON array")
@@ -70,7 +82,7 @@ def convert(books_path, classification):
 
     approved = []
     audit = []
-    queues = {status: [] for status in ("other", "review", "technical_failed")}
+    queues = {status: [] for status in ("other", "review", "technical_failed", "not_selected")}
     for book in books:
         ref = book["identifier"]
         entry = {"identifier": ref, "book": book, "policy": POLICY}
@@ -107,7 +119,7 @@ def convert(books_path, classification):
                 recomputed = validate(json.loads(response["message"]["content"]), prep["windows"])
                 if any(result.get(k) != v for k, v in recomputed.items()):
                     raise ValueError("Saved classification differs from evidence revalidation")
-            status, reason = disposition(result)
+            status, reason = disposition(result, allowed_families)
             entry.update(status=status, reason=reason, classification=result,
                          classification_result_sha256=digest(files[ref]))
         except (KeyError, TypeError, ValueError, OSError) as exc:
@@ -118,7 +130,8 @@ def convert(books_path, classification):
             approved.append(book)
         else:
             queues[status].append(entry)
-    report = {"policy": POLICY, "input_books": len(books), "approved": len(approved),
+    report = {"policy": POLICY, "allowed_families": allowed_families,
+              "input_books": len(books), "approved": len(approved),
               **{k: len(v) for k, v in queues.items()}, "count_conserved": len(audit) == len(books),
               "books_sha256": digest(books_path), "classification": str(classification.resolve()),
               "api_calls": 0, "pdf_quality_checked": False,
@@ -132,10 +145,11 @@ def main():
     parser.add_argument("--books", type=Path, required=True)
     parser.add_argument("--classification", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--allowed-families", nargs="+", choices=sorted(FAMILIES), default=list(DEFAULT_FAMILIES))
     args = parser.parse_args()
     if args.out.exists():
         raise FileExistsError(f"Use a new output directory: {args.out}")
-    approved, queues, audit, report = convert(args.books, args.classification)
+    approved, queues, audit, report = convert(args.books, args.classification, args.allowed_families)
     args.out.mkdir(parents=True)
     for name, value in (("approved_books.json", approved), ("report.json", report)):
         (args.out / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

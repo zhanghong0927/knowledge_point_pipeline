@@ -36,7 +36,7 @@ def fixture(root, modes):
             windows.append({"window_id": str(n), "zone": n, "kind": "targeted",
                             "lines": [{"id": h["line_id"], "text": "## " + head}, {"id": b["line_id"], "text": body}]})
             values.append({"window_id": str(n), "region": "entry_body", "body_scope": "primary",
-                           "organization": "O1", "entries": [{"head": h, "body": b, "role": "main_entry"}],
+                           "organization": "O3" if mode == "fixed_fields" else "O1", "entries": [{"head": h, "body": b, "role": "main_entry"}],
                            "boundary_contract": {"status": "unsupported" if mode == "other" else "supported",
                                                  "reason": "fixture", "evidence": [h]},
                            "md_usable": mode != "md_review"})
@@ -65,12 +65,46 @@ def fixture(root, modes):
 
 
 class DictionaryApprovalTests(unittest.TestCase):
+    def test_default_admission_excludes_supported_fixed_fields(self):
+        with tempfile.TemporaryDirectory() as d:
+            path, classified, books = fixture(Path(d), ["approved", "fixed_fields"])
+            approved, queues, audit, report = ADAPTER.convert(path, classified)
+            self.assertEqual(approved, books[:1])
+            self.assertEqual(queues["not_selected"][0]["identifier"], "book_1")
+            self.assertEqual(audit[1]["reason"], "family_not_allowed_by_config")
+            self.assertEqual(report["allowed_families"], ["entry_prose"])
+
+    def test_explicit_family_allowlist_restores_supported_types(self):
+        with tempfile.TemporaryDirectory() as d:
+            path, classified, books = fixture(Path(d), ["approved", "fixed_fields"])
+            approved, queues, _, report = ADAPTER.convert(
+                path, classified, allowed_families=["entry_prose", "fixed_fields"])
+            self.assertEqual(approved, books)
+            self.assertFalse(queues["not_selected"])
+            self.assertEqual(report["approved"], 2)
+
+    def test_family_filter_does_not_relabel_review_or_failure(self):
+        base = {"status": "sample_supported", "routing_status": "sample_supported",
+                "family": "text_commentary", "head_position": "standalone",
+                "md_quality_status": "no_problem_reported_in_samples",
+                "applicability_status": "model_considered_compatible"}
+        self.assertEqual(ADAPTER.disposition(base), ("not_selected", "family_not_allowed_by_config"))
+        self.assertEqual(ADAPTER.disposition({**base, "md_quality_status": "review"})[0], "review")
+        self.assertEqual(ADAPTER.disposition({**base, "status": "technical_failed"})[0], "technical_failed")
+
+    def test_invalid_family_allowlist_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            path, classified, _ = fixture(Path(d), ["approved"])
+            for value in ([], "entry_prose", ["typo"], ["entry_prose", "entry_prose"]):
+                with self.subTest(value=value), self.assertRaises(ValueError):
+                    ADAPTER.convert(path, classified, allowed_families=value)
+
     def test_native_results_split_and_preserve_original_books(self):
         with tempfile.TemporaryDirectory() as d:
             path, classified, books = fixture(Path(d), ["approved", "other", "review", "technical_failed", "md_review"])
             approved, queues, audit, report = ADAPTER.convert(path, classified)
             self.assertEqual(approved, books[:1])
-            self.assertEqual({k: len(v) for k, v in queues.items()}, {"other": 1, "review": 2, "technical_failed": 1})
+            self.assertEqual({k: len(v) for k, v in queues.items()}, {"other": 1, "review": 2, "technical_failed": 1, "not_selected": 0})
             self.assertEqual(len(audit), 5)
             self.assertTrue(report["count_conserved"])
             self.assertFalse(audit[0]["classification"]["ready_for_extraction"])

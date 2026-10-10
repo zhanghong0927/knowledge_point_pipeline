@@ -288,12 +288,13 @@ def build_tree(raw: dict[str, Any], cards: dict[str, dict[str, Any]]) -> TreeNod
     )
 
 
-def node_payload(node: TreeNode) -> dict[str, Any]:
-    return {"node_code": node.code, "name_zh": node.name_zh, "name_en": node.name_en, "path": node.path, "semantic_card": clip(node.semantic_card, 700)}
+def node_payload(node: TreeNode, card_chars: int = 700) -> dict[str, Any]:
+    card = clip(node.semantic_card, card_chars) if card_chars else " ".join(node.semantic_card.split())
+    return {"node_code": node.code, "name_zh": node.name_zh, "name_en": node.name_en, "path": node.path, "semantic_card": card}
 
 
-def candidate_payload(nodes: list[TreeNode], max_examples: int) -> list[dict[str, Any]]:
-    return [node_payload(node) | {"verified_examples": node.examples[:max_examples], "has_children": bool(node.children)} for node in nodes]
+def candidate_payload(nodes: list[TreeNode], max_examples: int, card_chars: int = 700) -> list[dict[str, Any]]:
+    return [node_payload(node, card_chars) | {"verified_examples": node.examples[:max_examples], "has_children": bool(node.children)} for node in nodes]
 
 
 def call_api(args: argparse.Namespace, system: str, payload: dict[str, Any]) -> tuple[dict[str, Any], TokenUsage]:
@@ -385,9 +386,9 @@ def score_level(knowledge_card: dict[str, Any], current: TreeNode, level: int, a
         routing_max_depth=args.routing_max_depth,
         mount_threshold=args.threshold,
         knowledge_card=knowledge_card,
-        current_node=node_payload(current),
+        current_node=node_payload(current, getattr(args, 'semantic_card_chars', 700)),
         is_root_level=is_root,
-        candidates=candidate_payload(current.children, args.max_seed_examples),
+        candidates=candidate_payload(current.children, args.max_seed_examples, getattr(args, 'semantic_card_chars', 700)),
     )
     payload["subject_name"] = args.subject_name
     payload["subject_scope"] = args.subject_scope
@@ -772,6 +773,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--subject-scope", default="", help="Override subject scope description from profile.json.")
     parser.add_argument("--knowledge-tree", type=Path, default=None, help="Override profile knowledge-tree JSON.")
     parser.add_argument("--semantic-cards", type=Path, default=None, help="Override profile semantic-card JSONL.")
+    parser.add_argument("--semantic-card-chars", type=int, default=700, help="Per-card character limit; 0 preserves the complete verified boundary card.")
     parser.add_argument("--prompt-module", type=Path, default=None, help="Override profile prompt Python module.")
     parser.add_argument("--routing-constraints", type=Path, default=None, help="Override profile routing-constraint Python module.")
     parser.add_argument("--api-url", default=os.environ.get("KNOWLEDGE_LABELING_API_URL", DEFAULT_API_URL))
@@ -825,6 +827,7 @@ def main() -> None:
         or args.retry_failed_cooldown < 0
         or args.api_failure_stop_window < 0
         or args.progress_interval < 1
+        or args.semantic_card_chars < 0
         or not all(0 < value <= 1 for value in threshold_values)
         or not routing_threshold_ok
     ):

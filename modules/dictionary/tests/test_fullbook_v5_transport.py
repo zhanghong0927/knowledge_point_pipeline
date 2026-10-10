@@ -23,6 +23,10 @@ class TransportTests(unittest.TestCase):
             context=100000, output_tokens=16000, overlap=4, workers=2, timeout=3,
             server_context=None, out=self.root/'out', attempts=3, transport_round=number)
         runner = v5.Runner(args)
+        class Tokenizer:
+            def apply_chat_template(self, messages, **kwargs):
+                return [0] * 100
+        runner.tokenizer = Tokenizer()
         runner.backoff = lambda *a: None
         def api(*a):
             self.calls.append(a)
@@ -92,6 +96,30 @@ class TransportTests(unittest.TestCase):
         self.assertEqual(len(self.calls),3)
         self.run_round(2)
         self.assertEqual(len(self.calls),3)
+
+    def test_unchanged_bad_location_is_not_reported_as_model_rename(self):
+        Path(self.spec['md_path']).write_text('Earlier Alpha means a thing.\n')
+        bad={'head':[{'unit':0,'quote':'Alpha'}],
+             'knowledge_point':[{'unit':0,'quote':'Alpha'}],'name':[],
+             'body':[],'body_complete':True}
+        def response(data):
+            return {'choices':[{'finish_reason':'stop','message':{'content':json.dumps(data)}}]}
+        def api(*args):
+            request=json.loads(args[-1]['messages'][1]['content'])
+            if 'repair_tasks' not in request:
+                return response({'scanned_all':True,'entries':[bad]})
+            rid=request['repair_tasks'][0]['repair_id']
+            return response({'repairs':[{'repair_id':rid,'entry':bad,'reason':'unchanged'}]})
+        self.responder=api
+        result=self.run_round(1)
+        self.assertEqual(result['status'],'partial')
+        self.assertEqual(result['entries'],0)
+        caches=list((self.root/'out').glob('*/chunks/*.json'))
+        self.assertEqual(len(caches),1)
+        pending=json.loads(caches[0].read_text())['unresolved']
+        self.assertEqual(len(pending),1)
+        self.assertIn('source validation failed',pending[0]['error'])
+        self.assertNotIn('changed candidate identity',pending[0]['error'])
 
 
 if __name__ == '__main__':

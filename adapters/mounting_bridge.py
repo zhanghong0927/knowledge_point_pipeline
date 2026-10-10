@@ -15,6 +15,7 @@ import sys
 from urllib import request
 
 from mounting_assets import ROOT, load_module, normalize
+from cleaning_handoff import verify_export
 
 NATIVE = ROOT / "modules/mounting/mapping_runtime"
 REGISTRY = ROOT / "configs/taxonomy_registry.json"
@@ -70,15 +71,37 @@ def prepare(args):
         raise ValueError("Add the subject and its taxonomy file to the registry first")
     if args.taxonomy and not args.subject_slug:
         raise ValueError("An explicit --taxonomy needs --subject-slug")
-    source = rows(args.input)
-    selected = source[:args.limit] if args.limit else source
+    inputs = args.input if isinstance(args.input, list) else [args.input]
+    if not inputs or any(not isinstance(p, Path) for p in inputs):
+        raise ValueError('At least one cleaned input file is required')
+    inputs = [p.resolve() for p in inputs]
+    if len(set(inputs)) != len(inputs):
+        raise ValueError('Duplicate mounting input path')
+    input_info = [{'path': str(p), 'sha256': sha(p)} for p in inputs]
+    if getattr(args, 'require_cleaned', False):
+        for path, info in zip(inputs, input_info):
+            proof = verify_export(path)
+            info['cleaning_report_sha256'] = sha(path.parent / 'report.json')
+            info['cleaning_track'] = proof['cleaning_export']['track']
+            proof_slug = by_alias.get(proof['cleaning_export'].get('subject'))
+            if not proof_slug or (target_slug and proof_slug != target_slug):
+                raise ValueError('Mounting cleaning proof subject does not match target')
+            info['cleaning_subject'] = proof_slug
+    source = []
+    for path, info in zip(inputs, input_info):
+        values = rows(path)
+        if info.get('cleaning_subject') and any(by_alias.get(row.get('tag')) != info['cleaning_subject'] for row in values):
+            raise ValueError('Mounting cleaning proof subject and record tags disagree')
+        source.extend(values)
+        info['records'] = len(values)
     groups, unknown, identities = {}, [], set()
-    for row in selected:
+    # Validate the complete handoff before applying an optional sample limit.
+    for row in source:
         if not isinstance(row, dict) or not isinstance(row.get("id"), (str, int)) or isinstance(row["id"], bool) or str(row["id"]) == "":
             raise ValueError("Every standard record needs a nonempty string/integer id")
         tag = row.get("tag") or args.subject_slug
         slug = by_alias.get(tag)
-        if target_slug and slug and slug != target_slug:
+        if target_slug and tag and slug != target_slug:
             raise ValueError("Mixed subjects in a single-subject pipeline input")
         identity = (str(tag), str(row["id"]))
         canonical = (slug or str(tag), str(row["id"]))
@@ -89,6 +112,9 @@ def prepare(args):
             raise ValueError(f"Empty name fields: {identity}")
         if any(row.get(f) is not None and not isinstance(row[f], str) for f in TEXT_FIELDS):
             raise ValueError(f"Invalid standard text field: {identity}")
+    selected = source[:args.limit] if args.limit else source
+    for row in selected:
+        slug = by_alias.get(row.get('tag') or args.subject_slug)
         explicit_tree = args.taxonomy if args.taxonomy and slug == target_slug else None
         if not slug or (not registry[slug].get("file") and not explicit_tree):
             unknown.append({"record": row, "status": "unconfigured", "reason": "subject_taxonomy_not_configured"})
@@ -98,13 +124,24 @@ def prepare(args):
             unknown.append({"record": row, "status": "unconfigured", "reason": "taxonomy_file_missing", "path": str(tree_path)})
             continue
         groups.setdefault(slug, {"rows": [], "tree_path": tree_path})["rows"].append(row)
+    if any(sha(Path(info['path'])) != info['sha256'] for info in input_info):
+        raise ValueError('Mounting input changed during preparation')
     args.out.mkdir(parents=True)
     write_rows(args.out / "input.snapshot.jsonl", selected)
     write_rows(args.out / "unconfigured.jsonl", unknown)
-    manifest = {"input": str(args.input.resolve()), "input_sha256": sha(args.input), "input_records": len(source),
+    manifest = {"inputs": input_info, "input_records": len(source),
                 "selected_records": len(selected), "limit": args.limit, "unconfigured": len(unknown),
                 "threshold": args.threshold, "min_depth": args.min_depth, "max_depth": args.max_depth,
                 "max_related": args.max_related, "groups": {}}
+    manifest['require_semantic_boundaries'] = bool(getattr(args, 'require_boundaries', False))
+    manifest['boundary_failure_policy'] = getattr(args, 'boundary_failure_policy', 'strict')
+    manifest['boundary_review_mode'] = getattr(args, 'boundary_review_mode', 'strict')
+    cache_dir = getattr(args, 'boundary_cache_dir', None)
+    manifest['boundary_cache_dir'] = str(cache_dir.resolve()) if cache_dir else None
+    if manifest['boundary_review_mode'] not in ('strict', 'off'):
+        raise ValueError('Invalid boundary review mode')
+    if len(inputs) == 1:
+        manifest.update(input=str(inputs[0]), input_sha256=input_info[0]['sha256'])
     for slug, group in groups.items():
         target = args.out / "groups" / slug
         target.mkdir(parents=True)
@@ -117,6 +154,11 @@ def prepare(args):
         config.update(subject_name=registry[slug]["name"], subject_scope="以所提供知识树的节点和原有边界为准，允许直接、实质的交叉关系。主要根据名称和定义判断，描述只作补充；优先具体节点，证据不足时允许父节点。")
         dump(profile / "profile.json", config)
         dump(target / "node_index.json", index)
+        if manifest['require_semantic_boundaries']:
+            dump(target / 'boundary_input.json', {'nodes': [
+                {'node_code': node['code'], 'name_zh': node['name_zh'], 'name_en': node['name_en'],
+                 'path': node['path'], 'parent_code': node['parent_code'], **node['existing_context']}
+                for node in index.values()]})
         items = []
         mapping = {}
         for original in group["rows"]:
@@ -129,6 +171,8 @@ def prepare(args):
         dump(target / "original_records.json", mapping)
         assets = [target / "input.jsonl", target / "original_records.json", target / "node_index.json",
                   *[p for p in profile.rglob('*') if p.is_file()]]
+        if manifest['require_semantic_boundaries']:
+            assets.append(target / 'boundary_input.json')
         manifest["groups"][slug] = {"records": len(items), "subject": registry[slug]["name"],
                                      "taxonomy": str(group["tree_path"].resolve()), **info,
                                      "assets": {str(p.relative_to(args.out)): sha(p) for p in assets}}
@@ -138,15 +182,43 @@ def prepare(args):
     return {"selected": len(selected), "groups": len(groups), "unconfigured": len(unknown), "api_calls": 0}
 
 
-def frozen(out):
+def frozen(out, allow_pending_boundaries=False):
     m = read(out / "PREPARED.json")
+    for info in m.get('inputs', []):
+        if sha(Path(info['path'])) != info['sha256']:
+            raise ValueError('Mounting source input changed')
+        if info.get('cleaning_report_sha256'):
+            path = Path(info['path'])
+            verify_export(path)
+            if sha(path.parent / 'report.json') != info['cleaning_report_sha256']:
+                raise ValueError('Mounting cleaning report changed')
     if sha(out / "input.snapshot.jsonl") != m["snapshot_sha256"] or sha(out / "unconfigured.jsonl") != m["unconfigured_sha256"]:
         raise ValueError("Mounting snapshot changed")
     for group in m["groups"].values():
+        if sha(Path(group['taxonomy'])) != group['source_sha256']:
+            raise ValueError('Mounting taxonomy changed')
         for name, digest in group["assets"].items():
             if sha(out / name) != digest:
                 raise ValueError(f"Prepared mounting asset changed: {name}")
+    if m.get('require_semantic_boundaries'):
+        if not m.get('boundaries_verified'):
+            if not allow_pending_boundaries:
+                raise ValueError('Semantic boundaries have not passed verification')
+        elif sha(out / 'BOUNDARIES_VERIFIED.json') != m['boundaries_verified_sha256']:
+            raise ValueError('Verified semantic boundary handoff changed')
+        elif sha(out / 'BOUNDARIES_GENERATED.json') != m['boundary_generation_report_sha256']:
+            raise ValueError('Semantic boundary generation report changed')
     return m
+
+
+def generate_boundaries(args):
+    from mounting_boundaries import generate
+    return generate(args)
+
+
+def verify_boundaries(args):
+    from mounting_boundaries import verify
+    return verify(args)
 
 
 def endpoint(value):
@@ -182,6 +254,8 @@ def route(args):
                '--min-parent-depth', str(m['min_depth']), '--min-mount-depth', str(m['min_depth']),
                '--max-depth', str(m['max_depth']), '--timeout', str(args.timeout), '--max-tokens', str(args.max_tokens),
                '--max-seed-examples', '0', '--retries', '1', '--retry-failed-rounds', '1']
+        if m.get('boundaries_verified'):
+            cmd += ['--semantic-card-chars', '0']
         env = os.environ.copy()
         if key:
             env['KNOWLEDGE_LABELING_API_KEY'] = key
@@ -221,6 +295,9 @@ def review_plan(out, config):
         target = out/'groups'/slug
         originals, routed = validate_routes(target)
         index = read(target/'node_index.json')
+        semantic_cards = ({card['node_code']: card
+                           for card in rows(target/'profile/data/semantic_cards.jsonl')}
+                          if config.get('boundaries_verified') else {})
         for rid, original in originals.items():
             label = routed[rid].get('knowledge_labeling') or {}
             decision = {'subject_slug':slug, 'record_id':rid, 'original':original,
@@ -254,6 +331,19 @@ def review_plan(out, config):
                         item.update(request_id=request_id,main_tags=c['path'],
                                     source=source if isinstance(source,str) else json.dumps(source,ensure_ascii=False),
                                     taxonomy_context={'exact_path_exists':True,'path_names':c['path_names'],'children_names':c['children_names']})
+                        if semantic_cards:
+                            item['taxonomy_context']['node_semantic_cards'] = [
+                                {'node_code': code, 'path': index[code]['path'],
+                                 'semantic_card': semantic_cards[code]['semantic_card'],
+                                 'boundary_status': ('empty_boundary_fallback' if semantic_cards[code].get('provenance') == 'empty_boundary_fallback'
+                                                     else 'model_generated_unreviewed' if config.get('boundary_review_mode') == 'off'
+                                                     else 'model_reviewed')}
+                                for code in index[c['codes'][-1]]['chain_codes']]
+                            decision.setdefault('empty_boundary_codes_in_candidates', [])
+                            for context in item['taxonomy_context']['node_semantic_cards']:
+                                if (context['boundary_status'] == 'empty_boundary_fallback'
+                                        and context['node_code'] not in decision['empty_boundary_codes_in_candidates']):
+                                    decision['empty_boundary_codes_in_candidates'].append(context['node_code'])
                         items.append(item);decision['review_request_ids'].append(request_id)
                     decision.update(status='pending_review',candidates=candidates)
             decisions.append(decision)
@@ -388,15 +478,35 @@ def export(args):
             'count_conserved':True,'content_policy':'only main_tags/related_tags updated; absent tag filled from registry',
             'review_policy':'native evidence-gated review; unreasonable receives independent counter-review',
             'threshold':config['threshold'],'level_range':[config['min_depth'],config['max_depth']]}
+    if config.get('require_semantic_boundaries'):
+        report['semantic_boundaries'] = {
+            'failure_policy': config.get('boundary_failure_policy', 'strict'),
+            'review_mode': config.get('boundary_review_mode', 'strict'),
+            'model_reviewed': config.get('boundary_model_reviewed', config.get('boundary_review_mode', 'strict') == 'strict'),
+            'empty_boundary_nodes': config.get('boundary_fallback_nodes', 0),
+            'quality_degraded': config.get('boundary_quality_degraded', False),
+            'mounted_with_empty_boundary_in_candidates': sum(
+                d['status'] == 'mounted' and bool(d.get('empty_boundary_codes_in_candidates')) for d in audit),
+            'empty_boundary_is_semantic_approval': False,
+        }
     dump(args.out/'SUMMARY.json',report)
     return report
 
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
-    p.add_argument('action',choices=('prepare','route','review','export'))
+    p.add_argument('action',choices=('prepare','generate-boundaries','verify-boundaries','route','review','export'))
     p.add_argument('--out',type=Path,required=True)
-    p.add_argument('--input',type=Path)
+    p.add_argument('--input',type=Path,action='append',help='Repeat to join cleaned dictionary/important records at mounting')
+    p.add_argument('--require-cleaned', action='store_true', help='Require hash-bound pass-only stage04 exports')
+    p.add_argument('--require-boundaries', action='store_true', help='Block routing until full-tree generated boundaries pass verification')
+    p.add_argument('--boundary-context-bytes', type=int, default=50000)
+    p.add_argument('--boundary-failure-policy', choices=('strict', 'empty'), default='strict')
+    p.add_argument('--boundary-review-mode', choices=('strict', 'off'), default='strict',
+                   help='Off skips boundary model review only; identity checks and final path review remain')
+    p.add_argument('--boundary-rewrite-rounds', type=int, default=2)
+    p.add_argument('--boundary-reuse-root', type=Path)
+    p.add_argument('--boundary-cache-dir', type=Path, help='Save and automatically reuse checksum-verified taxonomy assets')
     p.add_argument('--taxonomy',type=Path)
     p.add_argument('--taxonomy-dir',type=Path,default=ROOT.parent/'Books_textbooks_cleaning_pipeline/taxonomy')
     p.add_argument('--registry',type=Path,default=REGISTRY)
@@ -415,7 +525,7 @@ def main():
     p.add_argument('--retry-failed-reviews',action='store_true')
     a=p.parse_args()
     a.out=a.out.resolve()
-    if not 0<a.threshold<=1 or not 1<=a.min_depth<=a.max_depth or a.max_related<0 or a.limit<0 or min(a.workers,a.timeout,a.max_tokens)<1:
+    if not 0<a.threshold<=1 or not 1<=a.min_depth<=a.max_depth or a.max_related<0 or a.limit<0 or min(a.workers,a.timeout,a.max_tokens,a.boundary_context_bytes)<1 or not 0<=a.boundary_rewrite_rounds<=5:
         p.error('Invalid depth, score, worker or budget setting')
     if a.action=='prepare':
         if not a.input:p.error('--input required for prepare')
@@ -424,7 +534,8 @@ def main():
         import fcntl
         with (a.out/'mounting.lock').open('a') as lock:
             fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
-            result={'route':route,'review':review,'export':export}[a.action](a)
+            result={'generate-boundaries':generate_boundaries,'verify-boundaries':verify_boundaries,
+                    'route':route,'review':review,'export':export}[a.action](a)
     print(json.dumps(result,ensure_ascii=False))
 
 

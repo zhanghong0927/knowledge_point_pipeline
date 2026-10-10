@@ -148,10 +148,13 @@ def plan(config, v):
 
     approved_books = v.get("approved_books", "")
     if config["track"] == "dictionary" and config.get("dictionary_approval", {}).get("enabled", True):
+        from adapters.approve_dictionary_books import validate_families
+        families = validate_families(config.get("dictionary_approval", {}).get("allowed_families", ["entry_prose"]))
         approved_dir = run / "02_structure/dictionary_approval"
         approved_books = str(approved_dir / "approved_books.json")
         task(tasks, "approve_dictionary_books", [py, ROOT / "adapters/approve_dictionary_books.py",
-             "--books", books_path, "--classification", classified, "--out", approved_dir],
+             "--books", books_path, "--classification", classified, "--out", approved_dir,
+             "--allowed-families", *families],
              [books_path, classified / "results", classified / "DONE.json"],
              [approved_books, approved_dir / "report.json"])
         # Native dictionary verification produces this marker; important-book verification uses a different schema.
@@ -163,14 +166,26 @@ def plan(config, v):
         source = extraction / "source_prepared"
         task(tasks, "prepare_fullbook", [py, dictionary / "portable_pipeline.py", "prepare", "--books",
              approved_books, "--out", source], [approved_books], [source / "books.json"])
-        task(tasks, "extract_fullbook", [py, dictionary / "src/run_fullbook_v5.py", "--manifest", source / "books.json",
+        extraction_options = config.get("dictionary_extraction", {})
+        allow_partial = extraction_options.get("allow_partial", False)
+        if not isinstance(allow_partial, bool):
+            raise ValueError("dictionary_extraction.allow_partial must be boolean")
+        round_workers = extraction_options.get("round_workers", [1024, 256, 64])
+        if (not isinstance(round_workers, list) or len(round_workers) != 3
+                or any(type(value) is not int or value <= 0 for value in round_workers)):
+            raise ValueError("dictionary_extraction.round_workers must be three positive integers")
+        task(tasks, "extract_fullbook", [py, ROOT / "adapters/dictionary_extraction.py",
+             *(["--allow-partial"] if allow_partial else []), "--manifest", source / "books.json",
              "--out", extraction / "raw", "--api-url", v["api_root"], "--model", v["model"],
              "--context", config.get("context_limit", 32768), "--server-context", config.get("context_limit", 32768),
              "--output-tokens", config.get("extraction_max_tokens", 8192),
-             "--book-workers", config.get("book_workers", 4)], [source / "books.json"], [extraction / "raw"])
+             "--round-workers", *round_workers,
+             "--book-workers", config.get("book_workers", 4)], [source / "books.json"],
+             [extraction / "raw", extraction / "raw/HANDOFF.json", extraction / "raw/UNRESOLVED.jsonl"])
         task(tasks, "verify_extraction_sources", [py, dictionary / "portable_pipeline.py", "clean-prepare",
              "--books", source / "books.json", "--extraction", extraction / "raw", "--out", extraction / "verified"],
-             [source / "books.json", extraction / "raw"], [extraction / "verified/INPUT.json"])
+             [source / "books.json", extraction / "raw"], [extraction / "verified/INPUT.json",
+              extraction / "verified/MANIFEST.json", extraction / "verified/PREPARED.json"])
         default_input = extraction / "verified/INPUT.json"
         mode = "dictionary"
     elif config.get("important_extraction", "rule") == "llm":
@@ -221,56 +236,124 @@ def plan(config, v):
         default_input = extraction / "knowledge_points.csv"
         mode = "important"
 
-    tasks = stage("04", "Current two-stage cleaning")
+    tasks = stage("04", "Track-specific knowledge cleaning")
     raw = v.get("knowledge_input") or str(default_input)
     mode = config.get("knowledge_input_format", mode)
-    standardized = run / "04_cleaning/input"
-    clean_run = run / "04_cleaning/current"
-    task(tasks, "normalize_fields", [py, ROOT / "adapters/normalize_records.py", "--input", raw,
-         "--format", mode, "--subject", v["subject"], "--slug", v["slug"], "--out", standardized],
-         [raw], [standardized / "records.jsonl", standardized / "trace.jsonl"])
-    task(tasks, "rules", [py, cleaning / "scripts/rule_clean.py", "--input", standardized / "records.jsonl",
-         "--output-dir", clean_run / "01_rule_clean"], [standardized / "records.jsonl"],
-         [clean_run / "01_rule_clean/rule_pass.jsonl"])
-    task(tasks, "model_clean", [py, cleaning / "scripts/model_clean.py", "--input", clean_run / "01_rule_clean/rule_pass.jsonl",
-         "--output-dir", clean_run / "02_model_clean", "--subject", v["subject"],
-         "--subject-description", config["subject"].get("description", ""), "--taxonomy", v["taxonomy"],
-         "--api-url", v["chat_url"], "--model", v["model"], "--workers", config.get("cleaning_workers", 32),
-         "--batch-size", config.get("cleaning_batch_size", 8), "--max-tokens", 8192,
-         "--context-chars", config.get("cleaning_context_chars", 3000), "--response-format", "schema"],
-         [clean_run / "01_rule_clean/rule_pass.jsonl", v["taxonomy"]],
-         [clean_run / "02_model_clean/clean_standard.jsonl", clean_run / "02_model_clean/model_clean_report.json"])
-    task(tasks, "restore_trace", [py, ROOT / "adapters/normalize_records.py", "--restore",
-         "--input", clean_run / "02_model_clean/clean_standard.jsonl", "--trace", standardized / "trace.jsonl",
-         "--subject", v["subject"], "--slug", v["slug"], "--out", run / "04_cleaning/export"],
-         [clean_run / "02_model_clean/clean_standard.jsonl", standardized / "trace.jsonl"],
-         [run / "04_cleaning/export/records.jsonl"])
+    if config["track"] == "dictionary":
+        if mode != "dictionary":
+            raise ValueError("Dictionary cleaning requires verified native dictionary INPUT.json, not normalized standard records")
+        cleaning_books = v.get("cleaning_books") or str(extraction / "source_prepared/books.json")
+        native_clean = run / "04_cleaning/dictionary"
+        task(tasks, "clean_dictionary", [py, ROOT / "adapters/dictionary_cleaning.py",
+             "--input", raw, "--books", cleaning_books, "--out", native_clean,
+             "--export", run / "04_cleaning/export", "--subject", v["subject"], "--slug", v["slug"],
+             "--api-url", v["api_root"], "--model", v["model"],
+             "--workers", config.get("cleaning_workers", 32), "--context-limit", config.get("context_limit", 32768)],
+             [raw, cleaning_books, Path(raw).parent / 'MANIFEST.json', Path(raw).parent / 'PREPARED.json'],
+             [run / "04_cleaning/export/records.jsonl",
+              run / "04_cleaning/export/trace.jsonl", run / "04_cleaning/export/report.json",
+              native_clean / "MANIFEST.json", native_clean / "STATE.json",
+              native_clean / "DISPOSITIONS.jsonl", native_clean / "FINAL_RECORDS.jsonl",
+              native_clean / "SUMMARY.json", native_clean / "REVIEW.jsonl", native_clean / "TECHNICAL_FAILURES.jsonl"])
+    else:
+        standardized = run / "04_cleaning/input"
+        clean_run = run / "04_cleaning/current"
+        task(tasks, "normalize_fields", [py, ROOT / "adapters/normalize_records.py", "--input", raw,
+             "--format", mode, "--subject", v["subject"], "--slug", v["slug"], "--out", standardized],
+             [raw], [standardized / "records.jsonl", standardized / "trace.jsonl"])
+        task(tasks, "rules", [py, cleaning / "scripts/rule_clean.py", "--input", standardized / "records.jsonl",
+             "--output-dir", clean_run / "01_rule_clean"], [standardized / "records.jsonl"],
+             [clean_run / "01_rule_clean/rule_pass.jsonl"])
+        task(tasks, "model_clean", [py, cleaning / "scripts/model_clean.py", "--input", clean_run / "01_rule_clean/rule_pass.jsonl",
+             "--output-dir", clean_run / "02_model_clean", "--subject", v["subject"],
+             "--subject-description", config["subject"].get("description", ""), "--taxonomy", v["taxonomy"],
+             "--api-url", v["chat_url"], "--model", v["model"], "--workers", config.get("cleaning_workers", 32),
+             "--batch-size", config.get("cleaning_batch_size", 8), "--max-tokens", 8192,
+             "--context-chars", config.get("cleaning_context_chars", 3000), "--response-format", "schema"],
+             [clean_run / "01_rule_clean/rule_pass.jsonl", v["taxonomy"]],
+             [clean_run / "02_model_clean/clean_standard.jsonl", clean_run / "02_model_clean/model_clean_report.json",
+              clean_run / "02_model_clean/model_judgments.jsonl"])
+        task(tasks, "restore_trace", [py, ROOT / "adapters/normalize_records.py", "--restore",
+             "--input", clean_run / "02_model_clean/clean_standard.jsonl", "--trace", standardized / "trace.jsonl",
+             "--cleaning-report", clean_run / "02_model_clean/model_clean_report.json",
+             "--subject", v["subject"], "--slug", v["slug"], "--out", run / "04_cleaning/export"],
+             [clean_run / "02_model_clean/clean_standard.jsonl", standardized / "trace.jsonl",
+              clean_run / "02_model_clean/model_clean_report.json", clean_run / "02_model_clean/model_judgments.jsonl"],
+             [run / "04_cleaning/export/records.jsonl", run / "04_cleaning/export/trace.jsonl",
+              run / "04_cleaning/export/report.json"])
 
     tasks = stage("05", "Taxonomy mounting and reviewed standard export")
+    mount = config.get('mounting', {})
+    boundaries = mount.get('boundaries', {})
+    generate_boundaries = boundaries.get('enabled', False)
+    boundary_review_mode = boundaries.get('review_mode', 'strict')
+    boundary_cache = (str(Path(boundaries['cache_dir'].format_map(v)).expanduser().resolve())
+                      if boundaries.get('cache_dir') else None)
+    if boundary_cache and boundaries.get('reuse_from'):
+        raise ValueError('Configure mounting.boundaries.cache_dir or reuse_from, not both')
+    if boundary_review_mode not in ('strict', 'off'):
+        raise ValueError('mounting.boundaries.review_mode must be strict or off')
+    mounting_inputs = mount.get('inputs', ['{run}/04_cleaning/export/records.jsonl'])
+    if not isinstance(mounting_inputs, list) or not mounting_inputs or any(not isinstance(s, str) or not s for s in mounting_inputs):
+        raise ValueError("mounting.inputs must be a nonempty list of cleaned record paths")
+    mounting_inputs = [str(Path(s.format_map(v))) for s in mounting_inputs]
+    if any(not Path(p).is_absolute() for p in mounting_inputs) or len({str(Path(p).resolve()) for p in mounting_inputs}) != len(mounting_inputs):
+        raise ValueError("mounting.inputs must be distinct absolute paths or use {run}/{root}")
     if config.get('hooks', {}).get('mounting'):
+        if generate_boundaries:
+            raise ValueError('Semantic boundaries require the built-in mounting bridge, not a custom hook')
+        if len(mounting_inputs) != 1:
+            raise ValueError("Multiple mounting inputs require the built-in mounting bridge, not a custom hook")
         hook(tasks, "mounting", [run / "05_mounting/mounted_standard.jsonl"],
-             [run / "04_cleaning/export/records.jsonl", v["taxonomy"]])
+             [*mounting_inputs, v["taxonomy"]])
     else:
-        mount = config.get('mounting', {})
         bridge = ROOT/'adapters/mounting_bridge.py'
         mount_dir = run/'05_mounting'
-        cleaned = run/'04_cleaning/export/records.jsonl'
-        command = [py,bridge,'prepare','--input',cleaned,'--out',mount_dir,
+        command = [py,bridge,'prepare','--require-cleaned','--out',mount_dir,
                    '--subject-slug',v['slug'],'--threshold',mount.get('threshold',.85),
                    '--min-depth',mount.get('min_depth',2),'--max-depth',mount.get('max_depth',5),
                    '--max-related',mount.get('max_related',2),'--limit',mount.get('limit',0)]
+        for cleaned in mounting_inputs:
+            command += ['--input', cleaned]
         if v.get('taxonomy'):
             command += ['--taxonomy',v['taxonomy']]
         if v.get('taxonomy_dir'):
             command += ['--taxonomy-dir',v['taxonomy_dir']]
-        task(tasks,'prepare_mounting',command,[cleaned],[mount_dir/'PREPARED.json'])
+        if generate_boundaries:
+            command += ['--require-boundaries', '--boundary-failure-policy', boundaries.get('failure_policy', 'strict'),
+                        '--boundary-review-mode', boundary_review_mode]
+            if boundary_cache:
+                command += ['--boundary-cache-dir', boundary_cache]
+        task(tasks,'prepare_mounting',command,mounting_inputs,[mount_dir/'PREPARED.json'])
         api = ['--api-url',mount.get('api_url') or v['chat_url'],'--model',mount.get('model') or v['model'],
                '--workers',mount.get('workers',16),'--timeout',mount.get('timeout',600),
                '--max-tokens',mount.get('max_tokens',4096)]
         if mount.get('api_key_env'):
             api += ['--api-key-env',mount['api_key_env']]
+        routing_inputs = [mount_dir/'PREPARED.json']
+        if generate_boundaries:
+            boundary_api = ['--api-url', boundaries.get('api_url') or mount.get('api_url') or v['chat_url'],
+                            '--model', boundaries.get('model') or mount.get('model') or v['model'],
+                            '--workers', boundaries.get('workers', mount.get('workers', 16)),
+                            '--timeout', boundaries.get('timeout', mount.get('timeout', 600)),
+                            '--max-tokens', boundaries.get('max_tokens', 8192),
+                            '--boundary-context-bytes', boundaries.get('max_context_bytes', 50000),
+                            '--boundary-failure-policy', boundaries.get('failure_policy', 'strict'),
+                            '--boundary-review-mode', boundary_review_mode,
+                            '--boundary-rewrite-rounds', boundaries.get('rewrite_rounds', 2)]
+            if boundaries.get('reuse_from'):
+                boundary_api += ['--boundary-reuse-root', boundaries['reuse_from']]
+            if boundary_cache:
+                boundary_api += ['--boundary-cache-dir', boundary_cache]
+            if mount.get('api_key_env'):
+                boundary_api += ['--api-key-env', mount['api_key_env']]
+            task(tasks, 'generate_mounting_boundaries', [py, bridge, 'generate-boundaries', '--out', mount_dir, *boundary_api],
+                 [mount_dir/'PREPARED.json'], [mount_dir/'BOUNDARIES_GENERATED.json'])
+            task(tasks, 'verify_mounting_boundaries', [py, bridge, 'verify-boundaries', '--out', mount_dir],
+                 [mount_dir/'PREPARED.json', mount_dir/'BOUNDARIES_GENERATED.json'], [mount_dir/'BOUNDARIES_VERIFIED.json'])
+            routing_inputs.append(mount_dir/'BOUNDARIES_VERIFIED.json')
         task(tasks,'route_mounting',[py,bridge,'route','--out',mount_dir,*api],
-             [mount_dir/'PREPARED.json'],[mount_dir/'ROUTED.json'])
+             routing_inputs,[mount_dir/'ROUTED.json'])
         task(tasks,'review_mounting',[py,bridge,'review','--out',mount_dir,*api],
              [mount_dir/'ROUTED.json'],[mount_dir/'REVIEWED.json',mount_dir/'review_responses.jsonl'])
         task(tasks,'export_mounting',[py,bridge,'export','--out',mount_dir],
@@ -316,6 +399,10 @@ def run_stages(config_path, config, values, stages, resume, retry_failed=False):
                         raise ValueError(f"{key} already ran; use --resume to skip completed tasks")
                     if saved.get("signature") != signature or not all(Path(p).exists() for p in task["produces"]):
                         raise ValueError(f"{key}: command or output changed")
+                    if key in ('04.clean_dictionary', '04.restore_trace'):
+                        sys.path.insert(0, str(ROOT / 'adapters'))
+                        from cleaning_handoff import verify_export
+                        verify_export(Path(task['produces'][0]))
                     print(f"SKIP {key}", flush=True)
                     continue
                 if saved.get("status") == "running" or (saved.get("status") == "failed" and not retry_failed):

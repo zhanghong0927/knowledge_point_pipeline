@@ -1,32 +1,42 @@
 # 知识点全流程处理管线
 
-版本：2026-10-08。面向多个学科，将书目筛选、书籍质量与结构分类、知识点抽取、知识点清洗、知识树挂载、去重与合并组织成六个阶段。
+版本：2026-10-10。面向多个学科，将书目筛选、书籍质量与结构分类、知识点抽取、知识点清洗、知识树挂载、去重与合并组织成六个阶段。
 
 ## 文档导航
 
 - 本README：当前能力、配置、运行方法和恢复约束。
 - [技术说明：模块与数据流转](docs/技术说明_模块与数据流转.md)：各模块职责、输入输出、字段与ID契约、状态和统计口径。
-- [机械MD全流程测试记录](docs/机械MD全流程测试记录_20261008.md)：本次真实测试逐模块的输出文件、数量、修复和验收。
-- [本次最终70条知识点](runs/mechanical_e2e_20261008/important/06_dedup_after_review_retry/retained.jsonl)：复测后的最终结果，不是首轮68条基线。
+- [辞海线路分离与挂载合流](docs/辞海线路分离与挂载合流.md)：第一类准入配置、辞海原生清洗及两路挂载入口。
+- [机械MD全流程测试记录](docs/机械MD全流程测试记录_20261008.md)：2026-10-08历史联调的逐模块产物、数量及验收。
+- [历史机械MD最终70条知识点](runs/mechanical_e2e_20261008/important/06_dedup_after_review_retry/retained.jsonl)：仅在保留历史运行目录的环境可用，不是最新辞海结果。
+- [辞海0611端到端实测](docs/技术说明_模块与数据流转.md#22-2026-10-10交通运输辞海端到端实测)：最新各阶段数量、耗时、partial状态、抽检及开发机产物位置。
 
 ## 当前状态
 
-本版已解压现有工具包、接入当前两阶段清洗代码，并增加统一计划/调度入口、审核书单转换、辞海分类放行、字段转换、首次挂载及标准导出。**六阶段代码接口已衔接，重要书籍LLM分支已完成机械MD真实小样本联调。** 必须填写真实输入、依赖环境和模型配置后再执行，不能将小样本测试视为全量运行或语义验收。
+本版已接入统一调度、审核书单转换、辞海第一类准入、分轨清洗、知识树边界生成与复用、挂载及去重。**六阶段接口已衔接，辞海小批已从0611原始书单一次启动，自动跑至挂载复核和去重；重要书籍N1保留此前机械MD真实联调证据。** 必须填写真实输入、依赖环境和模型配置后再执行，不能将小样本测试视为全量运行或语义验收。
+
+2026-10-09调整：辞海默认仅放行第一类 `entry_prose`，第4步复用辞海原生 v22/v9/V46 清洗；重要书籍清洗保持不变。第5步可配置同学科多路清洗结果合流，不再要求等到第6步才汇合。该调整不改变抽取或清洗模型提示词，也不表示语义质量已合格。
+
+2026-10-10调整：允许显式接纳抽取partial的已验证子集，未解决项隔离；新示例保留边界生成、关闭边界语义复核，最终知识点路径复核仍执行。补充独立分类树资产缓存及8卡配置，旧配置的默认行为不被静默替换。
 
 当前约定：PDF默认符合质量要求，不执行独立PDF质量筛选；保留可选PDF版式辅助。重要书籍仅处理N1/N3，N2/N4/N5暂不纳入开发和抽取范围。
 
-初次整合以离线验证为主；2026-10-08已使用用户部署的Qwen3.8-27B完成机械MD小样本实测，详见 [真实端到端报告](runs/mechanical_e2e_20261008/END_TO_END_REPORT.md)。一份重要书籍完成全流程并得到70条最终记录，另一份辞海资料被审核为Review，未人为放行。离线验证结果另见 `VALIDATION.json`。
+2026-10-10交通运输辞海试跑取35条未改写的0611原始行，其中3本目标辞海及32条固定种子对照。3本目标进入分类，2本第一类进入全书抽取、1本待复核；3095条已验证候选经清洗保留2976条，挂载通过1242条，去重后1222条。两本抽取均为partial，83个未解决项另存。全流程一次启动、无手动中间交接，耗时约115分钟；生产代码和配置未在运行中更改，未修改正式交付。
+
+历史2026-10-08机械MD联调得到70条最终记录，另一份辞海资料停在MD审核REVIEW，未人为放行；见[历史端到端报告](runs/mechanical_e2e_20261008/END_TO_END_REPORT.md)。`VALIDATION.json`和上述历史运行路径不替代最新辞海的`acceptance/ACCEPTANCE.json`。运行数据未提交到Git，最新开发机路径见技术说明第2.2节。
 
 | 路线/能力 | 当前验证状态 |
 | --- | --- |
 | 重要书籍N1，LLM抽取→清洗→挂载→去重 | 已完成1份完整现有MD的真实联调 |
-| 重要书籍N1/N3规则抽取 | 接口及本地样例通过；本次真实全流程选择LLM路线 |
-| 辞海分类、全书抽取和清洗交接 | 代码已接通、离线验证通过；本次辞海样本停在MD审核REVIEW，未进入后续抽取 |
+| 重要书籍N1/N3规则抽取 | 接口及本地样例通过；历史真实全流程选择N1的LLM路线，N3真实端到端仍未验证 |
+| 辞海0611筛选→分类→全书抽取→清洗→挂载→去重 | 交通运输小批一次启动走完；2本partial，最终1222条，83个未解决项隔离；技术衔接通过，不代表语义质量全部通过 |
+| 全树边界生成及资产复用 | 1667节点，1641个未审模型描述、26个空边界兜底；独立复用验证新增模型调用为0 |
+| 8卡配置 | 常规API并发上限256，抽取256→64→16；离线执行链路已验证，实际吞吐未测 |
 | PDF质量筛选、N2/N4/N5、低产补抽 | 不在当前处理范围 |
 
 当前接收已解析MD。PDF只作可选版式辅助，不承担PDF/EPUB转MD。源数据范围、筛选口径和模型服务均需要配置；小样本成功不等于全库召回率或人工准确率合格。
 
-**最新串联评估（不调用模型接口）：三个分支的内部输入输出依赖已完整，第5步挂载及标准导出已接通。** 详细记录见 [离线串联报告](validation_logs/offline_flow/report.md)；测试中的模型响应为模拟值，不代表真实服务验证。
+离线接口验证与真实运行分开记录：开发机七套回归共513项通过、3项缺历史样本跳过；历史离线串联报告`validation_logs/offline_flow/report.md`需保留对应运行目录，其中模型响应为模拟值，不代表真实服务验证。最新24条最终结果的原文对照发现1条互参标记残留、1条挂载过窄风险，其余22条未发现明显问题；这是Codex辅助检查，不是独立人工审核或全量准确率。
 
 ## 1. 六阶段流程
 
@@ -34,25 +44,27 @@
 原始全量书目 CSV / 已有学科书单
   01 书目筛选：学科召回、元数据初筛、重要书籍精筛、两轨拆分
   02 MD质量审核 → 审核书单转books.json → MD主体结构分类
-       辞海轨：entry_prose / fixed_fields / text_commentary 等
+       辞海轨：分类为entry_prose / fixed_fields / text_commentary等，默认只准入entry_prose
        重要书籍轨：N1 / N3 / OTHER / needs_review / technical_failed
   03 知识点抽取
        辞海轨：完整MD分块模型抽取 + 原文范围核验
        重要书籍轨：只放行N1/N3，选择rule本地规则或llm逐书模型抽取
-  04 当前清洗流程：字段规范化 → 通用规则 → 模型清洗 → 恢复来源与tag
-  05 知识树挂载：整理已有边界 → 首次路由 → 路径复核 → 标准导出
+  04 分轨清洗
+       辞海轨：v22名称格式 → v9学科范围 → V46正文/定义/对应检查 → 标准导出
+       重要书籍轨：字段规范化 → 通用规则 → 模型清洗 → 恢复来源与tag
+  05 同学科清洗结果合流 → 按配置生成/复用全树边界并校验资产 → 首次路由 → 路径复核 → 标准导出
   06 去重与合并：同学科多个输入 → 同完整主路径同名去重 → 验收
 ```
 
-两条抽取轨道分别运行。合并发生在第6步，按学科汇合，不把所有学科混在一起做去重。一个知识点是否符合学科范围由第4步审核；具体挂载路径由第5步判断，二者不是同一任务。
+两条轨道独立抽取、独立清洗。第5步可通过 `mounting.inputs` 汇合两路已通过的清洗结果，第6步再做同分支去重；旧单输入挂载和多个已挂载结果的去重接口仍保留。不把所有学科混在一起处理。一个知识点是否符合学科范围由第4步审核；具体挂载路径由第5步判断，二者不是同一任务。
 
 | 阶段 | 现有模块 | 当前接入情况 | 模型/GPU需求 |
 | --- | --- | --- | --- |
 | 01 书目筛选 | `modules/book_screening` | 已接原包1–4子阶段 | 学科召回及硬规则本地执行；重要书籍精筛调用模型 |
 | 02 质量与分类 | `book_screening` 的5–7子阶段、书单转换适配器、两轨分类模块 | 审核结果自动转书单；不做PDF质量筛选 | 模型远端推理；本地CPU整理书单和读取版式 |
 | 03 抽取 | `dictionary`、`important_books`、`important_llm` | 辞海模型抽取；重要书籍N1/N3支持rule/llm二选一 | rule使用CPU；llm使用远端服务和本地tokenizer |
-| 04 清洗 | `modules/cleaning` | 当前规则＋模型流程已接入 | 规则本地CPU；模型审核调用接口 |
-| 05 挂载 | `adapters/mounting_bridge.py`、`modules/mounting` | 标准输入、知识树适配、首次挂载、复核与标准导出已接入 | 准备阶段本地；挂载和复核调用模型 |
+| 04 清洗 | `modules/dictionary`、`modules/cleaning` | 辞海原生分阶段清洗；重要书籍原规则＋模型流程 | 格式处理本地CPU；审核调用模型接口 |
+| 05 挂载 | `adapters/mounting_bridge.py`、`modules/mounting` | 标准输入、可配置全树边界生成/缓存复用、首次挂载、路径复核与导出 | 资产准备/校验本地；边界缓存未命中时生成调用模型，挂载和路径复核调用模型 |
 | 06 去重合并 | `modules/dedup` | 已接默认长度优先模式，支持同学科多个输入 | 长度模式本地CPU；原包另有模型质量模式 |
 
 执行端不要求本地GPU，模型可部署在其他机器。模型服务器的显存、窗口与并发需要单独核实。本版不运行BM25或Embedding；这些可作为后续挂载候选召回扩展，不是当前清洗的强制关卡。
@@ -70,6 +82,7 @@ knowledge_point_pipeline/
 ├─ docs/                         # 模块技术说明、逐模块真实测试记录
 ├─ configs/
 │  ├─ pipeline.example.json      # 单学科、单轨道配置
+│  ├─ pipeline.8card.example.json # 8卡辞海路线；API并发256，抽取256/64/16
 │  ├─ pipeline.important_llm.example.json # 重要书籍LLM分支
 │  ├─ important_llm_services.example.json # 原生LLM服务/tokenizer配置
 │  ├─ taxonomy_registry.json     # 学科别名与树文件映射
@@ -79,9 +92,14 @@ knowledge_point_pipeline/
 │  ├─ normalize_records.py       # 标准化字段/ID、来源侧文件、清洗后恢复
 │  ├─ screened_books_to_manifest.py # PASS审核书单转books.json，保存未匹配清单
 │  ├─ approve_dictionary_books.py # 分类完成后生成approved_books.json，复核证据与MD哈希
+│  ├─ dictionary_extraction.py   # 原生抽取交接与partial已验证子集导出
+│  ├─ dictionary_cleaning.py    # 辞海原生清洗入口与通过项标准导出，保留原文证据
+│  ├─ cleaning_handoff.py       # 通过项出口与原生证据哈希核验
 │  ├─ important_llm_io.py        # N1/N3清单转LLM协议，原生交接快照转统一清洗输入
 │  ├─ mounting_assets.py         # 知识树格式统一、原节点路径映射
 │  ├─ mounting_bridge.py         # prepare / route / review / export
+│  ├─ mounting_boundaries.py     # 全树边界生成/资产校验及运行卡片安装
+│  ├─ mounting_tree_cache.py     # 独立分类树资产发布、严格匹配与复用
 │  └─ important_route.py         # 包装原N1/N3路由函数为CLI
 ├─ tests/test_integration.py
 ├─ modules/
@@ -124,7 +142,7 @@ python -m unittest discover -s tests -v
 
 OSS下载依赖、tokenizer依赖分别按需求安装；OCR/EPUB转MD和模型服务不在包内。不要为了运行初版去安装模型权重或启动全量推理。
 
-复制 `configs/pipeline.example.json` 为本地配置并修改：
+复制 `configs/pipeline.example.json` 为本地配置并修改；当前8卡服务改用 `configs/pipeline.8card.example.json`，不要直接沿用旧1024并发示例：
 
 - `subject`：学科代码、中文名及范围说明。一份配置只处理一个学科。
 - `track`：`dictionary` 或 `important`。同学科两轨使用不同运行目录。
@@ -138,11 +156,57 @@ OSS下载依赖、tokenizer依赖分别按需求安装；OCR/EPUB转MD和模型�
 - `paths.dictionary_scope`：辞海分支的v9学科范围配置，可按书单行逐本提供scope_config。
 - `paths.books`：已有标准书单时，将 `book_manifest.enabled=false` 后直接读取此文件。
 - `dictionary_approval.enabled`：默认为true，第2步分类完成后自动生成approved_books并接入第3步。
+- `dictionary_approval.allowed_families`：默认 `["entry_prose"]`；第一类包括旧O1/O2。显式加入其他已知结构族可恢复旧准入口径，不绕过原文证据校验。
 - `paths.approved_books`：仅在 `dictionary_approval.enabled=false` 时使用的外部放行书单。
+- `dictionary_extraction.allow_partial`：旧默认false，未全部完成即停止；8卡示例为true，仅将无技术失败、无待处理HTTP504且通过原文定位校验的partial子集送入清洗。逐书状态仍是partial，未解决项另存，不自动算通过。
+- `dictionary_extraction.round_workers`：首轮及两轮重试的请求并发，必须为三个正整数；旧默认 `[1024, 256, 64]`，8卡示例为 `[256, 64, 16]`，不是同时处理书籍数。
 - `paths.taxonomy`：当前学科的真实知识树。
 - `paths.classification_model_config`：结构分类专用JSON模型配置。
 - `model.api_url/model.name`：清洗与抽取使用的真实服务和模型ID。分类JSON中的模型设置须同步填写。
-- `paths.knowledge_input`：可选，直接从已有抽取数据启动第4步；配合 `knowledge_input_format=standard/dictionary/important`。
+- `paths.knowledge_input`：可选，直接从已有抽取数据启动第4步。辞海必须提供原生已核验 `INPUT.json`，格式为dictionary，不能使用丢失原文范围的standard记录替代。
+- `paths.cleaning_books`：辞海只执行第4步时，可指定与输入相匹配的原生书单（含MD、学科及scope_config）；默认使用第3步source_prepared/books.json。
+- `mounting.inputs`：可选，同一学科已清洗JSONL的非空路径数组；默认只读取本次04_cleaning/export/records.jsonl。多输入需使用内置挂载入口；见合流说明。
+- `mounting.boundaries.enabled`：新示例为true，第5步自动生成全树语义边界并校验运行资产后再挂载。未含该配置的旧配置保持原行为，只读取已有树信息；false明确关闭补充生成。
+- `mounting.boundaries.workers/max_tokens/max_context_bytes/timeout`：生成及复核的并发、输出token上限、原生上下文UTF-8字节上限和请求超时；字节数不等于token数，需要匹配实际服务窗口。可单独配置api_url/model，否则沿用挂载服务。
+- `mounting.boundaries.failure_policy`：`strict`表示有未通过描述即停止（旧配置默认）；`empty`表示有限修复后将未解决分组及受影响后代的语义描述置空，保留原节点名称、路径、身份并继续挂载。新示例采用用户指定的`empty`。空边界不是语义复核通过。
+- `mounting.boundaries.review_mode`：未配置时保持旧默认`strict`，执行同级及跨层模型复核；新示例按当前运行口径设为`off`，仅逐层生成卡片，跳过边界语义复核和语义重写。字段、身份、完整覆盖和实际生成证据仍校验，技术失败仍可按`failure_policy=empty`兜底；最终知识点路径复核不取消。未审卡片单独统计为`unreviewed_nodes`，路径复核上下文标为`model_generated_unreviewed`，不冒称已通过模型审核。
+- `mounting.boundaries.rewrite_rounds`：strict模式下语义修订及跨层重写上限，默认2，可设0至5；每次请求仍最多三次结构重试。strict模式多目标组失败时，自动逐目标生成（不减少同级和祖先上下文），合并后还须联合复核，不接受advisory结果。off模式不执行语义复核或由其触发的重写，仍处理技术/结构失败。
+- `mounting.boundaries.reuse_from`：可选，上一轮`05_mounting`的绝对目录。只复用源树与提示词相同、当前祖先上下文相同且原始生成/复核证据仍通过的组；失败、空边界、上下文变化的组重新处理。旧目录只读，改动和历史复核保存在新目录。
+- `mounting.boundaries.cache_dir`：可选的独立分类树资产库，可用`{run}`或`{root}`占位。新示例保存到运行目录外的`taxonomy_assets/`。不能与`reuse_from`同时使用。首次运行在边界资产校验后发布，后续自动查找同一学科、原树、生成输入、模型、服务地址、上下文及输出预算、重写/超时/并发配置、边界模式、失败政策及脚本版本的资产；命中时不再调用边界模型，但仍执行本次完整资产核验和知识点路径复核。改变这些配置会生成新版本；同版本文件损坏则停止，不静默放行或覆盖。
+
+### 保存和复用补好的分类树
+
+分类树资产位于`cache_dir/{subject_slug}/{asset_key}/`，包含`taxonomy_original.json`、补入语义字段但不改节点身份的`taxonomy_enriched.json`、`boundaries/`中的卡片与完整生成证据，以及`MANIFEST.json`校验清单。不包含知识点输入或API密钥。新运行只需继续指定原树`paths.taxonomy`及同一个`cache_dir`，无需手动找旧运行目录或再次补边界。
+
+`taxonomy_enriched.json`保留规范化的code、名称、路径及父子结构，各节点增加`semantic_boundary`、`semantic_card`和`boundary_status`。`model_generated_unreviewed`只表示已生成，`empty_boundary_fallback`仍为空；缓存不是人工审核，也不会把空边界升级为已审核。发布只接受约定的边界证据文件，以新版本目录原子完成，已有版本不覆盖。同键并发生成不同内容时，后发布结果另存`{asset_key}--{content_hash}`，本轮报告指向自己的内容版本；后续自动命中首个已验证版本。资产库与书目中间结果分开：从0611重新跑时，仅复用树，不复用旧筛选、抽取或清洗结论。
+
+### 挂载前自动补充语义边界
+
+开启后，第5步依次执行：`prepare_mounting` → `generate_mounting_boundaries` → `verify_mounting_boundaries` → `route_mounting` → `review_mounting` → `export_mounting`。
+
+生成复用原生 `modules/mounting/pipeline/generate_semantic_boundaries.py`，保留节点code、名称、路径、父子关系及原树已有边界，按父层到子层生成。覆盖全树，不按知识点样本仅补少数节点；`strict`执行同级及逐节点祖先一致性复核，`off`不调用这些复核步骤。
+
+`BOUNDARIES_GENERATED.json`仅表示生成进程已结束，不表示通过。`review_mode`决定是否做边界语义复核，`failure_policy`决定失败能否以空描述继续，二者独立：
+
+| 配置 | 运行卡片与验收含义 |
+| --- | --- |
+| review_mode=strict，failure_policy=strict | 完整覆盖且同级/逐祖先复核全部通过后，安装`cross_validated_cards.jsonl` |
+| review_mode=strict，failure_policy=empty | 安装`runtime_cards.jsonl`；非空描述须复核通过，未解决项及受影响后代为空兜底 |
+| review_mode=off | 安装`runtime_cards.jsonl`；非空描述标为`model_generated_unreviewed`，只验原始生成证据、结构、身份与覆盖；若failure_policy=strict则技术失败仍停止，empty才允许空兜底 |
+
+`BOUNDARIES_VERIFIED.json`确认运行资产、卡片证据和兜底一致性，不把off或空边界称为语义审核通过。报告分开给出`verified_nodes`、`unreviewed_nodes`与`fallback_nodes`，存在空兜底时标记`boundary_quality_degraded`。首次路由与知识点路径复核读取相同卡片；空卡片仅按原树名称及路径判断，不补造描述。关闭边界语义复核不关闭最终知识点路径复核；模型复核通过也不等于专家审核。
+
+review_mode=strict时，跨层冲突会将后代和冲突祖先同时带入修订，避免只清空后代而保留错误祖先；变化祖先的后代会在新上下文重新复核，仍正确的内容不重写。次数耗尽后，failure_policy=strict保留待修订并停止，empty保存`boundary_fallbacks.json`并将冲突双方分组及受影响后代置空。分组最多3个目标，不能把某一旧联合复核结论挪给已改变的卡片。`group_history/`与`cross_history/`保留替换前记录。off模式不执行这套语义冲突修订；原有知识点ID、正文、source和分类树均不会因兜底改变。
+
+边界生成必须服从原树，不为消除描述矛盾改动节点。没有明确依据时，允许`excludes=[]`或`cross_boundary_rule=""`，不能强造排除项或复制父节点的“本节点”指代。这与失败后整张描述置空的兜底不同：正常卡片仍有定义、范围及非空收录项；strict要求语义复核，off保留未审状态。
+
+strict模式逐节点跨层复核使用`review_schema=2`，同时检查卡片自身矛盾和祖先约束矛盾，并提供祖先真实子节点上下文。明确矛盾必须附原字段的精确引用；父范围包含子范围、不同条件下的收录与排除不直接作为阻断理由。仅表述歧义写入`cross_warnings.json`，不自动重写；明确冲突写入`cross_issues.json`并执行有界修复。自身冲突不要求虚构一个祖先冲突。复核通过仍只是模型结论，需要按原树及完整条件抽检；不得把旧模型通过样本当作语义正确的标准答案。
+
+开启边界时，首次路由使用`--semantic-card-chars 0`保留完整卡片，避免旧700字符限制截掉收录/排除条件；旧独立路由默认仍为700。验收核对实际原生生成记录及原树身份；strict还核对同级和逐祖先复核记录，off不得要求不存在的语义复核记录或冒称通过。清洗证明的学科还必须与记录tag及目标学科一致，不能通过回填tag改换学科。
+
+生成任务技术中断后，显式`--retry-failed`可让原生生成器按其严格输入/配置/代码指纹恢复已有检查点。若中断发生在卡片激活过程中，可能因资产哈希不一致阻止重试；保留现场，使用新目录，不删除证据或直接放行。
+
+重复前面的书目阶段没有必要：使用新的`paths.run`，把`mounting.inputs`指向上一轮`04_cleaning/export/records.jsonl`，执行`--stages 05`即可。仍要求原清洗出口及其证据哈希通过检查；不会修改原运行目录、原知识点ID或正文。不能在旧运行目录改配置后续跑。自定义`hooks.mounting`与自动边界生成不能同时启用。
 
 `paths` 中相对路径以配置文件所在目录为基准；可以使用 `{root}` 指向整合目录。`books.json` 里面的MD/PDF/scope路径按照原模块要求填写绝对路径。只复制根目录至其他环境即可携带逻辑代码，但必须重配数据、模型、知识树及依赖。
 
@@ -168,7 +232,7 @@ python pipeline.py run --config configs/my_subject.json --stages 05,06
 python pipeline.py run --config configs/my_subject.json --stages 01,02,03,04,05,06
 ```
 
-`--resume` 只跳过调度器记录为completed且命令/产物检查通过的任务。修复失败原因后可显式加 `--retry-failed` 重试failed任务，保存上一轮失败记录；它不会删除已有输出，是否能原地恢复仍由各模块决定。running任务仍拒绝重入。调度器完成状态只代表进程结束且约定文件存在，不等于语义准确，也不代替各包验收报告。
+`--resume` 只跳过调度器记录为completed且命令/产物检查通过的任务；第4步清洗出口还需验证其绑定的原生证据哈希。修复失败原因后可显式加 `--retry-failed` 重试failed任务，保存上一轮失败记录；它不会删除已有输出，是否能原地恢复仍由各模块决定。running任务仍拒绝重入。调度器完成状态不等于语义准确，也不代替各包验收报告。
 
 整合层目前尚未对所有任务的全部输入、输出内容与代码统一计算续跑指纹；命令相同且文件存在不足以证明文件内容未改动。不要改动原输入或手动混拼不同批次；原生模块有自己的更严格检查点约束。外部手动修复失败任务后，调度状态不会自动接纳该结果，需要按模块恢复流程处理或使用新运行目录。
 
@@ -245,6 +309,7 @@ python adapters/screened_books_to_manifest.py \
 ├─ other.jsonl               # 当前结构不适配，不代表书籍质量差
 ├─ review.jsonl              # 结构、词头、MD或适配性仍有疑点
 ├─ technical_failed.jsonl    # 分类失败、文件变化、记录缺失、校验失败
+├─ not_selected.jsonl        # 已确认但不在allowed_families中的结构，不算技术失败
 ├─ approval_audit.jsonl      # 全量逐书决定及分类证据
 └─ report.json               # 输入/放行/分流数量与校验口径
 ```
@@ -252,7 +317,7 @@ python adapters/screened_books_to_manifest.py \
 默认仅放行同时满足以下条件的书籍：
 
 - 原分类 `status` 和 `routing_status` 均为 `sample_supported`。
-- family属于entry_prose、fixed_fields或text_commentary；head_position为inline、standalone或both。
+- family在allowed_families中，默认仅entry_prose；head_position为inline、standalone或both。
 - md_quality_status为no_problem_reported_in_samples，applicability_status为model_considered_compatible。
 - 分类书单与输入书单一致，MD哈希未变，保存的分类结果可由原响应和原MD证据重新验证。
 
@@ -332,7 +397,11 @@ python pipeline.py run --config configs/my_important_llm.json --stages 03,04
 
 新分支主要产物：`03_extraction/llm_work`（完整原生结果）、`llm_delivery`（带checksums的冻结交接）、`llm_clean_input`（统一输入和ID映射）。保留这三个目录以便回溯，不只拷贝最终records后删除证据。
 
-### 04 当前清洗流程
+### 04 分轨清洗
+
+辞海由 `adapters/dictionary_cleaning.py` 调用原包 `portable_pipeline.run_cleaning()`：v22名称格式、v9学科范围、V46正文选择/定义分离/对应检查。只给名称筛选的review补少量正文；完整raw_content及source_context不在前置标准化中压缩或丢弃。原生REVIEW、TECHNICAL_FAILURES和DISPOSITIONS单独保存，只有各层通过项进入export/records.jsonl。ID和source保持原值，完整抽取记录及原生清洗记录保存在trace中。原生清洗当前仅支持无鉴权端点。
+
+重要书籍继续使用以下原流程：
 
 1. `normalize_records.py`：JSON/JSONL/CSV转标准JSONL。纯英文name在英文名称槽为空时移入knowledge_point，明确为英文的正文移到英文字段；有冲突保留供模型判断。原文无中文不补译中文。混合中英名称不强行拆分。
 2. 当前规则清洗：确定性格式错误删除，安全清理标题标记、序号、布局引用、简繁与字符格式；模糊名称保留给模型。
@@ -341,9 +410,9 @@ python pipeline.py run --config configs/my_important_llm.json --stages 03,04
 
 使用标准文本字段和explanation/raw_content作为证据，不将所有额外字段送模型。来源对象的标题用于模型输入，原对象在清洗导出时恢复。已存在ID统一转字符串，以满足去重包；没有ID的行按学科、轨道、书目、记录内容及位置生成稳定ID，并记录映射。相同ID冲突直接报错，不擅自覆盖。
 
-**清洗包与辞海包内的清洗不能默认叠加。** 辞海包本来还有v22名称、v9学科、v46正文溯源清洗。本初版默认在辞海 `clean-prepare` 后转入当前两阶段清洗，避免两套名称/学科审核都自动跑一次。若要求严格原文片段输出，选择辞海原生clean路径进行单独实验，随后通过标准化接口接挂载，不默认再跑两阶段模型。
+**两套清洗不叠加。** 辞海clean-prepare后只进入原生v22/v9/V46，重要书籍只进入modules/cleaning；两者分别导出相同标准接口后才在挂载入口汇合。
 
-当前模型清洗允许截取和压缩，证据重合校验不是逐字精确原文校验。恢复source也不意味着新定义的全部字符仍对应原span。需要原文级交付时，应补清洗后精确证据检查或采用v46原生分支。
+重要书籍当前模型清洗允许截取和压缩，证据重合校验不是逐字精确原文校验。恢复source也不意味着新定义的全部字符仍对应原span。辞海使用V46原文范围选择，但可追溯也不等于定义选取的语义质量合格。
 
 Review文件独立保存；沿用当前统计口径时计入未保留/删除，但不能清空复核证据。技术错误始终单列。历史“语言误删恢复”脚本作为审计工具保留，本版预先规范语言字段，不默认对新批次执行历史恢复规则。
 
@@ -444,11 +513,26 @@ python adapters/mounting_bridge.py export --out runs/mounting_smoke_20_20261008
 
 初版整合层默认分类4、清洗32并发、清洗batch-size=8；不同学科和轨道顺序运行，由各模块内部并发。它们不是全流程统一限流器。
 
-辞海全书抽取原包内部轮次固定为 **1024→256→64**，`book_workers`只是同时处理书籍数，不会把HTTP请求并发限制到4。后续重试轮依赖 `/metrics`；分类可能要求 `/tokenize` 和 `/v1/models`。内置新挂载接口默认16并发，不调用历史1024并发边界生成总runner。真实部署前检查接口、服务容量及模型上下文，不沿用历史10万token窗口。
+辞海全书抽取轮次默认 **1024→256→64**，可通过 `dictionary_extraction.round_workers` 设置首轮及两轮重试的请求并发，必须为三个正整数。`book_workers`只是同时处理书籍数，不会把HTTP请求并发限制到4。后续重试轮依赖 `/metrics`；分类可能要求 `/tokenize` 和 `/v1/models`。内置新挂载接口默认16并发，不调用历史1024并发边界生成总runner。真实部署前检查接口、服务容量及模型上下文，不沿用历史10万token窗口。
 
-未进行本批次吞吐基准测试，不能提供可靠全量耗时。可用2–5本代表性书籍记录各阶段耗时、token、API失败和实际并发，再按MD字符数/抽取条数分层估算；不同版型差异较大。
+8卡服务可从 `configs/pipeline.8card.example.json` 开始配置：书目筛选、分类、清洗、边界生成、挂载及路径复核的请求并发上限均为256，抽取为 **256→64→16**。这只是从32卡配置缩减到四分之一的起始上限，不代表吞吐量按卡数线性变化，也不是跨进程的共享限流器；多个管线共用API时需要分配总并发。示例自动筛选第一类辞海书，并隔离未解决项，仅将已验证结果送入清洗。替换模型、输入及学科树路径后，先生成计划核对：
+
+```bash
+python pipeline.py plan --config configs/pipeline.8card.example.json
+python pipeline.py run --config configs/pipeline.8card.example.json
+```
+
+已启动任务保留其冻结配置和检查点；新配置用于新任务，不通过热改配置取消已提交请求。并发参数变化也会使严格匹配的分类树缓存键变化，不应把新配置下的重新生成误报为缓存复用。
+
+2026-10-10小批全流程耗时约115分钟，但保留启动时的1024并发配置，抽取实际峰值仅60请求，不是8卡256并发测速。8卡实际吞吐、多轮高压重试及全量耗时仍未验证；不得按卡数或这两本书的耗时直接线性外推全库。
 
 ## 8. 验证与下一步
+
+### 2026-10-10 辞海端到端及树资产验证
+
+0611原始书单的小批一次启动走完01–06，最终1222条；2本partial和83个未解决项如实保留。原代码、配置及输入哈希一致，没有手动执行中间生产步骤。1667节点分类树已保存，并在独立复用验证中新增边界模型调用为0。24条原文对照发现1条格式残留和1条挂载风险，未进行独立人工或全量语义验收。数量、耗时、审阅限制和实际产物路径见技术说明第2.2节。
+
+本轮开发机七套离线回归共513项通过、3项缺历史样本跳过，包含8卡参数的适配器→原生执行器子进程链路；模拟模型响应不代替真实模型结果。这些记录与下面的2026-10-08历史98项验证分开，不累加当作同一轮测试。
 
 ### 2026-10-08 离线串联评估
 
@@ -477,9 +561,9 @@ python adapters/mounting_bridge.py export --out runs/mounting_smoke_20_20261008
 python validate_offline.py
 ```
 
-报告输出 `validation_logs/offline_flow/report.json`，含本轮代码SHA256和三种计划的依赖检查；日志在同目录。`all_six_stage_interfaces_connected=true` 表示代码交接完整；该离线报告中的 `production_run_validated=false` 只限定离线套件的验证范围，不否认另行完成的真实MD测试。真实运行以测试记录和 `VALIDATION.json` 的real_model_smoke_test为准。
+历史报告输出 `validation_logs/offline_flow/report.json`，含当轮代码SHA256和三种计划的依赖检查；日志在同目录。`all_six_stage_interfaces_connected=true` 表示代码交接完整；该离线报告中的 `production_run_validated=false` 只限定离线套件范围，不否认另行完成的真实MD测试。历史机械实测见 `VALIDATION.json` 的real_model_smoke_test；最新辞海以技术说明列出的开发机 `acceptance/ACCEPTANCE.json` 及逐阶段产物为准。
 
-当前已验证该部署的模型列表、tokenize及重要书籍分支所需的真实结构化请求。仍未验证辞海抽取的metrics轮次门控、跨学科语义准确率、生产吞吐及全量数据质量。重要书籍LLM独立环境需按前述说明安装；切换服务后不能沿用旧服务的联调结论。
+已验证历史机械服务的模型列表、tokenize和重要书籍结构化请求，以及最新交通运输辞海的真实抽取、清洗及挂载链路；本次小批不证明多轮HTTP504恢复、高并发吞吐、跨学科语义准确率或全量质量。重要书籍LLM独立环境需按前述说明安装；切换服务后不能沿用旧服务的联调结论。
 
 整合测试覆盖英文名称迁移、重要书籍中文标题映射、冲突字段保留、来源侧文件回填、ID冲突拒绝、规则串接以及未实现接口阻塞；不访问模型服务。
 
@@ -489,4 +573,4 @@ python -m unittest discover -s modules/cleaning/tests -v
 python pipeline.py plan --config configs/pipeline.example.json
 ```
 
-六阶段接口已衔接，已完成一份机械N1资料的真实LLM路线测试。下一步应选择通过审核的辞海资料、N3真实样本及其他学科进行扩展联调，随后再评估批量吞吐。验收需分别检查书目筛选误删、原文词头完整性、名称与正文匹配、学科交叉误删、挂载路径与去重理由；条数守恒只证明技术覆盖，不证明知识点质量。
+六阶段接口已衔接，已完成历史机械N1联调及最新0611交通运输辞海小批端到端测试。后续扩展重点是8卡实际吞吐、N3真实样本、其他学科及更大批次语义验收，而不是重复手动串接已打通的步骤。验收需分别检查书目筛选误删、原文词头完整性、名称与正文匹配、学科交叉误删、挂载路径与去重理由；条数守恒只证明技术覆盖，不证明知识点质量。

@@ -1,5 +1,6 @@
 """Paired 22-book regression. Reuses frozen v6 windows and PDF annotations."""
 import argparse
+import copy
 import collections
 import concurrent.futures
 import hashlib
@@ -14,6 +15,37 @@ REFS='S022 S024 S030 S032 S046 S059 S075 S079 S088 S089 S092 S094 S096 S100 S109
 CODE=['run_structure_v6_1.py','structure_v6_1.py','structure_v6.py','md_primary_v5.py','run_md_primary_v5.py']
 
 
+def fit_request(ref, windows, cfg):
+    windows=copy.deepcopy(windows)
+    output=cfg.get('max_tokens',16000)
+    context=cfg['context_limit']
+    if isinstance(output,bool) or not isinstance(output,int) or output<1 or output+500>=context:
+        raise ValueError('invalid_output_budget')
+    original_lines=sum(len(w['lines']) for w in windows)
+    for shrink in range(8):
+        messages=[{'role':'system','content':core.PROMPT},
+                  {'role':'user','content':json.dumps({'ref':ref,'windows':windows},ensure_ascii=False,separators=(',',':'))}]
+        count=io.http(cfg['api_url']+'/tokenize',{'model':cfg['model'],'messages':messages,'add_generation_prompt':True})['count']
+        if count+output+500<=context:
+            return windows,messages,{'prompt_tokens':count,'max_tokens':output,'context_limit':context,
+                                     'original_lines':original_lines,'sent_lines':sum(len(w['lines']) for w in windows),
+                                     'shrink_rounds':shrink}
+        changed=False
+        # Keep every regional window, its anchor, and verbatim contiguous lines.
+        for window in windows:
+            lines=window['lines']
+            anchor=window.get('candidate') or {}
+            anchor_id='md:'+str(anchor.get('line',int(lines[0]['id'].split(':')[1])-1)+1)
+            index=next((i for i,row in enumerate(lines) if row['id']==anchor_id),0)
+            minimum=max(24,index+12)
+            length=max(minimum,len(lines)//2)
+            if length<len(lines):
+                window['lines']=lines[:length]
+                changed=True
+        if not changed:break
+    raise ValueError('context_budget_exceeded_after_sampling')
+
+
 def process(ref,base,out,cfg):
     dest=out/'results'/f'{ref}.json'
     if dest.exists():return io.read(dest)
@@ -25,17 +57,21 @@ def process(ref,base,out,cfg):
     if hashlib.sha256(md.read_bytes()).hexdigest()!=prep['md_sha256']:raise ValueError('md_hash_changed')
     windows=core.add_context(prep['windows'],md.read_text(encoding='utf-8-sig',errors='replace').splitlines())
     prep['windows']=windows;io.write(out/'prepared'/f'{ref}.json',prep)
-    messages=[{'role':'system','content':core.PROMPT},
-              {'role':'user','content':json.dumps({'ref':ref,'windows':windows},ensure_ascii=False,separators=(',',':'))}]
+    try:
+        windows,messages,budget=fit_request(ref,windows,cfg)
+    except ValueError as exc:
+        result={'ref':ref,'status':'technical_failed','errors':[repr(exc)]}
+        io.write(dest,result);return result
+    prep.update(windows=windows,request_budget=budget);io.write(out/'prepared'/f'{ref}.json',prep)
     errors=[]
     for attempt in range(2):
         try:
             count=io.http(cfg['api_url']+'/tokenize',{'model':cfg['model'],'messages':messages,'add_generation_prompt':True})['count']
-            if count+16500>cfg['context_limit']:raise ValueError('context_budget_exceeded')
-            payload={'model':cfg['model'],'messages':messages,'temperature':0,'max_tokens':16000,
+            if count+budget['max_tokens']+500>cfg['context_limit']:raise ValueError('context_budget_exceeded')
+            payload={'model':cfg['model'],'messages':messages,'temperature':0,'max_tokens':budget['max_tokens'],
                      'chat_template_kwargs':{'enable_thinking':False},'response_format':{'type':'json_object'}}
             io.write(out/'sent'/f'{ref}_{attempt}.json',{'prompt_tokens':count,'payload':payload})
-            raw=io.http(cfg['api_url']+'/v1/chat/completions',payload,timeout=900)
+            raw=io.http(cfg['api_url']+'/v1/chat/completions',payload,timeout=cfg.get('timeout',900))
             io.write(out/'raw'/f'{ref}_{attempt}.json',raw)
             choice=raw['choices'][0]
             if choice['finish_reason']!='stop':raise ValueError('incomplete_response')

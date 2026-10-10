@@ -11,6 +11,7 @@ import time
 import uuid
 
 import fullbook_llm_v2 as v2
+import fullbook_llm_v5 as v5
 import fullbook_v5_structure as structure
 import fullbook_v5_anchors as anchors
 from fullbook_llm_v2 import structural_units, attach_format, book_lock, dispatch_ranges
@@ -248,15 +249,9 @@ cleanup_body = structure.cleanup_body
 repair_matches = anchors.repair_matches
 
 
-class Runner(v2.Runner):
+class Runner(v5.Runner):
     def backoff(self,attempt):
         time.sleep(min(2**attempt,4))
-
-    def fits_messages(self,messages):
-        if self.tokenizer:
-            size=len(self.tokenizer.apply_chat_template(messages,tokenize=True,add_generation_prompt=True))
-        else:size=sum(len(m['content'].encode()) for m in messages)
-        return size+self.args.output_tokens+2048<=self.args.context
 
     def fits(self,part):
         return self.fits_messages([{'role':'system','content':PROMPT},{'role':'user','content':v2.legacy.encode(part)}])
@@ -429,7 +424,10 @@ class Runner(v2.Runner):
                                 if not isinstance(fixed.get('reason'),str) or not fixed['reason'].strip():
                                     next_pending.append({**task,'error':'Null repair needs reason'});continue
                                 excluded.append({'repair_id':rid,'reason':fixed['reason']});continue
-                            if not anchors.repair_matches(task['entry'],value,part):
+                            try:identity_matches=anchors.check_repair_identity(task['entry'],value,part)
+                            except (KeyError,IndexError,TypeError,ValueError) as exc:
+                                next_pending.append({**task,'error':f'Repair source validation failed: {exc}'});continue
+                            if not identity_matches:
                                 next_pending.append({**task,'error':'Repair changed candidate identity'});continue
                             valid,bad,omitted=validate_items([value],part,text,book)
                             for e in valid:accepted.setdefault(e['built']['id'],e['raw'])

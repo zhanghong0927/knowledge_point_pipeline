@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import threading
 import time
+import urllib.request
 import uuid
 
 import fullbook_llm_v2 as v2
@@ -249,13 +250,35 @@ repair_matches = anchors.repair_matches
 
 
 class Runner(v2.Runner):
+    def __init__(self,args):
+        super().__init__(args)
+        self._token_counts={}
+        self._token_count_lock=threading.Lock()
+
     def backoff(self,attempt):
         time.sleep(min(2**attempt,4))
 
     def fits_messages(self,messages):
         if self.tokenizer:
-            size=len(self.tokenizer.apply_chat_template(messages,tokenize=True,add_generation_prompt=True))
-        else:size=sum(len(m['content'].encode()) for m in messages)
+            size=len(self.tokenizer.apply_chat_template(messages,tokenize=True,
+                add_generation_prompt=True,enable_thinking=False))
+        else:
+            payload={'model':self.args.model,'messages':messages,'add_generation_prompt':True,
+                     'chat_template_kwargs':{'enable_thinking':False}}
+            encoded=v2.legacy.encode(payload).encode()
+            key=v2.legacy.digest(encoded)
+            with self._token_count_lock:size=self._token_counts.get(key)
+            if size is None:
+                headers={'Content-Type':'application/json'}
+                api_key=v2.legacy.os.environ.get('OPENAI_API_KEY')
+                if api_key:headers['Authorization']='Bearer '+api_key
+                request=urllib.request.Request(self.base.removesuffix('/v1')+'/tokenize',
+                    data=encoded,headers=headers)
+                with urllib.request.urlopen(request,timeout=self.args.timeout) as response:
+                    size=json.load(response).get('count')
+                if type(size) is not int or size<0:
+                    raise ValueError('Service /tokenize must return a nonnegative integer count')
+                with self._token_count_lock:self._token_counts[key]=size
         return size+self.args.output_tokens+2048<=self.args.context
 
     def fits(self,part):
@@ -429,7 +452,10 @@ class Runner(v2.Runner):
                                 if not isinstance(fixed.get('reason'),str) or not fixed['reason'].strip():
                                     next_pending.append({**task,'error':'Null repair needs reason'});continue
                                 excluded.append({'repair_id':rid,'reason':fixed['reason']});continue
-                            if not anchors.repair_matches(task['entry'],value,part):
+                            try:identity_matches=anchors.check_repair_identity(task['entry'],value,part)
+                            except (KeyError,IndexError,TypeError,ValueError) as exc:
+                                next_pending.append({**task,'error':f'Repair source validation failed: {exc}'});continue
+                            if not identity_matches:
                                 next_pending.append({**task,'error':'Repair changed candidate identity'});continue
                             valid,bad,omitted=validate_items([value],part,text,book)
                             for e in valid:accepted.setdefault(e['built']['id'],e['raw'])

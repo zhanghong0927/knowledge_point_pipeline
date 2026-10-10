@@ -18,6 +18,9 @@ _NON_HEAD_KINDS = {'gap', 'fence', 'code_block', 'table', 'html_block',
                    'math_block', 'bullet_list', 'ordered_list'}
 _INTERNAL_ROLES = {'caption', 'secondary_style', 'internal_after_bilingual_main'}
 _PREFIX = re.compile(r'[ \t]*(?:#{1,6}[ \t]+)?(?:\*\*|__|`)?[ \t]*')
+_NUMBERED_PREFIX = re.compile(_PREFIX.pattern + r'\d+(?:\.\d+)+[ \t]+(?:\*\*|__|`)?[ \t]*')
+_NUMBERED_HEAD = re.compile(_PREFIX.pattern + r'(\d+(?:\.\d+)+)[ \t]+([^\r\n]+)')
+_NUMBERED_PREDICATE = re.compile(r'(?<![\u3400-\u9fff])\u662f(?=[\u3400-\u9fff])')
 _GUIDE = r'(?:See(?:[ \t]+also)?|\u53c2\u89c1|\u89c1)'
 _DATES = re.compile(r'\([^()\n]*(?:\b\d{3,4}\b|\bb\.|\bd\.)[^()\n]*\)')
 _PROSE = re.compile(
@@ -140,13 +143,40 @@ class _Resolver:
             value = self.slice(base, row['offset'] + len(row['text']))
             local = absolute - base
         prefix = value[value.rfind('\n', 0, local) + 1:local]
-        if not (_PREFIX.fullmatch(prefix) or re.fullmatch(_PREFIX.pattern + _GUIDE + r'[ \t]+', prefix, re.I)):
+        # Missing Markdown markers need bilingual source text and a numbered peer.
+        numbered=(_NUMBERED_PREFIX.fullmatch(prefix) and self.numbered_head(row))
+        if not (_PREFIX.fullmatch(prefix) or numbered
+                or re.fullmatch(_PREFIX.pattern + _GUIDE + r'[ \t]+', prefix, re.I)):
             return False
         if end is not None:
             boundary = local + end - start
             if boundary < len(value) and _word_cut(value[boundary - 1], value[boundary]):
                 return False
         return True
+
+    def numbered_head(self, row):
+        if row.get('head_role') in _INTERNAL_ROLES or row.get('excluded_zone'):
+            return False
+        if row.get('kind') == 'heading':
+            return True
+        if row.get('kind') != 'paragraph':
+            return False
+        current = _NUMBERED_HEAD.fullmatch(row['text'].strip())
+        # Inline definitions may share this line; selected heads are checked separately.
+        if not current or _scripts(current[2]) != {'cjk', 'latin'}:
+            return False
+        number = current[1].split('.')
+        for peer in self.ordered:
+            if (abs(peer['unit'] - row['unit']) > 12 or peer.get('kind') != 'heading'
+                    or peer.get('head_role') in _INTERNAL_ROLES or peer.get('excluded_zone')):
+                continue
+            match = _NUMBERED_HEAD.fullmatch(peer['text'].strip())
+            if not match or _scripts(match[2]) != {'cjk', 'latin'} or _prose(match[2]):
+                continue
+            other = match[1].split('.')
+            if (other[:-1] == number[:-1] and 0 < abs(int(other[-1]) - int(number[-1])) <= 3):
+                return True
+        return False
 
     def matches(self, item):
         if not isinstance(item, dict):
@@ -278,6 +308,11 @@ def _head_cluster(resolver, head, *, check_position=True, explicit=False):
     if check_position and not resolver.head_position(first, head[0][0] - first['offset'], head[0][1] - first['offset']):
         raise ValueError('First head selection is not at a supported source head position')
     title = ' '.join(resolver.slice(a, b) for a, b in head)
+    if (first.get('kind') == 'paragraph' and _NUMBERED_HEAD.fullmatch(first['text'].strip())):
+        if _scripts(title) != {'cjk', 'latin'}:
+            raise ValueError('Numbered paragraph head requires original bilingual head evidence')
+        if _NUMBERED_PREDICATE.search(_plain(title)):
+            raise ValueError('Numbered paragraph head includes a definition predicate')
     if _prose(title) or re.search(r'(?:^|\s)' + _GUIDE + r'(?:\s|$)', _plain(title), re.I):
         raise ValueError('Head includes an introduction or reference guide, not just a headword')
 
@@ -360,10 +395,16 @@ def _next_head(resolver, head):
     first = resolver.row_at(head[0][0])
     own = re.match(r'\s*(#{1,6})\s+', first['text'])
     level = len(own[1]) if own else None
+    numbered_own = _NUMBERED_HEAD.fullmatch(first['text'].strip())
     for row in resolver.ordered:
         if (row.get('excluded_zone') or row.get('kind') in _NON_HEAD_KINDS
                 or row.get('head_role') in _INTERNAL_ROLES):
             continue
+        if (numbered_own and row['offset'] >= head[-1][1]
+                and row.get('kind') == 'paragraph' and resolver.numbered_head(row)):
+            numbered = _NUMBERED_HEAD.fullmatch(row['text'].strip())
+            if len(numbered[1].split('.')) <= len(numbered_own[1].split('.')):
+                return row['offset']
         for match in re.finditer(r'(?m)^[ \t]*(#{1,6})[ \t]+([^\r\n]+)', row['text']):
             pos = row['offset'] + match.start()
             if pos < head[-1][1] or (level is not None and len(match[1]) > level):
@@ -474,43 +515,49 @@ def _same_heading_recovery(resolver, original, fixed, old, new):
                    for r in resolver.ordered)
 
 
-def repair_matches(original, fixed, part):
-    """Check identity only; a True repair still requires ``validate_entry``.
+def check_repair_identity(original, fixed, part):
+    """Return identity compatibility; raise source/structure failures separately.
 
     Same-position formatting, evidenced guide/biography cropping, and adjacent
     original bilingual extension are allowed. Arbitrary lexical cropping,
     replacement, translation, and relocation to another occurrence are not.
     V4's bounded same-name body-mention-to-real-heading recovery is retained.
     """
+    if not isinstance(original, dict) or not isinstance(fixed, dict):
+        raise ValueError('Expected original and repaired entry objects')
+    resolver = _Resolver(part)
+    if not _same_book(original, fixed, part, *resolver.rows.values()):
+        return False
+    old, new = resolver.parts(original.get('head')), resolver.parts(fixed.get('head'))
+    if not old or not new:
+        raise ValueError('Empty repair head')
+    _head_cluster(resolver, new, explicit=True)
+    old_chars, new_chars = _lexical(resolver.chars(old)), _lexical(resolver.chars(new))
+    if not old_chars or not new_chars:
+        raise ValueError('Repair head contains no headword characters')
+    core = _identity_core(resolver, old)
+    if not core or any(new_chars.get(p) != c for p, c in core.items()):
+        return _same_heading_recovery(resolver, original, fixed, old, new)
+    added = {p: c for p, c in new_chars.items() if p not in old_chars}
+    if not added:
+        return True
+
+    scripts = _scripts(''.join(core.values()))
+    if scripts not in ({'latin'}, {'cjk'}):
+        return False
+    opposite = {'latin', 'cjk'} - scripts
+    field = 'name' if opposite == {'cjk'} else 'knowledge_point'
+    evidence = resolver.parts(fixed.get(field), role='name', head_spans=new)
+    supported = resolver.chars(evidence)
+    added_spans = [(a, b) for a, b in evidence if any(a <= p < b for p in added)]
+    core_spans = [(min(core), max(core) + 1)]
+    return (all(_script(c) in opposite and supported.get(p) == c for p, c in added.items())
+            and all(_adjacent_translation(resolver, core_spans, span) for span in added_spans))
+
+
+def repair_matches(original, fixed, part):
+    """Compatibility predicate; a True repair still requires ``validate_entry``."""
     try:
-        if not isinstance(original, dict) or not isinstance(fixed, dict):
-            return False
-        resolver = _Resolver(part)
-        if not _same_book(original, fixed, part, *resolver.rows.values()):
-            return False
-        old, new = resolver.parts(original.get('head')), resolver.parts(fixed.get('head'))
-        if not old or not new:
-            return False
-        _head_cluster(resolver, new, explicit=True)
-        old_chars, new_chars = _lexical(resolver.chars(old)), _lexical(resolver.chars(new))
-        if not old_chars or not new_chars:
-            return False
-        core = _identity_core(resolver, old)
-        if not core or any(new_chars.get(p) != c for p, c in core.items()):
-            return _same_heading_recovery(resolver, original, fixed, old, new)
-        added = {p: c for p, c in new_chars.items() if p not in old_chars}
-        if not added:
-            return True
-        scripts = _scripts(''.join(core.values()))
-        if scripts not in ({'latin'}, {'cjk'}):
-            return False
-        opposite = {'latin', 'cjk'} - scripts
-        field = 'name' if opposite == {'cjk'} else 'knowledge_point'
-        evidence = resolver.parts(fixed.get(field), role='name', head_spans=new)
-        supported = resolver.chars(evidence)
-        added_spans = [(a, b) for a, b in evidence if any(a <= p < b for p in added)]
-        core_spans = [(min(core), max(core) + 1)]
-        return (all(_script(c) in opposite and supported.get(p) == c for p, c in added.items())
-                and all(_adjacent_translation(resolver, core_spans, span) for span in added_spans))
+        return check_repair_identity(original, fixed, part)
     except (KeyError, IndexError, TypeError, ValueError):
         return False
