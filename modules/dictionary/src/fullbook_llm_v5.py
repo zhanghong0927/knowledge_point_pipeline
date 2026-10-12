@@ -326,6 +326,7 @@ class Runner(v2.Runner):
                     'unresolved':len(saved.get('unresolved',[])),
                     'transport_retryable':saved.get('transport_retryable',False),
                     'http504_unresolved':saved.get('http504_unresolved',False),
+                    'technical_failure_unresolved':saved.get('technical_failure_unresolved',False),
                     'excluded_items':len(saved.get('excluded',[])),
                     'excluded_units':sum(bool(r.get('excluded_zone')) for r in units[lo:hi])})
 
@@ -352,7 +353,7 @@ class Runner(v2.Runner):
                 write(cache,saved);complete(lo,hi,saved,part);return
             accepted={};pending=None;excluded=[];last_error='';scanned=False
             split=False
-            transport_retryable=False;http504_unresolved=False
+            transport_retryable=False;http504_unresolved=False;technical_failure_unresolved=False
             transport_round=getattr(self.args,'transport_round',1)
             for attempt in range(getattr(self.args,'attempts',3)):
                 repairing=pending is not None
@@ -376,6 +377,7 @@ class Runner(v2.Runner):
                 previous=read(error_path) if error_path.exists() else {}
                 if response_path.exists():
                     response=read(response_path);add('raw_response_reuse')
+                    technical_failure_unresolved=False
                 else:
                     payload={'model':self.args.model,'temperature':0,
                         'max_tokens':self.args.output_tokens,'chat_template_kwargs':{'enable_thinking':False},
@@ -383,10 +385,12 @@ class Runner(v2.Runner):
                     payload_hash=v2.legacy.digest(v2.legacy.encode(payload).encode())
                     if previous:
                         if previous.get('http_status')!=504:
+                            technical_failure_unresolved=True
                             last_error=previous['error'];continue
                         if previous.get('payload_sha256')!=payload_hash:
                             raise ValueError('Retry payload changed for checkpointed request')
                         if previous['last_round']>=transport_round or previous['transport_attempts']>=3:
+                            technical_failure_unresolved=True
                             http504_unresolved=True
                             transport_retryable=previous['transport_attempts']<3 and transport_round<3
                             break
@@ -398,6 +402,7 @@ class Runner(v2.Runner):
                     except v2.TelemetryError:raise
                     except Exception as exc:
                         add('technical_errors');add('unknown_usage')
+                        technical_failure_unresolved=True
                         last_error=f'{type(exc).__name__}: {exc}'
                         code=getattr(exc,'code',getattr(exc,'status_code',None))
                         if code is None and re.search(r'\bHTTP(?: Error)?\s*504\b',last_error,re.I):code=504
@@ -416,6 +421,7 @@ class Runner(v2.Runner):
                         continue
                     elapsed=time.monotonic()-start;add('request_seconds',elapsed)
                     write(response_path,response)
+                    technical_failure_unresolved=False
                     usage=response.get('usage') or {}
                     for name in ('prompt_tokens','completion_tokens'):
                         if isinstance(usage.get(name),int):add(name,usage[name])
@@ -474,6 +480,7 @@ class Runner(v2.Runner):
             saved={'status':'completed' if scanned and not unresolved else 'partial',
                    'accepted_raw':list(accepted.values()),'unresolved':unresolved,'excluded':excluded,
                    'transport_retryable':transport_retryable,'http504_unresolved':http504_unresolved,
+                   'technical_failure_unresolved':technical_failure_unresolved,
                    'transport_round':transport_round}
             write(cache,saved);complete(lo,hi,saved,part)
             event('chunk_finished',chunk=key,status=saved['status'],entries=len(accepted),unresolved=len(unresolved))
@@ -501,6 +508,7 @@ class Runner(v2.Runner):
             'unresolved_items':sum(x['unresolved'] for x in leaves),
             'http504_pending_chunks':sum(x['transport_retryable'] for x in leaves),
             'http504_unresolved_chunks':sum(x['http504_unresolved'] for x in leaves),
+            'technical_failure_unresolved_chunks':sum(x['status']!='completed' and x['technical_failure_unresolved'] for x in leaves),
             'visited_units':cursor,
             'cleaned_entries':sum(bool(e.get('body_cleanup_removed')) for e in entries),
             'pdf_annotated_units':sum(bool(r.get('pdf_format')) for r in units),

@@ -260,7 +260,7 @@ def plan(config, v):
         clean_run = run / "04_cleaning/current"
         task(tasks, "normalize_fields", [py, ROOT / "adapters/normalize_records.py", "--input", raw,
              "--format", mode, "--subject", v["subject"], "--slug", v["slug"], "--out", standardized],
-             [raw], [standardized / "records.jsonl", standardized / "trace.jsonl"])
+             [raw], [standardized / "records.jsonl", standardized / "trace.jsonl", standardized / "report.json"])
         task(tasks, "rules", [py, cleaning / "scripts/rule_clean.py", "--input", standardized / "records.jsonl",
              "--output-dir", clean_run / "01_rule_clean"], [standardized / "records.jsonl"],
              [clean_run / "01_rule_clean/rule_pass.jsonl"])
@@ -275,9 +275,10 @@ def plan(config, v):
               clean_run / "02_model_clean/model_judgments.jsonl"])
         task(tasks, "restore_trace", [py, ROOT / "adapters/normalize_records.py", "--restore",
              "--input", clean_run / "02_model_clean/clean_standard.jsonl", "--trace", standardized / "trace.jsonl",
+             "--normalization-report", standardized / "report.json",
              "--cleaning-report", clean_run / "02_model_clean/model_clean_report.json",
              "--subject", v["subject"], "--slug", v["slug"], "--out", run / "04_cleaning/export"],
-             [clean_run / "02_model_clean/clean_standard.jsonl", standardized / "trace.jsonl",
+             [clean_run / "02_model_clean/clean_standard.jsonl", standardized / "trace.jsonl", standardized / "report.json",
               clean_run / "02_model_clean/model_clean_report.json", clean_run / "02_model_clean/model_judgments.jsonl"],
              [run / "04_cleaning/export/records.jsonl", run / "04_cleaning/export/trace.jsonl",
               run / "04_cleaning/export/report.json"])

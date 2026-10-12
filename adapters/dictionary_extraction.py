@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import subprocess
 import sys
 
@@ -12,6 +13,29 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def read(path):
     return json.loads(path.read_text(encoding="utf-8-sig"))
+
+
+def unresolved_technical_failure(folder, key, chunk, execution_errors):
+    if chunk.get("technical_failure_unresolved"):
+        return True
+
+    def attempts(kind):
+        prefix = key + "_"
+        return [int(path.stem[len(prefix):]) for path in (folder / kind).glob(prefix + "*.json")
+                if path.stem[len(prefix):].isdecimal()]
+
+    errors = attempts("errors")
+    if errors:
+        if max(errors) > max(attempts("responses"), default=0):
+            return True
+    elif any(re.match(
+        r"^(?:TimeoutError|ConnectionError|ConnectionResetError|ConnectionRefusedError|"
+        r"BrokenPipeError|OSError|HTTPError|URLError|SSLError|RuntimeError|APIError|"
+        r"ServiceUnavailableError|RateLimitError):|^HTTP(?: Error)?\s*[45]\d\d\b",
+        str(item.get("error", "")), re.I)
+        for item in chunk.get("unresolved", [])):
+        return True
+    return bool(execution_errors and "technical_failure_unresolved" not in chunk and not errors)
 
 
 def finalized_report(manifest, out, returncode, allow_partial):
@@ -29,8 +53,6 @@ def finalized_report(manifest, out, returncode, allow_partial):
            for k in ("http504_pending_chunks", "http504_unresolved_chunks")):
         raise ValueError("Unresolved HTTP504 is a technical failure, not a content partial")
     partial = "partial" in statuses
-    if any(b["status"] == "partial" and b.get("execution", {}).get("technical_errors", 0) for b in books):
-        raise ValueError("Technical errors in partial extraction require recovery before handoff")
     if returncode != (2 if partial else 0):
         raise ValueError("Native return code does not match finalized extraction status")
     if partial and not allow_partial:
@@ -60,6 +82,8 @@ def finalized_report(manifest, out, returncode, allow_partial):
             chunk = read(path)
             if chunk.get("transport_retryable") or chunk.get("http504_unresolved"):
                 raise ValueError("Unresolved HTTP504 in finalized chunk")
+            if unresolved_technical_failure(folder, key, chunk, book.get("execution", {}).get("technical_errors", 0)):
+                raise ValueError("Technical errors in partial extraction require recovery before handoff")
             pending.extend({**item, "identifier": identifier, "chunk": key, "chunk_status": leaf["status"]}
                            for item in chunk.get("unresolved", []))
     if seen != expected:

@@ -78,6 +78,105 @@ class DictionaryExtractionTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "Technical errors"):
                 self.load().finalized_report(manifest, out, 2, True)
 
+    def test_explicitly_recovered_partial_allows_historical_error_count(self):
+        with tempfile.TemporaryDirectory() as d:
+            manifest, out = self.fixture(Path(d))
+            summary = json.loads((out / "SUMMARY.json").read_text())
+            summary["books"][0]["execution"] = {"technical_errors": 1}
+            (out / "SUMMARY.json").write_text(json.dumps(summary))
+            (out / "book/SUMMARY.json").write_text(json.dumps(summary["books"][0]))
+            chunk = out / "book/chunks/00000000_00000001.json"
+            chunk.write_text(json.dumps({"status": "partial", "technical_failure_unresolved": False,
+                                         "unresolved": [{"error": "unlocated head"}]}))
+            report, pending = self.load().finalized_report(manifest, out, 2, True)
+            self.assertEqual(report["status"], "finished_with_pending")
+            self.assertEqual(len(pending), 1)
+
+    def test_legacy_partial_response_without_failure_checkpoint_is_not_recovery_proof(self):
+        with tempfile.TemporaryDirectory() as d:
+            manifest, out = self.fixture(Path(d))
+            summary = json.loads((out / "SUMMARY.json").read_text())
+            summary["books"][0]["execution"] = {"technical_errors": 1}
+            (out / "SUMMARY.json").write_text(json.dumps(summary))
+            (out / "book/SUMMARY.json").write_text(json.dumps(summary["books"][0]))
+            response = out / "book/responses/00000000_00000001_2.json"
+            response.parent.mkdir(parents=True)
+            response.write_text("{}")
+            with self.assertRaisesRegex(ValueError, "Technical errors"):
+                self.load().finalized_report(manifest, out, 2, True)
+
+    def test_cached_partial_with_persisted_technical_marker_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            manifest, out = self.fixture(Path(d))
+            chunk = out / "book/chunks/00000000_00000001.json"
+            chunk.write_text(json.dumps({"status": "partial", "technical_failure_unresolved": True,
+                                         "unresolved": [{"error": "TimeoutError: model unavailable"}]}))
+            with self.assertRaisesRegex(ValueError, "Technical errors"):
+                self.load().finalized_report(manifest, out, 2, True)
+
+    def test_legacy_cached_partial_with_unanswered_request_error_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            manifest, out = self.fixture(Path(d))
+            error = out / "book/errors/00000000_00000001_2.json"
+            error.parent.mkdir(parents=True)
+            error.write_text(json.dumps({"error": "TimeoutError: model unavailable", "http_status": None}))
+            with self.assertRaisesRegex(ValueError, "Technical errors"):
+                self.load().finalized_report(manifest, out, 2, True)
+
+    def test_unanswered_request_error_overrides_false_marker(self):
+        with tempfile.TemporaryDirectory() as d:
+            manifest, out = self.fixture(Path(d))
+            chunk = out / "book/chunks/00000000_00000001.json"
+            chunk.write_text(json.dumps({"status": "partial", "technical_failure_unresolved": False,
+                                         "unresolved": [{"error": "unlocated head"}]}))
+            error = out / "book/errors/00000000_00000001_2.json"
+            error.parent.mkdir(parents=True)
+            error.write_text(json.dumps({"error": "TimeoutError: model unavailable"}))
+            with self.assertRaisesRegex(ValueError, "Technical errors"):
+                self.load().finalized_report(manifest, out, 2, True)
+
+    def test_legacy_cached_partial_with_only_exception_reason_is_rejected(self):
+        with tempfile.TemporaryDirectory() as d:
+            manifest, out = self.fixture(Path(d))
+            chunk = out / "book/chunks/00000000_00000001.json"
+            chunk.write_text(json.dumps({"status": "partial", "transport_retryable": False,
+                                         "http504_unresolved": False,
+                                         "unresolved": [{"error": "TimeoutError: model unavailable"}]}))
+            with self.assertRaisesRegex(ValueError, "Technical errors"):
+                self.load().finalized_report(manifest, out, 2, True)
+
+    def test_legacy_error_followed_by_response_allows_semantic_partial(self):
+        with tempfile.TemporaryDirectory() as d:
+            manifest, out = self.fixture(Path(d))
+            summary = json.loads((out / "SUMMARY.json").read_text())
+            summary["books"][0]["execution"] = {"technical_errors": 1}
+            (out / "SUMMARY.json").write_text(json.dumps(summary))
+            (out / "book/SUMMARY.json").write_text(json.dumps(summary["books"][0]))
+            error = out / "book/errors/00000000_00000001_1.json"
+            error.parent.mkdir(parents=True)
+            error.write_text(json.dumps({"error": "TimeoutError: temporary"}))
+            response = out / "book/responses/00000000_00000001_2.json"
+            response.parent.mkdir(parents=True)
+            response.write_text("{}")
+            report, pending = self.load().finalized_report(manifest, out, 2, True)
+            self.assertEqual(report["status"], "finished_with_pending")
+            self.assertEqual(len(pending), 1)
+
+    def test_completed_leaf_with_old_request_error_does_not_block_partial_book(self):
+        with tempfile.TemporaryDirectory() as d:
+            manifest, out = self.fixture(Path(d))
+            for summary in (out / "SUMMARY.json", out / "book/SUMMARY.json"):
+                data = json.loads(summary.read_text())
+                book = data["books"][0] if "books" in data else data
+                book["chunks"].insert(0, {"lo": 1, "hi": 2, "status": "completed"})
+                summary.write_text(json.dumps(data))
+            error = out / "book/errors/00000001_00000002_1.json"
+            error.parent.mkdir(parents=True)
+            error.write_text(json.dumps({"error": "TimeoutError: temporary"}))
+            report, pending = self.load().finalized_report(manifest, out, 2, True)
+            self.assertEqual(report["status"], "finished_with_pending")
+            self.assertEqual(len(pending), 1)
+
     def test_completed_does_not_require_partial_switch(self):
         with tempfile.TemporaryDirectory() as d:
             manifest, out = self.fixture(Path(d), "completed")
