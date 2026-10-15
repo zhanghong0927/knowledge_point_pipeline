@@ -1,0 +1,8 @@
+{
+  "source_package": "cleaning_name_whitespace_20261015_01",
+  "purpose": "Historical recovery regression fixtures only; not production launchers.",
+  "files_sha256": {
+    "resume_dictionary.py": "08422e38d1b5e6c4818c5d5d45c36e695e6651346f827d76fc149339253f0027",
+    "resume_mounting.py": "40dfaf057217d85d02ee1398c154e9ae9512ed4b5cfed524f4120dc92c587fb7"
+  }
+}

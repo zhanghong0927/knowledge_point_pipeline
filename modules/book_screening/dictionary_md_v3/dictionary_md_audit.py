@@ -9,13 +9,21 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import threading
 import time
 import urllib.request
 import urllib.error
 from collections import Counter
+from contextlib import closing
 from datetime import datetime
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from shared_request_pool import completed as shared_completed
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
+from staged_screening_state import (TRANSPORT_ERRORS, identity, latest_jsonl,
+                                    require_identity, save_status, transient_transport)
 
 
 DEFAULT_ROOT = Path(r"D:\七月工作\多学科辞海可用性分析")
@@ -660,6 +668,7 @@ def prepare(
                 "short_id": f"{spec['code']}{index:04d}",
                 "subject": spec["name"],
                 "source_path": str(path.resolve()),
+                "source_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
                 "relative_path": str(relative),
                 "file_name": path.name,
                 "title": guess_title(path, text),
@@ -983,7 +992,8 @@ def select_pass_challenge_samples(item, primary_result, max_samples=8):
     return [copy.deepcopy(by_number[number]) for number in chosen_numbers]
 
 
-def overlay_pass_challenges(primary_completed, challenge_completed, manifest_records):
+def overlay_pass_challenges(primary_completed, challenge_completed, manifest_records,
+                            allow_incomplete=False):
     """Return copied primary records with complete challenge results overlaid."""
     merged = {}
     for source_path, primary in primary_completed.items():
@@ -996,7 +1006,17 @@ def overlay_pass_challenges(primary_completed, challenge_completed, manifest_rec
         if reasons:
             challenge = challenge_completed.get(source_path)
             if not challenge or not challenge.get("ok") or not challenge.get("challenge"):
-                raise ValueError(f"missing pass challenge result: {source_path}")
+                if not allow_incomplete:
+                    raise ValueError(f"missing pass challenge result: {source_path}")
+                item['result']['decision'] = 'REVIEW'
+                item['result']['pass_challenge_policy'] = PASS_CHALLENGE_POLICY_VERSION
+                item['result']['pass_challenge_triggered'] = True
+                item['result']['pass_challenge_reasons'] = reasons
+                item['result']['decision_before_pass_challenge'] = primary['result'].get('decision')
+                item['result']['decision_adjusted_by_pass_challenge'] = True
+                item['result']['summary'] = 'PASS反证模型未完成，保留REVIEW'
+                merged[source_path] = item
+                continue
             item["result"] = apply_pass_challenge(item["result"], challenge["challenge"], reasons)
             item["pass_challenge_usage"] = challenge.get("usage")
             item["pass_challenge_latency_seconds"] = challenge.get("latency_seconds")
@@ -1478,6 +1498,7 @@ def request_one(
     max_nonknowledge_headword_ratio=0.15,
     drop_nonknowledge_headword_ratio=0.50,
     min_headword_evidence=10,
+    defer_transport_retry=False,
 ):
     payload = {
         "short_id": item["short_id"],
@@ -1525,6 +1546,7 @@ def request_one(
     encoded = json.dumps(body, ensure_ascii=False).encode("utf-8")
     last_error = None
     last_content = None
+    failure_kind = 'content_or_format'
     for attempt in range(1, retries + 2):
         started = time.time()
         try:
@@ -1577,11 +1599,16 @@ def request_one(
             }
         except Exception as exc:
             last_error = f"{type(exc).__name__}: {exc}"
+            failure_kind = ('transport' if transient_transport(exc) else
+                            'terminal_transport' if isinstance(exc, TRANSPORT_ERRORS)
+                            else 'content_or_format')
             if isinstance(exc, urllib.error.HTTPError):
                 last_error += ": " + exc.read().decode("utf-8", errors="replace")[:500]
+            if defer_transport_retry and isinstance(exc, TRANSPORT_ERRORS):
+                break
             if attempt <= retries:
                 time.sleep(min(2 ** (attempt - 1), 5))
-    return {
+    failed = {
         "ok": False,
         "short_id": item["short_id"],
         "subject": item["subject"],
@@ -1591,11 +1618,15 @@ def request_one(
         "input_title": item["title"],
         "error": last_error,
         "raw_content": last_content,
-        "attempt": retries + 1,
+        "attempt": attempt,
     }
+    if defer_transport_retry:
+        failed['failure_kind'] = failure_kind
+    return failed
 
 
-def request_pass_challenge(api_url, model, item, timeout, max_tokens, retries):
+def request_pass_challenge(api_url, model, item, timeout, max_tokens, retries,
+                           defer_transport_retry=False):
     samples = [
         {**sample, "text": compact_repetition_for_prompt(sample.get("text", ""))}
         for sample in item["challenge_samples"]
@@ -1630,6 +1661,7 @@ def request_pass_challenge(api_url, model, item, timeout, max_tokens, retries):
     encoded = json.dumps(body, ensure_ascii=False).encode("utf-8")
     last_error = None
     last_content = None
+    failure_kind = 'content_or_format'
     for attempt in range(1, retries + 2):
         started = time.time()
         try:
@@ -1660,11 +1692,16 @@ def request_pass_challenge(api_url, model, item, timeout, max_tokens, retries):
             }
         except Exception as exc:
             last_error = f"{type(exc).__name__}: {exc}"
+            failure_kind = ('transport' if transient_transport(exc) else
+                            'terminal_transport' if isinstance(exc, TRANSPORT_ERRORS)
+                            else 'content_or_format')
             if isinstance(exc, urllib.error.HTTPError):
                 last_error += ": " + exc.read().decode("utf-8", errors="replace")[:500]
+            if defer_transport_retry and isinstance(exc, TRANSPORT_ERRORS):
+                break
             if attempt <= retries:
                 time.sleep(min(2 ** (attempt - 1), 5))
-    return {
+    failed = {
         "ok": False,
         "short_id": item["short_id"],
         "subject": item["subject"],
@@ -1675,8 +1712,11 @@ def request_pass_challenge(api_url, model, item, timeout, max_tokens, retries):
         "trigger_reasons": item["challenge_reasons"],
         "error": last_error,
         "raw_content": last_content,
-        "attempt": retries + 1,
+        "attempt": attempt,
     }
+    if defer_transport_retry:
+        failed['failure_kind'] = failure_kind
+    return failed
 
 
 def load_progress(path):
@@ -1711,6 +1751,7 @@ def run_subject(
     max_generic_headword_ratio=0.15, min_candidate_headwords=20,
     knowledge_value_mode=False, max_nonknowledge_headword_ratio=0.15,
     drop_nonknowledge_headword_ratio=0.50, min_headword_evidence=10,
+    only_round=None,
 ):
     manifest_path = output / "输入清单" / f"{spec['name']}.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -1754,7 +1795,12 @@ def run_subject(
     write_json(config_path, run_config)
     api_raw_path = raw_dir / "api_raw.jsonl"
     completed = load_progress(progress_path)
-    pending = [item for item in items if item["source_path"] not in completed]
+    if only_round in (2, 3):
+        previous = latest_jsonl(progress_path, 'source_path')
+        pending = [item for item in items if item['source_path'] not in completed and
+                   previous.get(item['source_path'], {}).get('failure_kind') == 'transport']
+    else:
+        pending = [item for item in items if item["source_path"] not in completed]
     if pending_limit is not None:
         pending = pending[:pending_limit]
     counters = Counter(ok=0, failed=0)
@@ -1775,13 +1821,21 @@ def run_subject(
             max_nonknowledge_headword_ratio=max_nonknowledge_headword_ratio,
             drop_nonknowledge_headword_ratio=drop_nonknowledge_headword_ratio,
             min_headword_evidence=min_headword_evidence,
+            defer_transport_retry=only_round is not None,
         )
 
     with progress_path.open("a", encoding="utf-8") as progress, api_raw_path.open("a", encoding="utf-8") as api_raw:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
-            futures = {executor.submit(run, item): item for item in pending}
-            for future in concurrent.futures.as_completed(futures):
-                result = future.result()
+        with closing(shared_completed(run, pending, workers)) as completions:
+            for item, future in completions:
+                try:
+                    result = future.result()
+                except Exception as exc:
+                    if only_round is None:
+                        raise
+                    result = {'ok': False, 'short_id': item['short_id'],
+                              'source_path': item['source_path'],
+                              'failure_kind': 'content_or_format',
+                              'error': f'{type(exc).__name__}: {exc}'}
                 with lock:
                     key = "ok" if result.get("ok") else "failed"
                     counters[key] += 1
@@ -1807,7 +1861,7 @@ def run_subject(
 
 def run_pass_challenge_subject(
     output, spec, api_url, model, workers, timeout, retries, max_tokens,
-    pending_limit=None, challenge_sample_count=8,
+    pending_limit=None, challenge_sample_count=8, only_round=None,
 ):
     manifest_path = output / "输入清单" / f"{spec['name']}.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -1855,7 +1909,12 @@ def run_pass_challenge_subject(
                 )
     write_json(config_path, run_config)
     completed = load_progress(progress_path)
-    pending = [item for item in items if item["source_path"] not in completed]
+    if only_round in (2, 3):
+        previous = latest_jsonl(progress_path, 'source_path')
+        pending = [item for item in items if item['source_path'] not in completed and
+                   previous.get(item['source_path'], {}).get('failure_kind') == 'transport']
+    else:
+        pending = [item for item in items if item["source_path"] not in completed]
     if pending_limit is not None:
         pending = pending[:pending_limit]
     counters = Counter(ok=0, failed=0)
@@ -1863,16 +1922,24 @@ def run_pass_challenge_subject(
 
     def run(item):
         return request_pass_challenge(
-            api_url, model, item, timeout, max_tokens, retries
+            api_url, model, item, timeout, max_tokens, retries,
+            defer_transport_retry=only_round is not None,
         )
 
     with progress_path.open("a", encoding="utf-8") as progress, api_raw_path.open(
         "a", encoding="utf-8"
     ) as api_raw:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
-            futures = {executor.submit(run, item): item for item in pending}
-            for future in concurrent.futures.as_completed(futures):
-                result = future.result()
+        with closing(shared_completed(run, pending, workers)) as completions:
+            for item, future in completions:
+                try:
+                    result = future.result()
+                except Exception as exc:
+                    if only_round is None:
+                        raise
+                    result = {'ok': False, 'short_id': item['short_id'],
+                              'source_path': item['source_path'],
+                              'failure_kind': 'content_or_format',
+                              'error': f'{type(exc).__name__}: {exc}'}
                 with lock:
                     key = "ok" if result.get("ok") else "failed"
                     counters[key] += 1
@@ -2169,7 +2236,7 @@ def export_priority_workbook(output, spec, render_dir=None, progress_path=None):
 
 def materialize_subject(
     output, spec, generate_priority_workbook=True, symlink_classified=False,
-    pass_challenge=False,
+    pass_challenge=False, allow_incomplete_challenge=False,
 ):
     raw_path = output / spec["name"] / "模型原始结果" / "progress.jsonl"
     completed = load_progress(raw_path)
@@ -2181,7 +2248,8 @@ def materialize_subject(
         manifest_records = {item["source_path"]: item for item in manifest["records"]}
         challenge_dir = output / spec["name"] / "模型反证复核"
         challenge_completed = load_progress(challenge_dir / "challenge_progress.jsonl")
-        completed = overlay_pass_challenges(completed, challenge_completed, manifest_records)
+        completed = overlay_pass_challenges(completed, challenge_completed,
+                                            manifest_records, allow_incomplete_challenge)
         workbook_progress_path = challenge_dir / "merged_progress.jsonl"
         with workbook_progress_path.open("w", encoding="utf-8") as handle:
             for source_path in manifest_records:
@@ -2295,13 +2363,14 @@ def build_prompt_snapshot(run_entries):
 
 def materialize_all(
     root, output, names, config_path=None, generate_priority_workbook=True,
-    symlink_classified=False, pass_challenge=False,
+    symlink_classified=False, pass_challenge=False, allow_incomplete_challenge=False,
 ):
     all_rows, summaries = [], []
     for spec in selected_specs(root, names, config_path):
         rows, summary = materialize_subject(
             output, spec, generate_priority_workbook, symlink_classified,
             pass_challenge=pass_challenge,
+            allow_incomplete_challenge=allow_incomplete_challenge,
         )
         all_rows.extend(rows)
         summaries.append(summary)
@@ -2390,6 +2459,9 @@ def main():
     parser.add_argument("--parallel-subjects", type=int, default=1)
     parser.add_argument("--timeout", type=int, default=240)
     parser.add_argument("--retries", type=int, default=2)
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--only-round', type=int, choices=(1, 2, 3))
+    mode.add_argument('--finalize-only', action='store_true')
     parser.add_argument("--max-tokens", type=int, default=2500)
     parser.add_argument("--sample-count", type=int, default=12)
     parser.add_argument("--chunk-chars", type=int, default=1200)
@@ -2473,6 +2545,101 @@ def main():
         parser.error("--challenge-sample-count 至少为 3")
     names = args.subjects or ["all"]
     args.output.mkdir(parents=True, exist_ok=True)
+    staged = args.only_round is not None or args.finalize_only
+    if staged and (args.limit is not None or args.pending_limit is not None):
+        parser.error('Staged dictionary MD cohorts do not support --limit or --pending-limit')
+    if staged and args.action not in ('run', 'challenge', 'materialize'):
+        parser.error('Staged dictionary MD mode requires run, challenge or materialize')
+    if args.only_round is not None and args.action == 'materialize':
+        parser.error('A materialize action cannot be a model round')
+    if args.finalize_only and args.action != 'materialize':
+        parser.error('Finalization requires the materialize action')
+    staged_specs = selected_specs(args.root, names, args.config) if staged else []
+    if staged:
+        phase = 'primary' if args.action == 'run' else 'challenge'
+        status_path = args.output / (phase.upper() + '_ORCHESTRATION_STATUS.json')
+        primary_progress = [args.output / spec['name'] / '模型原始结果/progress.jsonl'
+                            for spec in staged_specs]
+        phase_progress = (primary_progress if phase == 'primary' else
+                          [args.output / spec['name'] / '模型反证复核/challenge_progress.jsonl'
+                           for spec in staged_specs])
+        checkpoints = [*phase_progress, *(primary_progress if phase == 'challenge' else [])]
+        manifests = [args.output / '输入清单' / f"{spec['name']}.json" for spec in staged_specs]
+        for manifest_path in manifests:
+            manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+            expected_paths = {item['source_path'] for item in manifest['records']}
+            current_paths = {str(path.resolve()) for directory in manifest['source_dirs']
+                             for path in Path(directory).rglob('*.md')}
+            if current_paths != expected_paths:
+                raise ValueError('Staged dictionary MD source directory changed')
+            for item in manifest['records']:
+                source = Path(item['source_path'])
+                if not source.is_file() or hashlib.sha256(source.read_bytes()).hexdigest() != item.get('source_sha256'):
+                    raise ValueError('Staged dictionary MD source content changed')
+        sources = [Path(__file__), *manifests]
+        if args.config:
+            sources.append(args.config)
+        frozen = identity(sources, {'api_url': args.api_url, 'model': args.model,
+                                   'phase': phase, 'timeout': args.timeout,
+                                   'max_tokens': args.max_tokens, 'retries': args.retries,
+                                   'sample_count': args.sample_count,
+                                   'chunk_chars': args.chunk_chars,
+                                   'strict_text_quality': args.strict_text_quality,
+                                   'knowledge_value_mode': args.knowledge_value_mode,
+                                   'max_generic_headword_ratio': args.max_generic_headword_ratio,
+                                   'min_candidate_headwords': args.min_candidate_headwords,
+                                   'max_nonknowledge_headword_ratio': args.max_nonknowledge_headword_ratio,
+                                   'drop_nonknowledge_headword_ratio': args.drop_nonknowledge_headword_ratio,
+                                   'min_headword_evidence': args.min_headword_evidence,
+                                   'challenge_sample_count': args.challenge_sample_count,
+                                   'pass_challenge': args.pass_challenge},
+                          force_full=args.finalize_only)
+        prior = require_identity(status_path, frozen, args.only_round,
+                                 phase_progress if args.only_round == 1 else checkpoints)
+        if args.action == 'challenge':
+            primary_status = args.output / 'PRIMARY_ORCHESTRATION_STATUS.json'
+            primary_options = {'api_url': args.api_url, 'model': args.model,
+                'phase': 'primary', 'timeout': args.timeout,
+                'max_tokens': args.max_tokens, 'retries': args.retries,
+                'sample_count': args.sample_count, 'chunk_chars': args.chunk_chars,
+                'strict_text_quality': args.strict_text_quality,
+                'knowledge_value_mode': args.knowledge_value_mode,
+                'max_generic_headword_ratio': args.max_generic_headword_ratio,
+                'min_candidate_headwords': args.min_candidate_headwords,
+                'max_nonknowledge_headword_ratio': args.max_nonknowledge_headword_ratio,
+                'drop_nonknowledge_headword_ratio': args.drop_nonknowledge_headword_ratio,
+                'min_headword_evidence': args.min_headword_evidence,
+                'challenge_sample_count': args.challenge_sample_count,
+                'pass_challenge': args.pass_challenge}
+            primary_identity = identity(sources, primary_options,
+                                        force_full=args.finalize_only)
+            checked = require_identity(primary_status, primary_identity, None,
+                                       primary_progress)
+            if checked is None or checked['state'] not in ('ready_to_finalize',
+                                                           'technical_failure', 'finalized'):
+                raise ValueError('Primary dictionary MD phase has not finished')
+        if args.finalize_only:
+            primary_status = args.output / 'PRIMARY_ORCHESTRATION_STATUS.json'
+            challenge_status = args.output / 'CHALLENGE_ORCHESTRATION_STATUS.json'
+            for required in (primary_status, challenge_status):
+                if not required.is_file() or json.loads(required.read_text(encoding='utf-8')).get('state') not in (
+                        'ready_to_finalize', 'technical_failure', 'finalized'):
+                    raise ValueError(f'Staged dictionary MD phase not ready: {required}')
+            primary_identity = identity(sources, {'api_url': args.api_url, 'model': args.model,
+                                   'phase': 'primary', 'timeout': args.timeout,
+                                   'max_tokens': args.max_tokens, 'retries': args.retries,
+                                   'sample_count': args.sample_count,
+                                   'chunk_chars': args.chunk_chars,
+                                   'strict_text_quality': args.strict_text_quality,
+                                   'knowledge_value_mode': args.knowledge_value_mode,
+                                   'max_generic_headword_ratio': args.max_generic_headword_ratio,
+                                   'min_candidate_headwords': args.min_candidate_headwords,
+                                   'max_nonknowledge_headword_ratio': args.max_nonknowledge_headword_ratio,
+                                   'drop_nonknowledge_headword_ratio': args.drop_nonknowledge_headword_ratio,
+                                   'min_headword_evidence': args.min_headword_evidence,
+                                   'challenge_sample_count': args.challenge_sample_count,
+                                   'pass_challenge': args.pass_challenge}, force_full=True)
+            require_identity(primary_status, primary_identity, None, primary_progress)
 
     if args.action in {"prepare", "all"}:
         print(json.dumps(prepare(
@@ -2494,6 +2661,7 @@ def main():
                 args.max_nonknowledge_headword_ratio,
                 args.drop_nonknowledge_headword_ratio,
                 args.min_headword_evidence,
+                args.only_round,
             )
 
         if args.parallel_subjects <= 1:
@@ -2515,6 +2683,7 @@ def main():
                 args.timeout, args.retries, args.max_tokens,
                 pending_limit=args.pending_limit,
                 challenge_sample_count=args.challenge_sample_count,
+                only_round=args.only_round,
             )
 
         if args.parallel_subjects <= 1:
@@ -2537,10 +2706,41 @@ def main():
                 generate_priority_workbook=not args.skip_priority_workbook,
                 symlink_classified=args.symlink_classified,
                 pass_challenge=args.pass_challenge,
+                allow_incomplete_challenge=args.finalize_only,
             ),
             ensure_ascii=False,
             indent=2,
         ))
+    if staged and args.only_round is not None:
+        pending = terminal = 0
+        for spec in staged_specs:
+            manifest = json.loads((args.output / '输入清单' / f"{spec['name']}.json").read_text(encoding='utf-8'))
+            if args.action == 'run':
+                candidates = manifest['records'][:args.limit] if args.limit is not None else manifest['records']
+                progress = args.output / spec['name'] / '模型原始结果/progress.jsonl'
+            else:
+                primary = load_progress(args.output / spec['name'] / '模型原始结果/progress.jsonl')
+                candidates = [item for item in manifest['records'] if item['source_path'] in primary
+                              and pass_challenge_reasons(primary[item['source_path']]['result'],
+                                                         item.get('title', ''))]
+                progress = args.output / spec['name'] / '模型反证复核/challenge_progress.jsonl'
+            latest = latest_jsonl(progress, 'source_path')
+            for item in candidates:
+                result = latest.get(item['source_path'])
+                if result and result.get('ok'):
+                    continue
+                if result and result.get('failure_kind') == 'transport':
+                    pending += 1
+                else:
+                    terminal += 1
+        print(json.dumps(save_status(status_path, frozen, args.only_round,
+                                     pending, terminal=terminal,
+                                     checkpoints=checkpoints), ensure_ascii=False), flush=True)
+    elif staged and args.finalize_only:
+        for path in (primary_status, challenge_status):
+            value = json.loads(path.read_text(encoding='utf-8'))
+            value.update(state='finalized', status='finalized')
+            write_json(path, value)
 
 
 if __name__ == "__main__":

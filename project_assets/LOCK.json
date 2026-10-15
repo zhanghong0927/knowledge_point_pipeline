@@ -1,0 +1,38 @@
+{
+  "schema": 1,
+  "project_version": "taxonomy-boundaries-v1-20261015",
+  "subjects": {
+    "civil_engineering": {
+      "asset": "v1/civil_engineering",
+      "manifest_sha256": "2e2f462acace8f4fd4ecd4e8c3a4d71c1724016be085905ce0bc828d2fed6b3e"
+    },
+    "electricengineering": {
+      "asset": "v1/electricengineering",
+      "manifest_sha256": "0ad3364b4c172b882f8063ba35f834e23712cd957732cc3f9cd88f6242533fb9"
+    },
+    "mechanical_engineering": {
+      "asset": "v1/mechanical_engineering",
+      "manifest_sha256": "f5ef651c4018dd4585f1448914f8341e4a5f2b306682a46ebde8a2d770a190e8"
+    },
+    "medicine": {
+      "asset": "v1/medicine",
+      "manifest_sha256": "a4e196ba947e823aac9e7c8de0256badc2dd7de14539e58b87c159c8f0b6bbb0"
+    },
+    "transportation": {
+      "asset": "v1/transportation",
+      "manifest_sha256": "43828773fb8e57cdabc5628fbb876dcb1a37ac08a39f90da32cb610355191c84"
+    }
+  },
+  "provenance": {
+    "source": "Completed dictionary five-subject assets; selected as shared baseline, without semantic rewriting",
+    "sources": {
+      "civil_engineering": "/mnt/nas_si002991c1cm/wenke/PDF/wangqiyuan/development/pipeline_dictionary_resume_32card_20261014_01/taxonomy_boundary_assets/civil_engineering/b1d0ed2b28d31fc4531bf53edad91d3a75023c38d7320a5b272f28d1bacb3542",
+      "electricengineering": "/mnt/nas_si002991c1cm/wenke/PDF/wangqiyuan/development/pipeline_dictionary_resume_32card_20261014_01/taxonomy_boundary_assets/electricengineering/ca935909f940fe6f496a0853baae962037927557d38bfa3396226e95923e066c",
+      "mechanical_engineering": "/mnt/nas_si002991c1cm/wenke/PDF/wangqiyuan/development/pipeline_dictionary_resume_32card_20261014_01/taxonomy_boundary_assets/mechanical_engineering/cf4fe4cf68c78bd5cce57cd6caf0b70595bcbc2c85a71615f8033b2af56f80f0",
+      "medicine": "/mnt/nas_si002991c1cm/wenke/PDF/wangqiyuan/development/pipeline_dictionary_resume_32card_20261014_01/taxonomy_boundary_assets/medicine/ab7b839f2da2bdf99cc75966b34924d367cd87a07e3ae40a2b1cc1018b5f5616",
+      "transportation": "/mnt/nas_si002991c1cm/wenke/PDF/wangqiyuan/development/pipeline_dictionary_resume_32card_20261014_01/taxonomy_boundary_assets/transportation/8e1c325a41e110ccf6f5c2e6c2b62b81be4ccdfd9e001535356c53660f4d8aaf"
+    },
+    "existing_results_changed": false,
+    "model_calls": 0
+  }
+}

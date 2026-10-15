@@ -20,7 +20,9 @@ import urllib.request
 from legacy_helpers import extract_json_object, normalize_api_url, normalize_partition
 from legacy_rules import merge_records
 
-VERSION = '20261008.2'
+VERSION = '20261015.1'
+NORMALIZATION_VERSION = 'whitespace-v1-20261015'
+NAME_RULES_PATH = Path(__file__).with_name('whitespace_rules.json')
 NAME_FIELDS = ('name','knowledge_point')
 TEXT_FIELDS = ('name','knowledge_point','definition','en_definition','description','en_description')
 PROMPT = '''你是知识点最终去重审核员。任务只限同一学科、同一挂载分支内的同名候选。
@@ -123,26 +125,73 @@ def canonical_path(path,aliases):
     return path
 
 
-def name_key(value):
-    return (value or '').strip().casefold()
+def layout_key(value):
+    """Normalize layout only; ordinary Latin word separators remain significant."""
+    text=re.sub(r'\s+',' ',value or '').strip().casefold()
+    han=r'\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\U00020000-\U000323af'
+    return re.sub(r'(?<=['+han+r']) | (?=['+han+r'])','',text)
+
+
+def load_name_rules():
+    data=json.loads(NAME_RULES_PATH.read_text(encoding='utf-8'))
+    if data.get('version')!=NORMALIZATION_VERSION: raise ValueError('Unknown whitespace rules version')
+    accepted={}; distinct={}
+    for rule in data['rules']:
+        path=rule['main_tags']; field=rule['field']; variants=rule['variants']
+        if not isinstance(path,str) or not path.strip() or field not in NAME_FIELDS:
+            raise ValueError('Whitespace rule requires a full path and name field')
+        if not isinstance(variants,list) or len(variants)<2 or any(not isinstance(v,str) or not v.strip() for v in variants):
+            raise ValueError('Whitespace rule needs nonempty original spelling variants')
+        compact={re.sub(r'\s+','',v).casefold() for v in variants}
+        if len(compact)!=1: raise ValueError('Whitespace rules must not introduce synonyms or punctuation changes')
+        spellings={layout_key(v) for v in variants}
+        if rule['equivalent'] is True:
+            key='reviewed_whitespace:'+next(iter(compact))
+            for spelling in spellings:
+                scoped=(path,field,spelling)
+                if scoped in accepted and accepted[scoped]!=key: raise ValueError('Conflicting whitespace rules')
+                accepted[scoped]=key
+        elif rule['equivalent'] is False:
+            distinct.setdefault((path,field,next(iter(compact))),set()).update(spellings)
+        else: raise ValueError('Whitespace rule must explicitly accept or reject equivalence')
+    return accepted,distinct
+
+
+NAME_RULES_SHA256=sha_file(NAME_RULES_PATH)
+NAME_EQUIVALENTS,NAME_DISTINCT=load_name_rules()
+
+
+def normalization_identity():
+    if sha_file(NAME_RULES_PATH)!=NAME_RULES_SHA256:
+        raise ValueError('Whitespace rules changed while the process was running')
+    return {'version':NORMALIZATION_VERSION,'rules_sha256':NAME_RULES_SHA256,
+            'implementation_sha256':sha_file(__file__)}
+
+
+def name_key(value,path='',field=''):
+    key=layout_key(value)
+    return NAME_EQUIVALENTS.get((path,field,key),key)
 
 
 def row_keys(row,aliases):
     path=canonical_path(row['main_tags'],aliases)
-    return [(path,field,name_key(row.get(field))) for field in NAME_FIELDS
-            if path.strip() and name_key(row.get(field))]
+    return [(path,field,name_key(row.get(field),path,field)) for field in NAME_FIELDS
+            if path.strip() and name_key(row.get(field),path,field)]
 
 
 def matched_fields(left,right,aliases):
     if canonical_path(left['main_tags'],aliases)!=canonical_path(right['main_tags'],aliases): return []
     if not left['main_tags'].strip() or not right['main_tags'].strip(): return []
-    return [f for f in NAME_FIELDS if name_key(left.get(f)) and name_key(left.get(f))==name_key(right.get(f))]
+    path=canonical_path(left['main_tags'],aliases)
+    return [f for f in NAME_FIELDS if name_key(left.get(f),path,f)
+            and name_key(left.get(f),path,f)==name_key(right.get(f),path,f)]
 
 
 def length_dedup(rows,aliases):
     validate_rows(rows)
     # Reuse the previous priority and direct-match algorithm, but return original payloads.
-    working=[{**r,**{f:r.get(f) or '' for f in TEXT_FIELDS}} for r in rows]
+    working=[{**r,**{f:(name_key(r.get(f),canonical_path(r['main_tags'],aliases),f)
+                       if f in NAME_FIELDS else r.get(f) or '') for f in TEXT_FIELDS}} for r in rows]
     def rule_path(path):
         canonical=canonical_path(path,aliases)
         return canonical if canonical.strip() else ''
@@ -157,6 +206,27 @@ def length_dedup(rows,aliases):
                       'canonical_main_tags':canonical_path(dropped['main_tags'],aliases),
                       'reason':'prefer_longer_zh_definition_then_en_definition_stable_input_tie'})
     return [original[r['id']] for r in selected],audit
+
+
+def whitespace_collisions(rows,aliases):
+    """Keep ambiguous English segmentation visible, without adding a pipeline gate."""
+    groups={}
+    for row in rows:
+        path=canonical_path(row['main_tags'],aliases)
+        if not path.strip(): continue
+        for field in NAME_FIELDS:
+            text=row.get(field) or ''; compact=re.sub(r'\s+','',text).casefold()
+            if compact: groups.setdefault((path,field,compact),[]).append(row)
+    result=[]
+    for (path,field,compact),members in groups.items():
+        spellings={layout_key(r.get(field)) for r in members}
+        if len(spellings)<2 or len({name_key(r.get(field),path,field) for r in members})<2: continue
+        known=spellings<=NAME_DISTINCT.get((path,field,compact),set())
+        result.append({'main_tags':path,'field':field,'compact_spelling':compact,
+                       'member_ids':[r['id'] for r in members],
+                       'original_spellings':[r[field] for r in members],
+                       'resolution':'distinct_by_reviewed_rule' if known else 'not_auto_merged'})
+    return result
 
 
 def candidate_groups(rows,subject,aliases):
@@ -304,6 +374,8 @@ def check_sources(meta):
 def verify_run(out):
     out=Path(out)
     meta=json.loads((out/'RUN.json').read_text(encoding='utf-8'))
+    if meta.get('version')!=VERSION or meta.get('name_normalization')!=normalization_identity():
+        raise ValueError('Deduplication rules changed; verify historical runs with their frozen code')
     check_sources(meta)
     if sha_file(out/'INPUT.jsonl')!=meta['snapshot_sha256']: raise ValueError('Frozen snapshot changed')
     original=read_rows(out/'INPUT.jsonl'); kept=read_rows(out/'retained.json')
@@ -333,6 +405,11 @@ def verify_run(out):
     for key,value in [('input_records',len(original)),('retained_records',len(kept)),
                       ('removed_records',len(removed)),('review_records',len(review))]:
         if summary[key]!=value: raise ValueError('Summary count mismatch: '+key)
+    collisions=whitespace_collisions(kept,aliases)
+    if read_rows(out/'whitespace_collisions.jsonl')!=collisions:
+        raise ValueError('Whitespace collision audit disagrees with original retained records')
+    if summary['remaining_whitespace_collision_groups']!=len(collisions):
+        raise ValueError('Whitespace collision count mismatch')
     residual=Counter(key for row in kept for key in row_keys(row,aliases))
     duplicates=sum(count-1 for count in residual.values() if count>1)
     if meta['mode']=='length' and duplicates: raise ValueError('Rule mode has residual exact-key duplicates')
@@ -358,7 +435,8 @@ def verify_run(out):
     return {'all_records_accounted_for':True,'original_payloads_unchanged':True,'id_changes':0,
             'payload_changes':0,'all_removed_have_direct_retained_matches':True,
             'selection_policy_consistent':True,
-            'remaining_same_name_key_excess':duplicates,'semantic_quality_approved':False}
+            'remaining_same_name_key_excess':duplicates,
+            'remaining_whitespace_collision_groups':len(collisions),'semantic_quality_approved':False}
 
 
 def execute(config,client=None):
@@ -389,7 +467,8 @@ def execute(config,client=None):
     if config.mode=='llm' and client is None and tasks:
         if not config.api_url or not config.model: raise ValueError('LLM mode requires explicit URL and model')
         if config.api_key_env and not os.environ.get(config.api_key_env): raise ValueError('Missing API key environment variable')
-    identity={'version':VERSION,'inputs':hashes,'subject':config.subject,'mode':config.mode,
+    identity={'version':VERSION,'name_normalization':normalization_identity(),
+              'inputs':hashes,'subject':config.subject,'mode':config.mode,
               'aliases':aliases,'alias_source':alias_source,'prompt_sha256':digest_value(PROMPT),
               'api_url':normalize_api_url(config.api_url) if config.mode=='llm' else '',
               'model':config.model if config.mode=='llm' else ''}
@@ -447,6 +526,8 @@ def execute(config,client=None):
         write_json(out/'retained.json',kept); write_jsonl(out/'retained.jsonl',kept)
         write_jsonl(out/'removed.jsonl',removed); write_jsonl(out/'duplicate_audit.jsonl',removed_audit)
         write_jsonl(out/'review.jsonl',review); write_jsonl(out/'group_decisions.jsonl',group_audit)
+        collisions=whitespace_collisions(kept,aliases)
+        write_jsonl(out/'whitespace_collisions.jsonl',collisions)
         counts=Counter(r['status'] for r in results.values())
         summary={'subject':config.subject,'mode':config.mode,'input_records':len(rows),
                  'candidate_groups':len(tasks),'candidate_records':sum(len(t['members']) for t in tasks),
@@ -456,6 +537,7 @@ def execute(config,client=None):
                  'configured_workers':config.workers,'elapsed_seconds':round(time.monotonic()-start,3),
                  'source_files_unchanged':True,'semantic_quality_approved':False,
                  'formal_delivery_overwritten':False}
+        summary['remaining_whitespace_collision_groups']=len(collisions)
         write_json(out/'SUMMARY.json',summary)
         verification=verify_run(out)
         write_json(out/'VERIFICATION.json',verification)

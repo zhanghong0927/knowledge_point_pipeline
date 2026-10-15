@@ -23,6 +23,10 @@ class TransportTests(unittest.TestCase):
             context=100000, output_tokens=16000, overlap=4, workers=2, timeout=3,
             server_context=None, out=self.root/'out', attempts=3, transport_round=number)
         runner = v5.Runner(args)
+        class Tokenizer:
+            def apply_chat_template(self, messages, **kwargs):
+                return [0] * 100
+        runner.tokenizer = Tokenizer()
         runner.backoff = lambda *a: None
         def api(*a):
             self.calls.append(a)
@@ -60,6 +64,39 @@ class TransportTests(unittest.TestCase):
         self.run_round(3, True)
         self.assertEqual(len(self.calls), 3)
 
+    def test_timeout_failure_marker_survives_same_round_cached_leaf_reuse(self):
+        def unavailable(*a):
+            raise TimeoutError('model unavailable')
+        self.responder = unavailable
+        first = self.run_round(1)
+        self.assertEqual(first['status'], 'partial')
+        self.assertEqual(first['execution']['technical_errors'], 1)
+        self.assertEqual(first['transport_pending_chunks'], 1)
+        self.assertTrue(first['chunks'][0]['technical_failure_unresolved'])
+        cache = next((self.root/'out').glob('*/chunks/*.json'))
+        self.assertTrue(json.loads(cache.read_text())['technical_failure_unresolved'])
+        cached = self.run_round(1)
+        self.assertEqual(len(self.calls), 1)
+        self.assertEqual(cached['execution']['technical_errors'], 0)
+        self.assertTrue(cached['chunks'][0]['technical_failure_unresolved'])
+        self.assertEqual(cached['technical_failure_unresolved_chunks'], 1)
+
+    def test_earlier_timeout_clears_after_successful_lower_concurrency_round(self):
+        def recover(*a):
+            if len(self.calls) == 1:
+                raise TimeoutError('temporary')
+            return {'choices':[{'finish_reason':'stop','message':{'content':json.dumps(
+                {'scanned_all':True, 'entries':[]})}}]}
+        self.responder = recover
+        deferred = self.run_round(1)
+        self.assertEqual(deferred['status'], 'partial')
+        self.assertEqual(deferred['execution']['technical_errors'], 1)
+        self.assertTrue(deferred['chunks'][0]['technical_failure_unresolved'])
+        result = self.run_round(2)
+        self.assertEqual(result['status'], 'completed')
+        self.assertEqual(result['execution']['technical_errors'], 0)
+        self.assertFalse(result['chunks'][0]['technical_failure_unresolved'])
+
     def test_repair_timeout_keeps_valid_neighbor_and_only_retries_repair(self):
         good={'head':[{'unit':0,'quote':'Alpha'}],
             'knowledge_point':[{'unit':0,'quote':'Alpha'}],'name':[],
@@ -92,6 +129,30 @@ class TransportTests(unittest.TestCase):
         self.assertEqual(len(self.calls),3)
         self.run_round(2)
         self.assertEqual(len(self.calls),3)
+
+    def test_unchanged_bad_location_is_not_reported_as_model_rename(self):
+        Path(self.spec['md_path']).write_text('Earlier Alpha means a thing.\n')
+        bad={'head':[{'unit':0,'quote':'Alpha'}],
+             'knowledge_point':[{'unit':0,'quote':'Alpha'}],'name':[],
+             'body':[],'body_complete':True}
+        def response(data):
+            return {'choices':[{'finish_reason':'stop','message':{'content':json.dumps(data)}}]}
+        def api(*args):
+            request=json.loads(args[-1]['messages'][1]['content'])
+            if 'repair_tasks' not in request:
+                return response({'scanned_all':True,'entries':[bad]})
+            rid=request['repair_tasks'][0]['repair_id']
+            return response({'repairs':[{'repair_id':rid,'entry':bad,'reason':'unchanged'}]})
+        self.responder=api
+        result=self.run_round(1)
+        self.assertEqual(result['status'],'partial')
+        self.assertEqual(result['entries'],0)
+        caches=list((self.root/'out').glob('*/chunks/*.json'))
+        self.assertEqual(len(caches),1)
+        pending=json.loads(caches[0].read_text())['unresolved']
+        self.assertEqual(len(pending),1)
+        self.assertIn('source validation failed',pending[0]['error'])
+        self.assertNotIn('changed candidate identity',pending[0]['error'])
 
 
 if __name__ == '__main__':

@@ -88,6 +88,20 @@ class OfflineFlowTests(unittest.TestCase):
                 available.update(task['produces'])
         self.assertTrue(all(not t['blocked'] for t in stages[4]['tasks']))
 
+    def test_dictionary_cold_plan_has_no_missing_internal_handoff(self):
+        pipeline = load(ROOT / 'pipeline.py', 'dictionary_cold_pipeline')
+        config, values = pipeline.load_config(ROOT / 'configs/pipeline.example.json')
+        stages = pipeline.plan(config, values)
+        available = set()
+        run = str(Path(values['run'])) + '/'
+        for stage in stages:
+            for task in stage['tasks']:
+                for requirement in task['requires']:
+                    if requirement.startswith(run):
+                        self.assertIn(requirement, available, task['name'] + ': ' + requirement)
+                available.update(task['produces'])
+        self.assertTrue(all(not task['blocked'] for stage in stages for task in stage['tasks']))
+
     def test_missing_executable_recorded_as_failed(self):
         pipeline = load(ROOT / 'pipeline.py', 'flow_runtime')
         with tempfile.TemporaryDirectory() as d:

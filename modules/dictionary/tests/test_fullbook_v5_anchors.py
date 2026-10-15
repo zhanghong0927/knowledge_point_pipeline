@@ -39,6 +39,92 @@ class ValidationTests(unittest.TestCase):
     def valid(self, item, text, part):
         return anchors.validate_entry(item, part, text, BOOK)
 
+    def test_numbered_heading_selects_original_lexical_head_without_number(self):
+        for prefix in ('## 8.3.1 ', '## **8.3.1 ', '8.3.1 '):
+            text, part = source(('heading', prefix + CN + ' Beta\n'), 'Definition.\n')
+            item = entry(quote=CN + ' Beta', knowledge_point=[sel(0, 'Beta')],
+                         name=[sel(0, CN)], body=body(1, 'Definition.', 1, 'Definition.'))
+            built = self.valid(item, text, part)
+            self.assertEqual(built['head'], CN + ' Beta')
+            self.assertEqual(built['knowledge_point'], 'Beta')
+            self.assertEqual(built['name'], CN)
+            self.assertEqual(built['raw_content'], 'Definition.')
+            self.assertEqual(built['source']['head_spans'], [(len(prefix), len(prefix) + 7)])
+
+    def test_numbered_prose_list_and_marked_internal_heading_are_not_heads(self):
+        for kind, prefix, role in (('paragraph', '8.3.1 ', None),
+                                   ('ordered_list', '8.3.1 ', None),
+                                   ('heading', '## 8.3.1 ', 'secondary_style'),
+                                   ('heading', '## 8.3.1 ', 'internal_after_bilingual_main'),
+                                   ('heading', '## 8.3.1 Earlier ', None)):
+            text, part = source((kind, prefix + 'Beta\n'))
+            if role:
+                part['units'][0]['head_role'] = role
+            with self.subTest(kind=kind, prefix=prefix, role=role), self.assertRaises(ValueError):
+                self.valid(entry(), text, part)
+
+    def test_numbered_bilingual_line_can_use_nearby_explicit_sibling_heading(self):
+        text, part = source(('heading', '## 2.0.2 \u963f\u5c14\u6cd5 Alpha\n'),
+                            '2.0.3 ' + CN + ' Beta\n', 'Definition.\n')
+        item = entry(1, quote=CN + ' Beta', knowledge_point=[sel(1, 'Beta')],
+                     name=[sel(1, CN)], body=body(2, 'Definition.', 2, 'Definition.'))
+        built = self.valid(item, text, part)
+        self.assertEqual(built['head'], CN + ' Beta')
+        self.assertEqual(built['raw_content'], 'Definition.')
+
+    def test_numbered_bilingual_inline_head_with_definition_uses_peer_evidence(self):
+        text, part = source(('heading', '## 8.1.21 \u963f\u5c14\u6cd5 Alpha\n'),
+                            '8.1.22 ' + CN + ' Beta \u7531\u8bbe\u5907\u7ec4\u6210\u3002\n')
+        item = entry(1, quote=CN + ' Beta', knowledge_point=[sel(1, 'Beta')],
+                     name=[sel(1, CN)], body=body(1, '\u7531\u8bbe\u5907', 1, '\u7ec4\u6210\u3002'))
+        built = self.valid(item, text, part)
+        self.assertEqual(built['head'], CN + ' Beta')
+        self.assertEqual(built['raw_content'], '\u7531\u8bbe\u5907\u7ec4\u6210\u3002')
+
+    def test_numbered_prose_does_not_become_head_through_nearby_numbering(self):
+        for kind, value in (('paragraph', '2.0.3 Beta is a tool.\n'),
+                            ('paragraph', '2.0.3 Earlier ' + CN + ' Beta is a tool.\n'),
+                            ('paragraph', '9.0.3 ' + CN + ' Beta\n'),
+                            ('ordered_list', '2.0.3 ' + CN + ' Beta\n')):
+            text, part = source(('heading', '## 2.0.2 \u963f\u5c14\u6cd5 Alpha\n'), (kind, value))
+            with self.subTest(kind=kind, value=value), self.assertRaises(ValueError):
+                self.valid(entry(1, quote=CN + ' Beta' if CN in value else 'Beta'), text, part)
+
+    def test_chinese_definition_does_not_supply_bilingual_head_evidence(self):
+        text, part = source(('heading', '## 2.0.2 \u963f\u5c14\u6cd5 Alpha\n'),
+                            '2.0.3 Beta \u662f\u4e00\u79cd\u5de5\u5177\u3002\n')
+        with self.assertRaises(ValueError):
+            self.valid(entry(1), text, part)
+
+    def test_numbered_paragraph_predicate_cannot_be_selected_as_chinese_name(self):
+        predicate = '\u662f\u5de5\u5177'
+        for separator in (' ', ''):
+            line = '2.0.3 Beta' + separator + predicate
+            text, part = source(('heading', '## 2.0.2 \u963f\u5c14\u6cd5 Alpha\n'), line + '\n')
+            for quote in (line, line.removeprefix('2.0.3 ')):
+                item = entry(1, quote=quote, knowledge_point=[sel(1, 'Beta')],
+                             name=[sel(1, predicate)])
+                with self.subTest(separator=separator, quote=quote), self.assertRaises(ValueError):
+                    self.valid(item, text, part)
+
+    def test_numbered_paragraph_next_head_bounds_body_in_either_language_order(self):
+        for title in ('Gamma \u4f3d\u9a6c', '\u4f3d\u9a6c Gamma'):
+            text, part = source(('heading', '## 2.0.2 \u963f\u5c14\u6cd5 Alpha\n'),
+                                '2.0.3 Beta ' + CN + '\n', 'Own definition.\n',
+                                '2.0.4 ' + title + '\n', 'Foreign definition.\n')
+            item = entry(1, quote='Beta ' + CN, knowledge_point=[sel(1, 'Beta')],
+                         name=[sel(1, CN)], body=body(2, 'Own definition.', 4, 'Foreign definition.'))
+            with self.subTest(title=title), self.assertRaises(ValueError):
+                self.valid(item, text, part)
+
+    def test_numbered_paragraph_preserves_own_body_before_next_entry(self):
+        text, part = source(('heading', '## 2.0.2 \u963f\u5c14\u6cd5 Alpha\n'),
+                            '2.0.3 Beta ' + CN + '\n', 'Own definition.\n',
+                            '2.0.4 Gamma \u4f3d\u9a6c\n', 'Foreign definition.\n')
+        item = entry(1, quote='Beta ' + CN, knowledge_point=[sel(1, 'Beta')],
+                     name=[sel(1, CN)], body=body(2, 'Own definition.', 2, 'Own definition.'))
+        self.assertEqual(self.valid(item, text, part)['raw_content'], 'Own definition.')
+
     def test_same_line_chinese_name_extends_english_only_head(self):
         text, part = source('Beta (' + CN + ') is defined.\n')
         item = entry(name=[sel(0, CN)], body=body(0, 'is defined.', 0, 'is defined.'))
@@ -427,6 +513,21 @@ class ValidationTests(unittest.TestCase):
 
 
 class RepairTests(unittest.TestCase):
+    def test_unchanged_unsupported_position_reports_source_error_not_rename(self):
+        _, part = source('Earlier Beta\n')
+        with self.assertRaisesRegex(ValueError, 'supported source head position'):
+            anchors.check_repair_identity(entry(), entry(), part)
+        self.assertFalse(anchors.repair_matches(entry(), entry(), part))
+
+    def test_absent_repair_quote_reports_source_error_not_rename(self):
+        _, part = source('Beta\n')
+        with self.assertRaisesRegex(ValueError, 'absent from its source unit'):
+            anchors.check_repair_identity(entry(), entry(quote='Missing'), part)
+
+    def test_actual_relocation_is_still_an_identity_mismatch(self):
+        _, part = source('Beta\nGamma\n')
+        self.assertFalse(anchors.check_repair_identity(entry(), entry(quote='Gamma'), part))
+
     def test_crop_see_guide_keeps_same_literal_head_identity(self):
         text, part = source('Beta See Gamma.\n')
         self.assertTrue(anchors.repair_matches(entry(quote='Beta See'), entry(), part))

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, ThreadPoolExecutor, as_completed, wait
 import csv
 import bisect
 import collections
@@ -12,11 +12,27 @@ import unicodedata
 import hashlib
 import importlib.util
 import json
+import multiprocessing
 import os
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from shared_request_pool import SharedExecutor, completed as shared_completed
+from contextlib import closing
 import re
+import shutil
+import threading
+import time
 from typing import Any
 import urllib.request
+from urllib.error import HTTPError, URLError
+
+
+def transient_transport(exc):
+    if isinstance(exc, HTTPError):
+        return exc.code in (408, 429, 500, 502, 503, 504)
+    return isinstance(exc, (URLError, TimeoutError, ConnectionError,
+                            ConnectionResetError, BrokenPipeError))
 
 
 ID_RE = re.compile(r"^[A-Za-z0-9_-]+$")
@@ -412,7 +428,7 @@ def validate_result(value: dict, windows: list[dict]) -> dict:
 
 
 def prepare(books_path: Path | None, root: Path | None, pdf_root: Path | None, out: Path,
-            radius: int = 24, max_line_chars: int = 3000) -> dict:
+            radius: int = 24, max_line_chars: int = 3000, allow_empty: bool = False) -> dict:
     if (books_path is None) == (root is None):
         raise ValueError("prepare 必须且只能提供 --books 或 --root")
     if radius < 1 or max_line_chars < 100:
@@ -420,7 +436,7 @@ def prepare(books_path: Path | None, root: Path | None, pdf_root: Path | None, o
     if out.exists() and any(out.iterdir()):
         raise FileExistsError(f"输出目录非空：{out}")
     books = read_json(books_path) if books_path else books_from_root(root.resolve(), pdf_root)
-    if not isinstance(books, list) or not books or any(not isinstance(b, dict) for b in books):
+    if not isinstance(books, list) or (not books and not allow_empty) or any(not isinstance(b, dict) for b in books):
         raise ValueError("书目必须是非空对象数组")
     refs = [b.get("identifier") for b in books]
     if any(not isinstance(ref, str) or not ID_RE.fullmatch(ref) for ref in refs) or len(set(refs)) != len(refs):
@@ -469,6 +485,34 @@ def prepare(books_path: Path | None, root: Path | None, pdf_root: Path | None, o
     return summary
 
 
+def prepare_one(item: dict, path_base: Path, radius: int, max_line_chars: int) -> dict:
+    """Prepare one book in a separate process; never share a PyMuPDF process across jobs."""
+    md = (path_base / item["md_path"]).expanduser().resolve(strict=True)
+    if md.suffix.lower() != ".md":
+        raise ValueError("md_path 必须是 .md 文件")
+    source_hash = sha256(md)
+    rows = md.read_text(encoding="utf-8-sig").splitlines()
+    windows = sample_windows(rows, radius, max_line_chars)
+    if not windows:
+        raise ValueError("empty_md")
+    pdf, pdf_hash, pdf_info = None, None, {"error": "pdf_not_supplied"}
+    if item.get("pdf_path"):
+        candidate = (path_base / item["pdf_path"]).expanduser().resolve()
+        if candidate.is_file():
+            pdf, pdf_hash = str(candidate), sha256(candidate)
+            pdf_info = extract_pdf_format(candidate, windows)
+            if sha256(candidate) != pdf_hash:
+                raise ValueError("pdf_source_changed_during_prepare")
+        else:
+            pdf_info = {"error": "pdf_not_found", "requested_path": str(candidate)}
+    if sha256(md) != source_hash:
+        raise ValueError("source_changed_during_prepare")
+    return {"schema": SCHEMA, "ref": item["identifier"], "title": item.get("title", md.stem),
+            "md_path": str(md), "md_sha256": source_hash, "line_count": len(rows),
+            "pdf_path": pdf, "pdf_sha256": pdf_hash, "pdf_info": pdf_info, "windows": windows,
+            "scope": "N1、N3、OTHER 主类与 OTHER 子类型分类验证；不是全文切分或知识点抽取"}
+
+
 def load_prepared(base: Path, manifest: dict, ref: str) -> dict:
     path = base / "prepared" / f"{ref}.json"
     if ref not in manifest["prepared_hashes"]:
@@ -497,9 +541,12 @@ def http_json(url: str, config: dict, payload: dict | None = None) -> Any:
         return json.load(response)
 
 
-def failure(ref: str, errors: list[str], title: str = "") -> dict:
-    return {"ref": ref, "title": title, "status": "technical_failed", "errors": errors,
-            "human_verified": False, "semantic_audit_complete": False}
+def failure(ref: str, errors: list[str], title: str = "", failure_kind: str | None = None) -> dict:
+    result = {"ref": ref, "title": title, "status": "technical_failed", "errors": errors,
+              "human_verified": False, "semantic_audit_complete": False}
+    if failure_kind:
+        result["failure_kind"] = failure_kind
+    return result
 
 
 def compact_model_windows(windows: list[dict]) -> list[dict]:
@@ -595,6 +642,20 @@ def process(ref: str, base: Path, out: Path, config: dict, manifest: dict) -> di
             if existing.get("status") != "technical_failed":
                 check_saved(existing, prep, out)
                 return existing
+            if config.get('defer_transport_retry') and existing.get('failure_kind') != 'transport':
+                return existing
+            # A failed response may be retried; retain its original request/response evidence.
+            archive_root = out / "technical_retry_archive" / ref
+            archive = archive_root / f"round_{len(list(archive_root.iterdir())) + 1}" if archive_root.exists() else archive_root / "round_1"
+            if archive.exists():
+                raise FileExistsError("technical_retry_archive_exists")
+            for folder in ("results", "raw", "sent"):
+                paths = ([destination] if folder == "results" else
+                         list((out / folder).glob(f"{ref}_*.json")))
+                for path in paths:
+                    target = archive / folder / path.name
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.move(str(path), str(target))
     except Exception as exc:
         result = failure(ref, [str(exc)])
         write_json(destination, result)
@@ -603,6 +664,7 @@ def process(ref: str, base: Path, out: Path, config: dict, manifest: dict) -> di
     user = json.dumps({"ref": ref, "windows": model_windows}, ensure_ascii=False, separators=(",", ":"))
     messages = [{"role": "system", "content": PROMPT}, {"role": "user", "content": user}]
     errors = []
+    failure_kind = 'content_or_format'
     for attempt in range(2):
         response_text = None
         try:
@@ -633,13 +695,19 @@ def process(ref: str, base: Path, out: Path, config: dict, manifest: dict) -> di
             return result
         except Exception as exc:
             errors.append(str(exc))
+            # Transport recovery belongs to the controller's lower-cap cohort rounds.
+            if (config.get('defer_transport_retry') and
+                    isinstance(exc, (HTTPError, URLError, TimeoutError, ConnectionError))):
+                failure_kind = 'transport' if transient_transport(exc) else 'terminal_transport'
+                break
             if str(exc).startswith("context_budget_exceeded") or "source_changed" in str(exc) or "prepared_changed" in str(exc):
+                failure_kind = 'source_or_budget'
                 break
             messages = messages[:2]
             if response_text is not None:
                 messages.append({"role": "assistant", "content": compact_repair_response(response_text)})
             messages.append({"role": "user", "content": "修复返回格式或证据错误，遵守原分类标准，不得补造证据；证据不足请标记 needs_review。错误：" + str(exc)[:500]})
-    result = failure(ref, errors, prep["title"])
+    result = failure(ref, errors, prep["title"], failure_kind if config.get('defer_transport_retry') else None)
     write_json(destination, result)
     return result
 
@@ -655,6 +723,12 @@ def verify(out: Path) -> dict:
     manifest = read_json(out / "manifest.json")
     if manifest.get("schema") != SCHEMA or manifest.get("prompt_sha256") != prompt_hash():
         raise ValueError("incompatible_run_manifest")
+    if manifest.get("config_path") and sha256(Path(manifest["config_path"])) != manifest["config_sha256"]:
+        raise ValueError("config_changed")
+    if manifest.get("code_sha256") and sha256(Path(__file__)) != manifest["code_sha256"]:
+        raise ValueError("code_changed")
+    if manifest.get("books_path") and sha256(Path(manifest["books_path"])) != manifest["books_sha256"]:
+        raise ValueError("books_changed")
     base = Path(manifest["base"])
     if sha256(base / "manifest.json") != manifest["base_manifest_sha256"]:
         raise ValueError("base_manifest_changed")
@@ -715,21 +789,193 @@ def run(base: Path, out: Path, config_path: Path, workers: int = 4) -> dict:
     manifest = {"schema": SCHEMA, "base": str(base.resolve()), "base_manifest_sha256": sha256(base / "manifest.json"),
                 "targets": prepared_manifest["targets"], "config": config, "prompt_sha256": prompt_hash()}
     if (out / "manifest.json").is_file():
-        if read_json(out / "manifest.json") != manifest:
-            raise ValueError("run_manifest_mismatch:请使用新的输出目录")
+        existing_manifest = read_json(out / "manifest.json")
+        validate_resume_manifest(existing_manifest, manifest,
+                                 str(config_path.resolve()), sha256(config_path), sha256(Path(__file__)))
+        manifest = existing_manifest
     elif out.exists() and any(out.iterdir()):
         raise ValueError("run_output_not_empty")
     # 模型预检失败时不创建假分类结果。
     models = http_json(api_url(config["api_url"], "/v1/models"), config)
     if config["model"] not in {item.get("id") for item in models.get("data", [])}:
         raise ValueError("configured_model_unavailable")
-    write_json(out / "manifest.json", manifest)
-    with ThreadPoolExecutor(max_workers=workers) as pool:
-        futures = [pool.submit(process, ref, base, out, config, prepared_manifest) for ref in manifest["targets"]]
-        for future in as_completed(futures):
+    if not (out / "manifest.json").is_file():
+        write_json(out / "manifest.json", manifest)
+    with closing(shared_completed(lambda ref: process(ref, base, out, config, prepared_manifest),
+                                  manifest["targets"], workers)) as completions:
+        for _, future in completions:
             result = future.result()
             print(result["ref"], result["status"], result.get("primary_class") or "", flush=True)
     return verify(out)
+
+
+def validate_resume_manifest(existing: dict, expected: dict, config_path: str,
+                             config_hash: str, code_hash: str) -> None:
+    """Allow a frozen streaming manifest to resume through native run()."""
+    if any(existing.get(key) != value for key, value in expected.items()):
+        raise ValueError("run_manifest_mismatch:请使用新的输出目录")
+    extra = set(existing) - set(expected)
+    valid_extra = {"config_path", "config_sha256", "code_sha256"}
+    if extra not in (set(), valid_extra, valid_extra | {"books_path", "books_sha256"}):
+        raise ValueError("run_manifest_mismatch:unexpected_fields")
+    if extra and (existing["config_path"] != config_path or
+                  existing["config_sha256"] != config_hash or
+                  existing["code_sha256"] != code_hash):
+        raise ValueError("run_manifest_mismatch:streaming_identity_changed")
+    if "books_path" in extra and sha256(Path(existing["books_path"])) != existing["books_sha256"]:
+        raise ValueError("run_manifest_mismatch:books_changed")
+
+
+def _stream_process(ref: str, base: Path, out: Path, config: dict, manifest: dict,
+                    started: list[float], events: list[dict], lock: Any) -> dict:
+    with lock:
+        at = time.monotonic()
+        started.append(at)
+        events.append({"event": "model_started", "ref": ref, "at": at})
+    return process(ref, base, out, config, manifest)
+
+
+def prepare_run(books_path: Path, out: Path, classification: Path, config_path: Path,
+                workers: int = 4, prepare_workers: int = 2, max_pending: int = 32,
+                radius: int = 24, max_line_chars: int = 3000) -> dict:
+    """Stream bounded, process-isolated preparation into the existing classifier."""
+    if min(workers, prepare_workers, max_pending, radius) < 1 or max_line_chars < 100:
+        raise ValueError("invalid_streaming_limits")
+    books_hash = sha256(books_path)
+    books = read_json(books_path)
+    if not isinstance(books, list) or any(not isinstance(book, dict) for book in books):
+        raise ValueError("books_must_be_object_list")
+    refs = [book.get("identifier") for book in books]
+    if any(not isinstance(ref, str) or not ID_RE.fullmatch(ref) for ref in refs) or len(set(refs)) != len(refs):
+        raise ValueError("identifier 必须唯一且只含 ASCII 字母、数字、下划线或短横线")
+    if any(not isinstance(book.get("md_path"), str) or not book["md_path"] or
+           (book.get("pdf_path") is not None and not isinstance(book["pdf_path"], str)) or
+           ("title" in book and not isinstance(book["title"], str)) for book in books):
+        raise ValueError("invalid_book_structure")
+    if out.resolve() == classification.resolve() or out.resolve() in classification.resolve().parents or \
+            classification.resolve() in out.resolve().parents:
+        raise ValueError("stream_output_directories_overlap")
+    if any(path.exists() and any(path.iterdir()) for path in (out, classification)):
+        if not (out / 'manifest.json').is_file() or not (classification / 'manifest.json').is_file():
+            raise ValueError("stream_output_not_empty")
+        config = read_json(config_path)
+        expected = {"schema": SCHEMA, "base": str(out.resolve()),
+                    "base_manifest_sha256": sha256(out / 'manifest.json'), "targets": refs,
+                    "config": config, "prompt_sha256": prompt_hash()}
+        validate_resume_manifest(read_json(classification / 'manifest.json'), expected,
+                                 str(config_path.resolve()), sha256(config_path), sha256(Path(__file__)))
+        return verify(classification)
+    config = read_json(config_path)
+    if not isinstance(config, dict) or not all(isinstance(config.get(k), str) and config[k]
+                                                for k in ("api_url", "model")):
+        raise ValueError("config_requires_api_url_and_model")
+    if "api_key" in config:
+        raise ValueError("请通过 api_key_env 指定环境变量，不将密钥写入配置或运行日志")
+    if not config["api_url"].startswith(("http://", "https://")):
+        raise ValueError("invalid_api_url")
+    for key in ("context_limit", "max_tokens", "timeout"):
+        if key in config and (type(config[key]) is not int or config[key] <= 0):
+            raise ValueError(f"invalid_config:{key}")
+    config_hash, code_hash = sha256(config_path), sha256(Path(__file__))
+    (classification / 'results').mkdir(parents=True, exist_ok=True)
+    if refs:
+        models = http_json(api_url(config["api_url"], "/v1/models"), config)
+        if config["model"] not in {item.get("id") for item in models.get("data", [])}:
+            raise ValueError("configured_model_unavailable")
+
+    prepared_manifest = {
+        "schema": SCHEMA, "standard": "五类抽取版型判断标准.md", "targets": refs,
+        "sampling": {"positions": [0.1, 0.5, 0.9], "radius": radius, "max_line_chars": max_line_chars},
+        "prompt_sha256": prompt_hash(), "prepared_hashes": {}, "preparation_errors": {},
+    }
+    path_base = books_path.resolve().parent
+    pending_prepare: dict[Any, str] = {}
+    pending_model: dict[Any, str] = {}
+    ready: collections.deque[str] = collections.deque()
+    started: list[float] = []
+    events: list[dict] = []
+    lock = threading.Lock()
+    next_book = 0
+    prepare_peak = model_peak = ready_peak = pipeline_peak = 0
+    last_prepare_finished = None
+
+    if refs:
+        with ProcessPoolExecutor(max_workers=prepare_workers,
+                                 mp_context=multiprocessing.get_context("spawn")) as preparation_pool, \
+                SharedExecutor(max_workers=workers) as model_pool:
+            while next_book < len(books) or pending_prepare or ready or pending_model:
+                while (next_book < len(books) and len(pending_prepare) < prepare_workers
+                       and len(pending_prepare) + len(pending_model) + len(ready) < max_pending):
+                    item = books[next_book]
+                    future = preparation_pool.submit(prepare_one, item, path_base, radius, max_line_chars)
+                    pending_prepare[future] = item["identifier"]
+                    next_book += 1
+                    prepare_peak = max(prepare_peak, len(pending_prepare))
+                    pipeline_peak = max(pipeline_peak,
+                                        len(pending_prepare) + len(pending_model) + len(ready))
+                while ready and len(pending_model) < max_pending:
+                    ref = ready.popleft()
+                    future = model_pool.submit(_stream_process, ref, out, classification, config,
+                                               prepared_manifest, started, events, lock)
+                    pending_model[future] = ref
+                    model_peak = max(model_peak, len(pending_model))
+                active = set(pending_prepare) | set(pending_model)
+                if not active:
+                    continue
+                completed, _ = wait(active, return_when=FIRST_COMPLETED)
+                for future in completed:
+                    if future in pending_prepare:
+                        ref = pending_prepare.pop(future)
+                        last_prepare_finished = time.monotonic()
+                        events.append({"event": "prepare_finished", "ref": ref,
+                                       "at": last_prepare_finished})
+                        try:
+                            data = future.result()
+                            dest = out / "prepared" / f"{ref}.json"
+                            write_json(dest, data)
+                            prepared_manifest["prepared_hashes"][ref] = sha256(dest)
+                            ready.append(ref)
+                            ready_peak = max(ready_peak, len(ready))
+                        except Exception as exc:
+                            prepared_manifest["preparation_errors"][ref] = str(exc)
+                            write_json(out / "preparation_failed" / f"{ref}.json",
+                                       failure(ref, [str(exc)]))
+                            write_json(classification / "results" / f"{ref}.json",
+                                       failure(ref, ["preparation_failed:" + str(exc)]))
+                    else:
+                        ref = pending_model.pop(future)
+                        try:
+                            result = future.result()
+                        except Exception as exc:
+                            result = failure(ref, ["model_worker_failed:" + str(exc)])
+                            write_json(classification / "results" / f"{ref}.json", result)
+                        print(ref, result["status"], result.get("primary_class") or "", flush=True)
+
+    if sha256(config_path) != config_hash:
+        raise ValueError("config_changed_during_stream")
+    if sha256(books_path) != books_hash:
+        raise ValueError("books_changed_during_stream")
+    if sha256(Path(__file__)) != code_hash:
+        raise ValueError("code_changed_during_stream")
+    write_json(out / "manifest.json", prepared_manifest)
+    write_json(out / "PREPARED.json", {"expected": len(refs),
+               "prepared": len(prepared_manifest["prepared_hashes"]),
+               "failures": len(prepared_manifest["preparation_errors"])})
+    manifest = {"schema": SCHEMA, "base": str(out.resolve()),
+                "base_manifest_sha256": sha256(out / "manifest.json"), "targets": refs,
+                "config": config, "prompt_sha256": prompt_hash(),
+                "config_path": str(config_path.resolve()), "config_sha256": config_hash,
+                "code_sha256": code_hash,
+                "books_path": str(books_path.resolve()), "books_sha256": books_hash}
+    write_json(classification / "manifest.json", manifest)
+    write_json(classification / "SCHEDULER_EVENTS.json", {
+        "prepare_inflight_peak": prepare_peak, "model_inflight_peak": model_peak,
+        "ready_peak": ready_peak, "pipeline_inflight_peak": pipeline_peak,
+        "model_first_started_at": min(started) if started else None,
+        "prepare_last_finished_at": last_prepare_finished,
+        "events": sorted(events, key=lambda item: item["at"]),
+    })
+    return verify(classification)
 
 
 def run_module(books: list[dict], config: dict, out: str | Path, workers: int = 4,
@@ -769,20 +1015,50 @@ def run_module(books: list[dict], config: dict, out: str | Path, workers: int = 
 
 
 def route_extractors(prepared_dir: Path, classification_dir: Path, output: Path,
-                     model_config: dict[str, Any] | None = None) -> dict:
+                     model_config: dict[str, Any] | None = None,
+                     selected_refs: list[str] | None = None) -> dict:
     """Extract N1/N3 books and retain OTHER with its subtype for later use."""
+    manifest = read_json(prepared_dir / "manifest.json")
+    targets = manifest["targets"]
+    refs = targets
+    if selected_refs is not None:
+        if not isinstance(selected_refs, list) or any(not isinstance(ref, str) for ref in selected_refs):
+            raise ValueError("selected_refs_must_be_string_list")
+        if len(set(selected_refs)) != len(selected_refs):
+            raise ValueError("duplicate_selected_ref")
+        unknown = set(selected_refs) - set(targets)
+        if unknown:
+            raise ValueError("unknown_selected_ref:" + ",".join(sorted(unknown)))
+        prepared_manifest = load_manifest(prepared_dir)
+        run_manifest = read_json(classification_dir / "manifest.json")
+        if (run_manifest.get("schema") != SCHEMA or run_manifest.get("prompt_sha256") != prompt_hash()
+                or Path(run_manifest.get("base", "")).resolve() != prepared_dir.resolve()
+                or run_manifest.get("base_manifest_sha256") != sha256(prepared_dir / "manifest.json")
+                or run_manifest.get("targets") != targets):
+            raise ValueError("selected_classification_manifest_mismatch")
+        if run_manifest.get("config_path") and sha256(Path(run_manifest["config_path"])) != run_manifest["config_sha256"]:
+            raise ValueError("config_changed")
+        if run_manifest.get("code_sha256") and sha256(Path(__file__)) != run_manifest["code_sha256"]:
+            raise ValueError("code_changed")
+        for ref in selected_refs:
+            classification = read_json(classification_dir / "results" / f"{ref}.json")
+            if classification.get("status") != "classified" or classification.get("primary_class") not in {"N1", "N3"}:
+                raise ValueError(f"invalid_selected_classification:{ref}")
+            prep = load_prepared(prepared_dir, prepared_manifest, ref)
+            check_saved(classification, prep, classification_dir)
+        refs = selected_refs
     output.mkdir(parents=True, exist_ok=True)
     results_dir = output / "results"
     results_dir.mkdir(exist_ok=True)
-    manifest = read_json(prepared_dir / "manifest.json")
     n1_module = None
     routed: list[dict] = []
     knowledge_points: list[dict] = []
-    for ref in manifest["targets"]:
+    for ref in refs:
         classified_path = classification_dir / "results" / f"{ref}.json"
         prep_path = prepared_dir / "prepared" / f"{ref}.json"
         classification = read_json(classified_path) if classified_path.is_file() else {"status": "technical_failed"}
-        prep = read_json(prep_path) if prep_path.is_file() else {}
+        prep = (load_prepared(prepared_dir, manifest, ref) if selected_refs is not None
+                else read_json(prep_path) if prep_path.is_file() else {})
         primary = classification.get("primary_class")
         route = {"ref": ref, "title": prep.get("title", classification.get("title", ref)),
                  "primary_class": primary, "classification_status": classification.get("status"),
@@ -860,6 +1136,7 @@ def route_extractors(prepared_dir: Path, classification_dir: Path, output: Path,
         writer.writerows(knowledge_points)
     counts = Counter(item["extraction_status"] for item in routed)
     summary = {"books_total": len(routed), "extracted_books": counts.get("extracted", 0),
+               "selection_input_count": len(refs), "routed_selected_count": len(routed),
                "other_books": counts.get("skipped_other", 0),
                "needs_review_books": counts.get("skipped_needs_review", 0),
                "failed_books": counts.get("technical_failed", 0) + counts.get("skipped_classification_failed", 0),
@@ -879,19 +1156,32 @@ def main() -> int:
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--radius", type=int, default=24)
     p.add_argument("--max-line-chars", type=int, default=3000)
+    p.add_argument('--allow-empty', action='store_true')
     r = commands.add_parser("run")
     r.add_argument("--base", type=Path, required=True)
     r.add_argument("--config", type=Path, required=True)
     r.add_argument("--out", type=Path, required=True)
     r.add_argument("--workers", type=int, default=4)
+    s = commands.add_parser("prepare-run")
+    s.add_argument("--books", type=Path, required=True)
+    s.add_argument("--out", type=Path, required=True)
+    s.add_argument("--classification", type=Path, required=True)
+    s.add_argument("--config", type=Path, required=True)
+    s.add_argument("--workers", type=int, default=4)
+    s.add_argument("--prepare-workers", type=int, default=2)
+    s.add_argument("--max-pending", type=int, default=32)
     v = commands.add_parser("verify")
     v.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
     try:
         if args.command == "prepare":
-            result = prepare(args.books, args.root, args.pdf_root, args.out, args.radius, args.max_line_chars)
+            result = prepare(args.books, args.root, args.pdf_root, args.out, args.radius, args.max_line_chars,
+                             allow_empty=args.allow_empty)
         elif args.command == "run":
             result = run(args.base, args.out, args.config, args.workers)
+        elif args.command == "prepare-run":
+            result = prepare_run(args.books, args.out, args.classification, args.config,
+                                 args.workers, args.prepare_workers, args.max_pending)
         else:
             result = verify(args.out)
         print(json.dumps(result, ensure_ascii=False))

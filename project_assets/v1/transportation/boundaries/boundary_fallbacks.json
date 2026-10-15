@@ -1,0 +1,12 @@
+[
+  {
+    "node_code": "N_bb58129b19c7f37f",
+    "path": "交通运输/交通运输安全工程/交通运行安全控制/交通运行安全监测预警/交通安全状态监测",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_118af4011993bc58",
+    "path": "交通运输/交通运输安全工程/交通运行安全控制/交通运行安全监测预警/交通风险实时预警",
+    "reason": "generation_technical_failure"
+  }
+]

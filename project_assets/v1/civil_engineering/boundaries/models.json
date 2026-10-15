@@ -1,0 +1,4 @@
+{
+  "probe_skipped_in_staged_mode": true,
+  "requested_model": "/mnt/si002647a3lv/zhanghong/model/modelscope/Qwen/Qwen3.8-27B"
+}

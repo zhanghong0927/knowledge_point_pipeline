@@ -158,7 +158,10 @@ def convert(args):
               "pdf_attached": sum("pdf_path" in b for b in books), "pdf_quality_checked": False,
               "api_calls": 0, "downloads": 0, "unresolved_reasons": dict(Counter(x["reason"] for x in unresolved)),
               "exclusion_reasons": dict(Counter(x["reason"] for x in excluded)),
-              "allow_partial": args.allow_partial, "ready_for_classification": bool(books) and (not unresolved or args.allow_partial)}
+              "allow_partial": args.allow_partial,
+              "empty_filtered_cohort": not books and not unresolved,
+              "ready_for_classification": (bool(books) and (not unresolved or args.allow_partial))
+                    or (getattr(args, 'allow_empty', False) and not books and not unresolved)}
     return books, audit, excluded, unresolved, report
 
 
@@ -180,6 +183,7 @@ def parser():
     p.add_argument("--pdf-column")
     p.add_argument("--assume-track", action="store_true", help="Input already separated; accept missing book_track")
     p.add_argument("--allow-partial", action="store_true", help="Allow valid subset to continue despite unresolved records")
+    p.add_argument("--allow-empty", action="store_true", help="Accept zero filtered books only when no unresolved inputs remain")
     return p
 
 

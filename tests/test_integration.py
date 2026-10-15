@@ -4,6 +4,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+from types import SimpleNamespace
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -56,6 +57,61 @@ class IntegrationTests(unittest.TestCase):
         important = pipeline.plan(config, values)
         self.assertIn("important_route.py", str(important[2]))
         self.assertNotIn("run_fullbook_v5.py", str(important[2]))
+
+    def test_important_restore_receives_initial_normalization_proof(self):
+        pipeline = module(ROOT / "pipeline.py")
+        for filename in ("pipeline.example.json", "pipeline.important_llm.example.json"):
+            with self.subTest(config=filename):
+                config, values = pipeline.load_config(ROOT / "configs" / filename)
+                config["track"] = "important"
+                tasks = pipeline.plan(config, values)[3]["tasks"]
+                normalize = next(t for t in tasks if t["name"] == "normalize_fields")
+                restore = next(t for t in tasks if t["name"] == "restore_trace")
+                proof = str(Path(values["run"]) / "04_cleaning/input/report.json")
+                self.assertIn(proof, normalize["produces"])
+                self.assertIn(proof, restore["requires"])
+                command = restore["command"]
+                self.assertIn("--normalization-report", command)
+                self.assertEqual(command[command.index("--normalization-report") + 1], proof)
+
+    def test_example_plans_skip_boundary_semantic_review(self):
+        pipeline = module(ROOT / "pipeline.py")
+        for filename in ("pipeline.example.json", "pipeline.8card.example.json",
+                         "pipeline.important_llm.example.json"):
+            with self.subTest(config=filename):
+                config, values = pipeline.load_config(ROOT / "configs" / filename)
+                config['mounting']['review_enabled'] = True
+                tasks = pipeline.plan(config, values)[4]["tasks"]
+                generate = next(t for t in tasks if t["name"] == "generate_mounting_boundaries")
+                command = generate["command"]
+                self.assertIn('activate-project-assets',command)
+                self.assertNotIn('--api-url',command)
+                prepare=next(t for t in tasks if t['name']=='prepare_mounting')['command']
+                self.assertEqual(prepare[prepare.index('--boundary-review-mode')+1],'off')
+                self.assertTrue(any(t["name"] == "review_mounting" for t in tasks))
+
+    def test_record_binding_survives_rules_without_entering_model_or_standard_output(self):
+        normalize = module(ROOT / "adapters/normalize_records.py")
+        rules = module(ROOT / "modules/cleaning/scripts/rule_clean.py")
+        model = module(ROOT / "modules/cleaning/scripts/model_clean.py")
+        original = {"id": "kp", "name": "齿轮", "knowledge_point": "gear",
+                    "definition": "齿轮用于传递运动。",
+                    "source": {"identifier": "book-A", "book_title": "Shared Title", "head_spans": [[1, 4]]}}
+        normalized, _ = normalize.standardize(original, "standard", "机械工程", "mechanical_engineering", 1)
+        field = "_normalization_record_sha256"
+        self.assertIn(field, normalized)
+        settings = SimpleNamespace(max_name_chars=240, keep_single_letter=False, max_context_chars=3000)
+        status, passed = rules.classify(normalized, 1, settings)
+        self.assertEqual(status, "pass")
+        self.assertEqual(passed[field], normalized[field])
+        api_item = model.input_item(passed, 1, 3000)
+        self.assertNotIn(field, api_item)
+        self.assertNotIn(normalized[field], json.dumps(api_item, ensure_ascii=False))
+        cleaned = model.standard_record(passed, passed["cleaning_record_id"],
+                                        {key: passed[key] for key in normalize.TEXT_FIELDS})
+        self.assertNotIn(field, cleaned)
+        self.assertEqual(cleaned["id"], "kp")
+        self.assertEqual(cleaned["source"], "Shared Title")
 
     def test_normalize_rules_and_restore_trace_offline(self):
         with tempfile.TemporaryDirectory() as directory:

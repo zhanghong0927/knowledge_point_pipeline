@@ -1,0 +1,122 @@
+[
+  {
+    "node_code": "N_610d374bd8af7e81",
+    "path": "土木工程/土木工程材料/材料试验与质量评价/材料取样与试件制备/试件制备",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_94de056f414cde0d",
+    "path": "土木工程/土木工程材料/材料试验与质量评价/材料取样与试件制备/材料取样",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_c95f9c13f72e4c9a",
+    "path": "土木工程/土木工程材料/材料试验与质量评价/沥青与沥青混合料试验/沥青混合料试验",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_1bc7935afee4b9f5",
+    "path": "土木工程/土木工程材料/材料试验与质量评价/沥青与沥青混合料试验/沥青",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_2542f6e7cd81837f",
+    "path": "土木工程/建筑与结构工程/结构抗震、抗风与性能设计/抗震设防目标与概念设计/抗震设防目标",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_1fe5f6c208bd0f75",
+    "path": "土木工程/建筑与结构工程/结构抗震、抗风与性能设计/抗震设防目标与概念设计/概念设计",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_98dbf3ef89c0b0d9",
+    "path": "土木工程/建筑与结构工程/结构稳定、疲劳与耐久/稳定分析与临界荷载/临界荷载",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_c3c1c73741f6abe9",
+    "path": "土木工程/建筑与结构工程/结构稳定、疲劳与耐久/稳定分析与临界荷载/稳定分析",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_43a43f1f3e002d29",
+    "path": "土木工程/建筑与结构工程/结构稳定、疲劳与耐久/结构疲劳验算与寿命/结构疲劳验算",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_15c676fa9fe1ab16",
+    "path": "土木工程/建筑与结构工程/结构稳定、疲劳与耐久/结构疲劳验算与寿命/寿命",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_9555fb960de5f0a3",
+    "path": "土木工程/建筑与结构工程/高层建筑结构/超高层结构体系与加强措施/加强措施",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_863c01bfafc4a50d",
+    "path": "土木工程/建筑与结构工程/高层建筑结构/超高层结构体系与加强措施/超高层结构体系",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_3ab6feddb97549df",
+    "path": "土木工程/建筑与结构工程/组合结构与混合结构/组合节点与界面连接/组合节点",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_743262d6dc0cf27d",
+    "path": "土木工程/建筑与结构工程/组合结构与混合结构/组合节点与界面连接/界面连接",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_43b43211aa4511c6",
+    "path": "土木工程/工程施工与智能建造/BIM、数字建造与智能施工/数字交付与智能建造评价/数字交付",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_779f728fc50ff3fc",
+    "path": "土木工程/工程施工与智能建造/BIM、数字建造与智能施工/数字交付与智能建造评价/智能建造评价",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_f7e21505b9458435",
+    "path": "土木工程/工程施工与智能建造/BIM、数字建造与智能施工/施工仿真与数字孪生/施工仿真",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_8f2ecf67be65593b",
+    "path": "土木工程/工程施工与智能建造/BIM、数字建造与智能施工/施工仿真与数字孪生/数字孪生",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_12e2ea69b3392b4e",
+    "path": "土木工程/工程施工与智能建造/BIM、数字建造与智能施工/增材制造与3D打印建造/增材制造",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_98578b72d525980b",
+    "path": "土木工程/工程施工与智能建造/BIM、数字建造与智能施工/增材制造与3D打印建造/3D打印建造",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_584df96c22e8814c",
+    "path": "土木工程/工程施工与智能建造/施工组织、进度与资源配置/资源需求计划与均衡/均衡",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_6531a66c6d3764c6",
+    "path": "土木工程/工程施工与智能建造/施工组织、进度与资源配置/资源需求计划与均衡/资源需求计划",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_23a210ababbbe480",
+    "path": "土木工程/工程施工与智能建造/土方、基坑与基础施工/基坑开挖与支护施工/基坑开挖",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_ad62ed90ecb218bf",
+    "path": "土木工程/工程施工与智能建造/土方、基坑与基础施工/基坑开挖与支护施工/支护施工",
+    "reason": "generation_technical_failure"
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "node_code": "N_a3c8649163da7383",
+    "path": "机械工程/机电一体化、机器人与控制/机器感知、智能控制与自主系统/定位、建图与环境理解/同步定位与建图/视觉同步定位与建图",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_aef2b4b07f2c149c",
+    "path": "机械工程/机电一体化、机器人与控制/机器感知、智能控制与自主系统/定位、建图与环境理解/同步定位与建图/视觉—惯性与多传感融合建图",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_50c1daa5a83163ae",
+    "path": "机械工程/可靠性与生命周期工程/全寿命周期系统工程与产品生命周期管理/产品生命周期管理与数字主线/PDM与PLM平台及业务流程",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_f09d035b91fcca6a",
+    "path": "机械工程/可靠性与生命周期工程/全寿命周期系统工程与产品生命周期管理/产品生命周期管理与数字主线/设计、制造、服务数据贯通",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_ffd87457e3f868e4",
+    "path": "机械工程/可靠性与生命周期工程/生命周期评价、绿色设计与可持续性/碳、资源与循环可持续性/水、能源、关键材料与资源效率",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_db48a45cce5e3621",
+    "path": "机械工程/可靠性与生命周期工程/生命周期评价、绿色设计与可持续性/碳、资源与循环可持续性/循环指标、环境声明与可持续权衡",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_b11fd01749d63e18",
+    "path": "机械工程/机械产品与应用领域/物料搬运与起重运输机械/仓储与自动物流装备/AGV、AMR与移动搬运机器人/自动导引车",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_844d9acc0edb7441",
+    "path": "机械工程/机械产品与应用领域/物料搬运与起重运输机械/仓储与自动物流装备/AGV、AMR与移动搬运机器人/自主移动机器人",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_afbc1921ebf685f8",
+    "path": "机械工程/机械产品与应用领域/过程工业、石油化工与承压装备/过程装备安装、运行与维护/安装、调试与检修",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_0720d5c42b0f5913",
+    "path": "机械工程/机械产品与应用领域/过程工业、石油化工与承压装备/过程装备安装、运行与维护/运行、维护与故障处置",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_8a9226156aa3c1f3",
+    "path": "机械工程/机械产品与应用领域/过程工业、石油化工与承压装备/工业炉窑与过程辅助装备/工业炉窑与冶炼设备",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_c54d40844fefe38c",
+    "path": "机械工程/机械产品与应用领域/过程工业、石油化工与承压装备/工业炉窑与过程辅助装备/过程给料、装卸与辅助设备",
+    "reason": "generation_technical_failure"
+  }
+]

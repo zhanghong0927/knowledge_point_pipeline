@@ -8,17 +8,22 @@ routing constraints are loaded from a profile directory.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib.util
 import json
 import math
 import os
 import re
 import sys
+import threading
 import time
 from collections import Counter, defaultdict, deque
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+from shared_request_pool import completed as shared_completed
+from round_integrity import digest_file
 from typing import Any
 from urllib import error as urlerror
 from urllib import request as urlrequest
@@ -288,15 +293,28 @@ def build_tree(raw: dict[str, Any], cards: dict[str, dict[str, Any]]) -> TreeNod
     )
 
 
-def node_payload(node: TreeNode) -> dict[str, Any]:
-    return {"node_code": node.code, "name_zh": node.name_zh, "name_en": node.name_en, "path": node.path, "semantic_card": clip(node.semantic_card, 700)}
+def node_payload(node: TreeNode, card_chars: int = 700) -> dict[str, Any]:
+    card = clip(node.semantic_card, card_chars) if card_chars else " ".join(node.semantic_card.split())
+    return {"node_code": node.code, "name_zh": node.name_zh, "name_en": node.name_en, "path": node.path, "semantic_card": card}
 
 
-def candidate_payload(nodes: list[TreeNode], max_examples: int) -> list[dict[str, Any]]:
-    return [node_payload(node) | {"verified_examples": node.examples[:max_examples], "has_children": bool(node.children)} for node in nodes]
+def candidate_payload(nodes: list[TreeNode], max_examples: int, card_chars: int = 700) -> list[dict[str, Any]]:
+    return [node_payload(node, card_chars) | {"verified_examples": node.examples[:max_examples], "has_children": bool(node.children)} for node in nodes]
 
 
-def call_api(args: argparse.Namespace, system: str, payload: dict[str, Any]) -> tuple[dict[str, Any], TokenUsage]:
+class ModelResponseFormatError(ValueError):
+    """The service responded, but its routing payload has the wrong structure."""
+
+
+def validate_model_response(parsed):
+    if (not isinstance(parsed, dict) or not isinstance(parsed.get('routing_decision'), dict)
+            or not isinstance(parsed.get('candidates'), list)
+            or any(not isinstance(item, dict) for item in parsed['candidates'])):
+        raise ModelResponseFormatError('Model response format: expected routing_decision object and candidates object list')
+    return parsed
+
+
+def _call_api_uncached(args: argparse.Namespace, system: str, payload: dict[str, Any]) -> tuple[dict[str, Any], TokenUsage]:
     headers = {"Content-Type": "application/json"}
     if args.send_auth and args.api_key:
         headers["Authorization"] = f"Bearer {args.api_key}"
@@ -318,8 +336,14 @@ def call_api(args: argparse.Namespace, system: str, payload: dict[str, Any]) -> 
             request = urlrequest.Request(args.api_url, data=json.dumps(body, ensure_ascii=False).encode("utf-8"), headers=headers, method="POST")
             with urlrequest.urlopen(request, timeout=args.timeout) as response:
                 result = json.loads(response.read().decode("utf-8"))
-            content = result.get("choices", [{}])[0].get("message", {}).get("content", "")
-            return extract_json_object(content), usage_from_api(result.get("usage", {}))
+            choices=result.get('choices') if isinstance(result,dict) else None
+            if (not isinstance(choices,list) or not choices or not isinstance(choices[0],dict)
+                    or not isinstance(choices[0].get('message'),dict)
+                    or not isinstance(choices[0]['message'].get('content'),str)):
+                raise ModelResponseFormatError('Model response format: invalid chat completion envelope')
+            content = choices[0]['message']['content']
+            usage=result.get('usage')
+            return validate_model_response(extract_json_object(content)), usage_from_api(usage if isinstance(usage,dict) else {})
         except urlerror.HTTPError as exc:
             try:
                 error_text = exc.read().decode("utf-8", errors="replace")[:300]
@@ -335,8 +359,41 @@ def call_api(args: argparse.Namespace, system: str, payload: dict[str, Any]) -> 
                 break
         except Exception as exc:
             last_error = f"{type(exc).__name__}: {exc}"
-        time.sleep(min(2**attempt, 8))
+        if attempt < args.retries:
+            time.sleep(min(2**attempt, 8))
     raise RuntimeError(f"API request failed: {last_error}")
+
+
+_request_cache_guard = threading.Lock()
+_request_cache_locks: dict[str, threading.Lock] = {}
+
+
+def call_api(args: argparse.Namespace, system: str, payload: dict[str, Any]) -> tuple[dict[str, Any], TokenUsage]:
+    cache_dir = getattr(args, 'staged_request_cache', None)
+    if cache_dir is None:
+        return _call_api_uncached(args, system, payload)
+    key_payload = {'identity_sha256': args.staged_request_identity,
+                   'system': system, 'payload': payload, 'model': args.model,
+                   'temperature': args.temperature, 'top_p': args.top_p,
+                   'max_tokens': args.max_tokens, 'enable_thinking': args.enable_thinking}
+    key = hashlib.sha256(json.dumps(key_payload, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+    path = cache_dir/(key+'.json')
+    with _request_cache_guard:
+        lock = _request_cache_locks.setdefault(key, threading.Lock())
+    with lock:
+        if path.exists():
+            saved = json.loads(path.read_text(encoding='utf-8'))
+            core = {'key': key, 'parsed': saved.get('parsed'), 'usage': saved.get('usage')}
+            digest = hashlib.sha256(json.dumps(core, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+            if saved.get('key') != key or saved.get('sha256') != digest:
+                raise ValueError('Native successful request cache checksum changed')
+            return validate_model_response(saved['parsed']), TokenUsage(**saved['usage'])
+        parsed, usage = _call_api_uncached(args, system, payload)
+        validate_model_response(parsed)
+        core = {'key': key, 'parsed': parsed, 'usage': usage.as_dict()}
+        atomic_json(path, {**core, 'sha256': hashlib.sha256(
+            json.dumps(core, ensure_ascii=False, sort_keys=True).encode()).hexdigest()})
+        return parsed, usage
 
 
 def routing_decision(raw: Any, *, is_root: bool) -> dict[str, Any]:
@@ -385,9 +442,9 @@ def score_level(knowledge_card: dict[str, Any], current: TreeNode, level: int, a
         routing_max_depth=args.routing_max_depth,
         mount_threshold=args.threshold,
         knowledge_card=knowledge_card,
-        current_node=node_payload(current),
+        current_node=node_payload(current, getattr(args, 'semantic_card_chars', 700)),
         is_root_level=is_root,
-        candidates=candidate_payload(current.children, args.max_seed_examples),
+        candidates=candidate_payload(current.children, args.max_seed_examples, getattr(args, 'semantic_card_chars', 700)),
     )
     payload["subject_name"] = args.subject_name
     payload["subject_scope"] = args.subject_scope
@@ -772,6 +829,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--subject-scope", default="", help="Override subject scope description from profile.json.")
     parser.add_argument("--knowledge-tree", type=Path, default=None, help="Override profile knowledge-tree JSON.")
     parser.add_argument("--semantic-cards", type=Path, default=None, help="Override profile semantic-card JSONL.")
+    parser.add_argument("--semantic-card-chars", type=int, default=700, help="Per-card character limit; 0 preserves the complete verified boundary card.")
     parser.add_argument("--prompt-module", type=Path, default=None, help="Override profile prompt Python module.")
     parser.add_argument("--routing-constraints", type=Path, default=None, help="Override profile routing-constraint Python module.")
     parser.add_argument("--api-url", default=os.environ.get("KNOWLEDGE_LABELING_API_URL", DEFAULT_API_URL))
@@ -806,7 +864,220 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--limit", type=int, default=0)
     parser.add_argument("--no-progress", action="store_true", help="Disable tqdm progress bar and use periodic text logs.")
     parser.add_argument("--progress-interval", type=int, default=10, help="Fallback text-log interval when tqdm is unavailable or disabled.")
+    parser.add_argument("--only-round", type=int, choices=(1, 2, 3), help="Run one durable cohort transport round only.")
+    parser.add_argument("--finalize-only", action="store_true", help="Build ordered output from completed rounds without API calls.")
     return parser.parse_args()
+
+
+def staged_transport_failure(record: dict[str, Any]) -> bool:
+    label = record.get("knowledge_labeling") or {}
+    if label.get("status") != "failed":
+        return False
+    error = str(label.get("error", "")).lower()
+    if "http 4" in error and "http 429" not in error:
+        return False
+    return any(marker in error for marker in (
+        "http 429", "http 5", "timed out", "timeout", "connection reset",
+        "temporarily unavailable", "incompleteread", "incomplete read",
+        "remote end closed", "connection aborted", "connection broken",
+        "server disconnected", "urlopen error", "ssl", "record layer failure",
+    ))
+
+
+def staged_format_failure(record: dict[str, Any]) -> bool:
+    label=record.get('knowledge_labeling') or {}
+    if label.get('status')!='failed' or staged_transport_failure(record):return False
+    error=str(label.get('error','')).lower()
+    if 'http 4' in error:return False
+    return any(marker in error for marker in (
+        'jsondecodeerror','invalid model json format','modelresponseformaterror',
+        'model response format:', "'str' object has no attribute 'get'"))
+
+
+def staged_retryable_failure(record: dict[str, Any]) -> bool:
+    return staged_transport_failure(record) or staged_format_failure(record)
+
+
+def staged_file_identity(args: argparse.Namespace) -> dict[str, Any]:
+    """Bind resumes to source and semantic assets, independent of worker allocation."""
+    def digest(path: Path) -> str:
+        return digest_file(path, force_full=args.finalize_only) if path.exists() else "missing"
+    return {
+        "native_script_sha256": digest(Path(__file__)),
+        "integrity_code_sha256": digest(Path(__file__).resolve().parents[4]/'round_integrity.py'),
+        "input_sha256": digest(args.input),
+        "tree_sha256": digest(args.knowledge_tree),
+        "cards_sha256": digest(args.semantic_cards),
+        "prompt_sha256": digest(args.prompt_module),
+        "constraints_sha256": digest(args.routing_constraints),
+        "model": args.model,
+        "subject_name": args.subject_name,
+        "subject_scope": args.subject_scope,
+        "semantic_options": {key: getattr(args, key) for key in (
+            "beam_width", "threshold", "root_threshold", "routing_threshold",
+            "routing_max_depth", "force_routing_through_depth", "stop_threshold",
+            "scope_threshold", "min_parent_depth", "min_mount_depth", "max_depth",
+            "temperature", "top_p", "max_tokens", "enable_thinking",
+            "max_seed_examples", "semantic_card_chars", "limit",
+        )},
+    }
+
+
+def atomic_json(path: Path, value: Any) -> None:
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temporary.replace(path)
+
+
+def run_staged(args: argparse.Namespace, records: list[dict[str, Any]], root: TreeNode, prompt: Any) -> None:
+    """Append every result; retry transport and malformed responses in later cohorts."""
+    if args.only_round and args.finalize_only:
+        raise ValueError("--only-round and --finalize-only are mutually exclusive")
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    events_path = args.output.with_suffix(".rounds.jsonl")
+    state_path = args.output.with_suffix(".rounds.json")
+    identity = staged_file_identity(args)
+    args.staged_request_identity = hashlib.sha256(
+        json.dumps(identity, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+    args.staged_request_cache = args.output.with_suffix('.requests')
+    args.staged_request_cache.mkdir(parents=True, exist_ok=True)
+    if state_path.exists():
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        if state.get("identity") != identity:
+            raise ValueError("Native route source or semantic identity changed")
+    elif args.only_round == 1:
+        if events_path.exists() or args.output.exists():
+            raise ValueError("Route checkpoint/output exists without matching state")
+        state = {"identity": identity, "completed_rounds": [],
+                 "completed_prefix_bytes": 0,
+                 "completed_prefix_sha256": hashlib.sha256(b'').hexdigest()}
+        atomic_json(state_path, state)
+    else:
+        raise ValueError("Missing native route round 1 checkpoint")
+    completed = state["completed_rounds"]
+    if completed != list(range(1, len(completed) + 1)) or len(completed) > 3:
+        raise ValueError("Invalid native route round history")
+    for name, digest in state.get('request_cache_hashes', {}).items():
+        cached = args.staged_request_cache/name
+        if not cached.is_file() or digest_file(cached,force_full=args.finalize_only) != digest:
+            raise ValueError('Native successful request cache checksum changed')
+    prefix_bytes = state.get('completed_prefix_bytes', 0)
+    event_digest = hashlib.sha256()
+    event_bytes = 0
+    prefix_verified = prefix_bytes == 0
+    if prefix_verified and event_digest.hexdigest() != state.get('completed_prefix_sha256'):
+        raise ValueError('Native route checkpoint completed prefix checksum changed')
+    events: dict[tuple[int, int], dict[str, Any]] = {}
+    if events_path.exists():
+        with events_path.open("rb") as handle:
+            for line in handle:
+                event_digest.update(line)
+                event_bytes += len(line)
+                if not prefix_verified:
+                    if event_bytes > prefix_bytes:
+                        raise ValueError('Native route checkpoint completed prefix checksum changed')
+                    if event_bytes == prefix_bytes:
+                        if event_digest.hexdigest() != state.get('completed_prefix_sha256'):
+                            raise ValueError('Native route checkpoint completed prefix checksum changed')
+                        prefix_verified = True
+                if not line.strip():
+                    continue
+                event = json.loads(line)
+                core = {key: event[key] for key in ('round', 'index', 'record')}
+                if event.get('sha256') != hashlib.sha256(
+                    json.dumps(core, ensure_ascii=False, sort_keys=True).encode()).hexdigest():
+                    raise ValueError('Native route checkpoint result checksum changed')
+                phase, index, record = event["round"], event["index"], event["record"]
+                if not isinstance(index, int) or not 0 <= index < len(records) or phase not in (1, 2, 3):
+                    raise ValueError("Invalid native route checkpoint index")
+                if (phase, index) in events or {k: v for k, v in record.items() if k != "knowledge_labeling"} != records[index]:
+                    raise ValueError("Native route checkpoint record identity changed")
+                events[(phase, index)] = record
+    if not prefix_verified:
+        raise ValueError('Native route checkpoint completed prefix checksum changed')
+
+    def results_through(round_number: int) -> list[dict[str, Any] | None]:
+        latest: list[dict[str, Any] | None] = [None] * len(records)
+        for phase in range(1, round_number + 1):
+            for index in range(len(records)):
+                if (phase, index) in events:
+                    latest[index] = events[(phase, index)]
+        return latest
+
+    if args.finalize_only:
+        if not completed or any(item is None for item in results_through(completed[-1])):
+            raise ValueError("Native route rounds incomplete; cannot finalize")
+        if completed[-1] < 3 and state.get("pending_retryable",state.get('pending_transport')):
+            raise ValueError("Native route still has retryable technical failures for a later round")
+        ordered = results_through(completed[-1])
+        temporary = args.output.with_suffix(args.output.suffix + ".tmp")
+        with temporary.open("w", encoding="utf-8") as handle:
+            for item in ordered:
+                handle.write(json.dumps(item, ensure_ascii=False) + "\n")
+        temporary.replace(args.output)
+        report = {"input_records": len(records), "output": str(args.output),
+                  "failed_records": sum(item["knowledge_labeling"].get("status") == "failed" for item in ordered),
+                  "transport_unresolved": sum(staged_transport_failure(item) for item in ordered),
+                  "format_unresolved": sum(staged_format_failure(item) for item in ordered),
+                  "retryable_unresolved": sum(staged_retryable_failure(item) for item in ordered),
+                  "staged_rounds": completed, "model": args.model, "aggregates": aggregate(ordered)}
+        atomic_json(args.output.with_suffix(".report.json"), report)
+        print(json.dumps(report, ensure_ascii=False), flush=True)
+        return
+
+    phase = args.only_round
+    if phase in completed:
+        if any(item is None for item in results_through(phase)):
+            raise ValueError(f"Native route round {phase} checkpoint incomplete")
+        print(json.dumps({"round": phase, "reused": True}, ensure_ascii=False), flush=True)
+        return
+    if completed != list(range(1, phase)):
+        raise ValueError(f"Native route round {phase} requires completed prior rounds")
+    previous = results_through(phase - 1)
+    if phase == 1:
+        indexes = list(range(len(records)))
+    else:
+        indexes = [index for index, item in enumerate(previous) if item is not None and staged_retryable_failure(item)]
+    pending = [index for index in indexes if (phase, index) not in events]
+    # A model request may fail in this phase; its one result is still durable and
+    # a later phase, not an inline loop, owns any transport retry.
+    args.retries = 0
+    if pending:
+        with events_path.open("ab") as handle:
+            for index, future in shared_completed(lambda i: route_record(records[i], root, args, prompt),
+                                                   pending, args.workers):
+                record = dict(records[index])
+                try:
+                    result, _usage = future.result()
+                    record["knowledge_labeling"] = result
+                except Exception as exc:
+                    record["knowledge_labeling"] = {"status": "failed", "decision": "needs_review",
+                                                   "error": str(exc), "token_usage": TokenUsage().as_dict()}
+                event = {"round": phase, "index": index, "record": record}
+                event['sha256'] = hashlib.sha256(json.dumps(
+                    event, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+                encoded = (json.dumps(event, ensure_ascii=False) + "\n").encode('utf-8')
+                handle.write(encoded)
+                handle.flush()
+                os.fsync(handle.fileno())
+                event_digest.update(encoded)
+                event_bytes += len(encoded)
+                events[(phase, index)] = record
+    if any((phase, index) not in events for index in indexes):
+        raise ValueError("Native route round checkpoint incomplete")
+    state["completed_rounds"].append(phase)
+    latest = results_through(phase)
+    state["pending_transport"] = sum(item is not None and staged_transport_failure(item) for item in latest)
+    state['pending_format'] = sum(item is not None and staged_format_failure(item) for item in latest)
+    state['pending_retryable'] = sum(item is not None and staged_retryable_failure(item) for item in latest)
+    state['completed_prefix_bytes'] = event_bytes
+    state['completed_prefix_sha256'] = event_digest.hexdigest()
+    state['request_cache_hashes'] = {path.name: digest_file(path)
+                                     for path in args.staged_request_cache.glob('*.json')}
+    atomic_json(state_path, state)
+    print(json.dumps({"round": phase, "attempted": len(indexes),
+                      "pending_transport": state["pending_transport"],
+                      "completed": len(completed)}, ensure_ascii=False), flush=True)
 
 
 def main() -> None:
@@ -825,6 +1096,7 @@ def main() -> None:
         or args.retry_failed_cooldown < 0
         or args.api_failure_stop_window < 0
         or args.progress_interval < 1
+        or args.semantic_card_chars < 0
         or not all(0 < value <= 1 for value in threshold_values)
         or not routing_threshold_ok
     ):
@@ -837,6 +1109,9 @@ def main() -> None:
     records = [normalise_input_record(json.loads(line)) for line in args.input.read_text(encoding="utf-8").splitlines() if line.strip()]
     if args.limit:
         records = records[:args.limit]
+    if args.only_round or args.finalize_only:
+        run_staged(args, records, root, prompt)
+        return
     try:
         preflight_usage = run_api_preflight(records, root, args, prompt)
     except Exception as exc:

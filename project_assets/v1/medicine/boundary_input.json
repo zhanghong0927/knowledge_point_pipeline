@@ -1,0 +1,6017 @@
+{
+  "nodes": [
+    {
+      "node_code": "N_718c8fd8d25ac37c",
+      "name_zh": "医学",
+      "name_en": "",
+      "path": "医学",
+      "parent_code": null
+    },
+    {
+      "node_code": "N_67f94558ccb37c35",
+      "name_zh": "中医学",
+      "name_en": "",
+      "path": "医学/中医学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_20620c703a0ac2c0",
+      "name_zh": "中医临床各科",
+      "name_en": "",
+      "path": "医学/中医学/中医临床各科",
+      "parent_code": "N_67f94558ccb37c35"
+    },
+    {
+      "node_code": "N_2d3cacd9bcc4a01f",
+      "name_zh": "中医基础理论",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论",
+      "parent_code": "N_67f94558ccb37c35"
+    },
+    {
+      "node_code": "N_8740bba1d8d3b61c",
+      "name_zh": "阴阳五行学说",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/阴阳五行学说",
+      "parent_code": "N_2d3cacd9bcc4a01f"
+    },
+    {
+      "node_code": "N_e8d50766370ab781",
+      "name_zh": "阴阳学说",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/阴阳五行学说/阴阳学说",
+      "parent_code": "N_8740bba1d8d3b61c"
+    },
+    {
+      "node_code": "N_40949319449b4c27",
+      "name_zh": "五行学说",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/阴阳五行学说/五行学说",
+      "parent_code": "N_8740bba1d8d3b61c"
+    },
+    {
+      "node_code": "N_31022797bb6224a0",
+      "name_zh": "藏象学说",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/藏象学说",
+      "parent_code": "N_2d3cacd9bcc4a01f"
+    },
+    {
+      "node_code": "N_6bad21396d326199",
+      "name_zh": "五脏",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/藏象学说/五脏",
+      "parent_code": "N_31022797bb6224a0"
+    },
+    {
+      "node_code": "N_0a1413187d1b383e",
+      "name_zh": "六腑与奇恒之腑",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/藏象学说/六腑与奇恒之腑",
+      "parent_code": "N_31022797bb6224a0"
+    },
+    {
+      "node_code": "N_d78922c5cf5a9298",
+      "name_zh": "气血津液学说",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/气血津液学说",
+      "parent_code": "N_2d3cacd9bcc4a01f"
+    },
+    {
+      "node_code": "N_28fbff81ee2f4218",
+      "name_zh": "气",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/气血津液学说/气",
+      "parent_code": "N_d78922c5cf5a9298"
+    },
+    {
+      "node_code": "N_bdb852d68cfe53ab",
+      "name_zh": "血",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/气血津液学说/血",
+      "parent_code": "N_d78922c5cf5a9298"
+    },
+    {
+      "node_code": "N_f3f131178ac9bb52",
+      "name_zh": "津液",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/气血津液学说/津液",
+      "parent_code": "N_d78922c5cf5a9298"
+    },
+    {
+      "node_code": "N_1faecf2c6e5488a0",
+      "name_zh": "经络学说",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/经络学说",
+      "parent_code": "N_2d3cacd9bcc4a01f"
+    },
+    {
+      "node_code": "N_d0907b31965e91e5",
+      "name_zh": "十二经脉",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/经络学说/十二经脉",
+      "parent_code": "N_1faecf2c6e5488a0"
+    },
+    {
+      "node_code": "N_7fe8842587b28d99",
+      "name_zh": "奇经八脉与其他经脉",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/经络学说/奇经八脉与其他经脉",
+      "parent_code": "N_1faecf2c6e5488a0"
+    },
+    {
+      "node_code": "N_25f11344f1b7ffcc",
+      "name_zh": "病因病机与防治原则",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/病因病机与防治原则",
+      "parent_code": "N_2d3cacd9bcc4a01f"
+    },
+    {
+      "node_code": "N_4c0d56c53ffe7561",
+      "name_zh": "病因",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/病因病机与防治原则/病因",
+      "parent_code": "N_25f11344f1b7ffcc"
+    },
+    {
+      "node_code": "N_71ed1e42e07fb7e5",
+      "name_zh": "病机",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/病因病机与防治原则/病机",
+      "parent_code": "N_25f11344f1b7ffcc"
+    },
+    {
+      "node_code": "N_5c9ff371dc287bf3",
+      "name_zh": "治则与治法",
+      "name_en": "",
+      "path": "医学/中医学/中医基础理论/病因病机与防治原则/治则与治法",
+      "parent_code": "N_25f11344f1b7ffcc"
+    },
+    {
+      "node_code": "N_d3b39a14039d8867",
+      "name_zh": "中医经典与医史文献",
+      "name_en": "",
+      "path": "医学/中医学/中医经典与医史文献",
+      "parent_code": "N_67f94558ccb37c35"
+    },
+    {
+      "node_code": "N_b04132cc0ec7f7b6",
+      "name_zh": "中医诊断与方药",
+      "name_en": "",
+      "path": "医学/中医学/中医诊断与方药",
+      "parent_code": "N_67f94558ccb37c35"
+    },
+    {
+      "node_code": "N_cf18a9e484d8ed85",
+      "name_zh": "四诊与辨证",
+      "name_en": "",
+      "path": "医学/中医学/中医诊断与方药/四诊与辨证",
+      "parent_code": "N_b04132cc0ec7f7b6"
+    },
+    {
+      "node_code": "N_94556d85fed5f4a6",
+      "name_zh": "四诊",
+      "name_en": "",
+      "path": "医学/中医学/中医诊断与方药/四诊与辨证/四诊",
+      "parent_code": "N_cf18a9e484d8ed85"
+    },
+    {
+      "node_code": "N_f81b1ca41538047f",
+      "name_zh": "辨证方法（八纲、脏腑、六经、卫气营血、三焦等）",
+      "name_en": "",
+      "path": "医学/中医学/中医诊断与方药/四诊与辨证/辨证方法（八纲、脏腑、六经、卫气营血、三焦等）",
+      "parent_code": "N_cf18a9e484d8ed85"
+    },
+    {
+      "node_code": "N_ccba0abc2855e329",
+      "name_zh": "中药学",
+      "name_en": "",
+      "path": "医学/中医学/中医诊断与方药/中药学",
+      "parent_code": "N_b04132cc0ec7f7b6"
+    },
+    {
+      "node_code": "N_51ed132a0bfe33ce",
+      "name_zh": "中药基础理论与药性",
+      "name_en": "",
+      "path": "医学/中医学/中医诊断与方药/中药学/中药基础理论与药性",
+      "parent_code": "N_ccba0abc2855e329"
+    },
+    {
+      "node_code": "N_d0dedab383e6cd0d",
+      "name_zh": "常用中药分类与应用",
+      "name_en": "",
+      "path": "医学/中医学/中医诊断与方药/中药学/常用中药分类与应用",
+      "parent_code": "N_ccba0abc2855e329"
+    },
+    {
+      "node_code": "N_a6df858d453ace91",
+      "name_zh": "中药炮制",
+      "name_en": "",
+      "path": "医学/中医学/中医诊断与方药/中药学/中药炮制",
+      "parent_code": "N_ccba0abc2855e329"
+    },
+    {
+      "node_code": "N_ba6e194f3c273a9e",
+      "name_zh": "配伍与用药禁忌",
+      "name_en": "",
+      "path": "医学/中医学/中医诊断与方药/中药学/配伍与用药禁忌",
+      "parent_code": "N_ccba0abc2855e329"
+    },
+    {
+      "node_code": "N_0628d051f4979334",
+      "name_zh": "方剂学",
+      "name_en": "",
+      "path": "医学/中医学/中医诊断与方药/方剂学",
+      "parent_code": "N_b04132cc0ec7f7b6"
+    },
+    {
+      "node_code": "N_09e67c2df58970ba",
+      "name_zh": "方剂基础理论与组方原则",
+      "name_en": "",
+      "path": "医学/中医学/中医诊断与方药/方剂学/方剂基础理论与组方原则",
+      "parent_code": "N_0628d051f4979334"
+    },
+    {
+      "node_code": "N_ad5d8b29c0f2c4af",
+      "name_zh": "常用方剂分类与应用",
+      "name_en": "",
+      "path": "医学/中医学/中医诊断与方药/方剂学/常用方剂分类与应用",
+      "parent_code": "N_0628d051f4979334"
+    },
+    {
+      "node_code": "N_7d2a192e1ec73c21",
+      "name_zh": "中西医结合",
+      "name_en": "",
+      "path": "医学/中医学/中西医结合",
+      "parent_code": "N_67f94558ccb37c35"
+    },
+    {
+      "node_code": "N_6c09d61814213f3f",
+      "name_zh": "针灸推拿与养生",
+      "name_en": "",
+      "path": "医学/中医学/针灸推拿与养生",
+      "parent_code": "N_67f94558ccb37c35"
+    },
+    {
+      "node_code": "N_6cecc0e1e63c6b96",
+      "name_zh": "产科学与生殖医学",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_c219fcc9e972baee",
+      "name_zh": "不孕症与辅助生殖",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/不孕症与辅助生殖",
+      "parent_code": "N_6cecc0e1e63c6b96"
+    },
+    {
+      "node_code": "N_caf27dbe64a201a6",
+      "name_zh": "产褥医学",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/产褥医学",
+      "parent_code": "N_6cecc0e1e63c6b96"
+    },
+    {
+      "node_code": "N_cb5969ca12e02b6e",
+      "name_zh": "分娩医学",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/分娩医学",
+      "parent_code": "N_6cecc0e1e63c6b96"
+    },
+    {
+      "node_code": "N_2f63ee0d6c926abe",
+      "name_zh": "围产与胎儿医学",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/围产与胎儿医学",
+      "parent_code": "N_6cecc0e1e63c6b96"
+    },
+    {
+      "node_code": "N_6e1c74ba39ca024f",
+      "name_zh": "妊娠异常与高危妊娠",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/妊娠异常与高危妊娠",
+      "parent_code": "N_6cecc0e1e63c6b96"
+    },
+    {
+      "node_code": "N_17a7beebdc304782",
+      "name_zh": "妊娠期高血压疾病",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/妊娠异常与高危妊娠/妊娠期高血压疾病",
+      "parent_code": "N_6e1c74ba39ca024f"
+    },
+    {
+      "node_code": "N_2d9c69ee389d0006",
+      "name_zh": "妊娠期糖尿病",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/妊娠异常与高危妊娠/妊娠期糖尿病",
+      "parent_code": "N_6e1c74ba39ca024f"
+    },
+    {
+      "node_code": "N_1a23cc5088c0e0da",
+      "name_zh": "妊娠合并内、外科疾病",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/妊娠异常与高危妊娠/妊娠合并内、外科疾病",
+      "parent_code": "N_6e1c74ba39ca024f"
+    },
+    {
+      "node_code": "N_2fec97083a9f654c",
+      "name_zh": "妊娠生理与产前医学",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/妊娠生理与产前医学",
+      "parent_code": "N_6cecc0e1e63c6b96"
+    },
+    {
+      "node_code": "N_e5e79f02e48ba7e4",
+      "name_zh": "生殖内分泌",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/生殖内分泌",
+      "parent_code": "N_6cecc0e1e63c6b96"
+    },
+    {
+      "node_code": "N_7d85084abab4adc1",
+      "name_zh": "生殖医学",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/生殖医学",
+      "parent_code": "N_6cecc0e1e63c6b96"
+    },
+    {
+      "node_code": "N_3c4fced53bada6c4",
+      "name_zh": "生理产科",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/生理产科",
+      "parent_code": "N_6cecc0e1e63c6b96"
+    },
+    {
+      "node_code": "N_a70b1a86ddf073cf",
+      "name_zh": "病理产科",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/病理产科",
+      "parent_code": "N_6cecc0e1e63c6b96"
+    },
+    {
+      "node_code": "N_2f2739315047bbb2",
+      "name_zh": "胎儿医学",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/胎儿医学",
+      "parent_code": "N_6cecc0e1e63c6b96"
+    },
+    {
+      "node_code": "N_4dc612369ef87d73",
+      "name_zh": "计划生育",
+      "name_en": "",
+      "path": "医学/产科学与生殖医学/计划生育",
+      "parent_code": "N_6cecc0e1e63c6b96"
+    },
+    {
+      "node_code": "N_d11de3aedd4d87db",
+      "name_zh": "人体寄生虫学",
+      "name_en": "",
+      "path": "医学/人体寄生虫学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_3d8098593f58bdbb",
+      "name_zh": "医学原虫学",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/医学原虫学",
+      "parent_code": "N_d11de3aedd4d87db"
+    },
+    {
+      "node_code": "N_6ddbe4eccd7a6296",
+      "name_zh": "根足虫纲",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/医学原虫学/根足虫纲",
+      "parent_code": "N_3d8098593f58bdbb"
+    },
+    {
+      "node_code": "N_a4ef77c0d1523be5",
+      "name_zh": "鞭毛虫纲",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/医学原虫学/鞭毛虫纲",
+      "parent_code": "N_3d8098593f58bdbb"
+    },
+    {
+      "node_code": "N_4f45cb39bb7161fb",
+      "name_zh": "孢子虫纲",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/医学原虫学/孢子虫纲",
+      "parent_code": "N_3d8098593f58bdbb"
+    },
+    {
+      "node_code": "N_acc7e4b1b57bd05e",
+      "name_zh": "医学节肢动物",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/医学节肢动物",
+      "parent_code": "N_d11de3aedd4d87db"
+    },
+    {
+      "node_code": "N_0068a085fb3f7e14",
+      "name_zh": "昆虫纲",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/医学节肢动物/昆虫纲",
+      "parent_code": "N_acc7e4b1b57bd05e"
+    },
+    {
+      "node_code": "N_de58331837d68686",
+      "name_zh": "蛛形纲",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/医学节肢动物/蛛形纲",
+      "parent_code": "N_acc7e4b1b57bd05e"
+    },
+    {
+      "node_code": "N_7e39816c1d001781",
+      "name_zh": "医学蠕虫学",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/医学蠕虫学",
+      "parent_code": "N_d11de3aedd4d87db"
+    },
+    {
+      "node_code": "N_5f9024bf57b50d8d",
+      "name_zh": "线虫纲",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/医学蠕虫学/线虫纲",
+      "parent_code": "N_7e39816c1d001781"
+    },
+    {
+      "node_code": "N_bd314cbeadbd6737",
+      "name_zh": "吸虫纲",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/医学蠕虫学/吸虫纲",
+      "parent_code": "N_7e39816c1d001781"
+    },
+    {
+      "node_code": "N_0cd830f95013484c",
+      "name_zh": "绦虫纲",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/医学蠕虫学/绦虫纲",
+      "parent_code": "N_7e39816c1d001781"
+    },
+    {
+      "node_code": "N_b5693d8ded1d18b7",
+      "name_zh": "寄生虫病诊治",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/寄生虫病诊治",
+      "parent_code": "N_d11de3aedd4d87db"
+    },
+    {
+      "node_code": "N_7dfe84fa67a40f0a",
+      "name_zh": "病原学诊断",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/寄生虫病诊治/病原学诊断",
+      "parent_code": "N_b5693d8ded1d18b7"
+    },
+    {
+      "node_code": "N_1e9c55c6521926c0",
+      "name_zh": "免疫学与分子诊断",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/寄生虫病诊治/免疫学与分子诊断",
+      "parent_code": "N_b5693d8ded1d18b7"
+    },
+    {
+      "node_code": "N_0dce749e6d04d2b9",
+      "name_zh": "抗寄生虫药物治疗",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/寄生虫病诊治/抗寄生虫药物治疗",
+      "parent_code": "N_b5693d8ded1d18b7"
+    },
+    {
+      "node_code": "N_036ea04996969c80",
+      "name_zh": "预防与控制",
+      "name_en": "",
+      "path": "医学/人体寄生虫学/寄生虫病诊治/预防与控制",
+      "parent_code": "N_b5693d8ded1d18b7"
+    },
+    {
+      "node_code": "N_acf0aea52426a3d5",
+      "name_zh": "传染病学",
+      "name_en": "",
+      "path": "医学/传染病学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_2bb2924fddf2db1f",
+      "name_zh": "医院感染与脓毒症",
+      "name_en": "",
+      "path": "医学/传染病学/医院感染与脓毒症",
+      "parent_code": "N_acf0aea52426a3d5"
+    },
+    {
+      "node_code": "N_3ea3dde4636add4a",
+      "name_zh": "医院感染概论",
+      "name_en": "",
+      "path": "医学/传染病学/医院感染与脓毒症/医院感染概论",
+      "parent_code": "N_2bb2924fddf2db1f"
+    },
+    {
+      "node_code": "N_8b129458c9523b73",
+      "name_zh": "常见医院感染类型",
+      "name_en": "",
+      "path": "医学/传染病学/医院感染与脓毒症/常见医院感染类型",
+      "parent_code": "N_2bb2924fddf2db1f"
+    },
+    {
+      "node_code": "N_4a0df865bd66ee97",
+      "name_zh": "脓毒症",
+      "name_en": "",
+      "path": "医学/传染病学/医院感染与脓毒症/脓毒症",
+      "parent_code": "N_2bb2924fddf2db1f"
+    },
+    {
+      "node_code": "N_005255d6a299ee7c",
+      "name_zh": "呼吸道传染病",
+      "name_en": "",
+      "path": "医学/传染病学/呼吸道传染病",
+      "parent_code": "N_acf0aea52426a3d5"
+    },
+    {
+      "node_code": "N_911afb53c6987556",
+      "name_zh": "病毒性呼吸道感染",
+      "name_en": "",
+      "path": "医学/传染病学/呼吸道传染病/病毒性呼吸道感染",
+      "parent_code": "N_005255d6a299ee7c"
+    },
+    {
+      "node_code": "N_b8e72be76b0769f1",
+      "name_zh": "细菌性呼吸道感染",
+      "name_en": "",
+      "path": "医学/传染病学/呼吸道传染病/细菌性呼吸道感染",
+      "parent_code": "N_005255d6a299ee7c"
+    },
+    {
+      "node_code": "N_fd7b9b0182b8c78e",
+      "name_zh": "非典型病原体肺炎",
+      "name_en": "",
+      "path": "医学/传染病学/呼吸道传染病/非典型病原体肺炎",
+      "parent_code": "N_005255d6a299ee7c"
+    },
+    {
+      "node_code": "N_ff9890e3269feb79",
+      "name_zh": "病毒性肝炎与肝衰竭",
+      "name_en": "",
+      "path": "医学/传染病学/病毒性肝炎与肝衰竭",
+      "parent_code": "N_acf0aea52426a3d5"
+    },
+    {
+      "node_code": "N_a0815fd49eb2fb66",
+      "name_zh": "嗜肝病毒肝炎",
+      "name_en": "",
+      "path": "医学/传染病学/病毒性肝炎与肝衰竭/嗜肝病毒肝炎",
+      "parent_code": "N_ff9890e3269feb79"
+    },
+    {
+      "node_code": "N_95457b54b3e643a7",
+      "name_zh": "病毒性肝炎与肝衰竭·肝衰竭",
+      "name_en": "",
+      "path": "医学/传染病学/病毒性肝炎与肝衰竭/病毒性肝炎与肝衰竭·肝衰竭",
+      "parent_code": "N_ff9890e3269feb79"
+    },
+    {
+      "node_code": "N_f2d466cb8f01303c",
+      "name_zh": "特殊人群肝炎",
+      "name_en": "",
+      "path": "医学/传染病学/病毒性肝炎与肝衰竭/特殊人群肝炎",
+      "parent_code": "N_ff9890e3269feb79"
+    },
+    {
+      "node_code": "N_614438d12cf649cc",
+      "name_zh": "肠道传染病",
+      "name_en": "",
+      "path": "医学/传染病学/肠道传染病",
+      "parent_code": "N_acf0aea52426a3d5"
+    },
+    {
+      "node_code": "N_d0415dfdde3d6828",
+      "name_zh": "细菌性肠道感染",
+      "name_en": "",
+      "path": "医学/传染病学/肠道传染病/细菌性肠道感染",
+      "parent_code": "N_614438d12cf649cc"
+    },
+    {
+      "node_code": "N_ee4b7564051df7f2",
+      "name_zh": "病毒性肠道感染",
+      "name_en": "",
+      "path": "医学/传染病学/肠道传染病/病毒性肠道感染",
+      "parent_code": "N_614438d12cf649cc"
+    },
+    {
+      "node_code": "N_e80289f5bbf5eafa",
+      "name_zh": "其他肠道感染",
+      "name_en": "",
+      "path": "医学/传染病学/肠道传染病/其他肠道感染",
+      "parent_code": "N_614438d12cf649cc"
+    },
+    {
+      "node_code": "N_8ba4007215eb8a9c",
+      "name_zh": "艾滋病与免疫缺陷相关感染",
+      "name_en": "",
+      "path": "医学/传染病学/艾滋病与免疫缺陷相关感染",
+      "parent_code": "N_acf0aea52426a3d5"
+    },
+    {
+      "node_code": "N_70d20e4e5efb218b",
+      "name_zh": "HIV基础科学",
+      "name_en": "",
+      "path": "医学/传染病学/艾滋病与免疫缺陷相关感染/HIV基础科学",
+      "parent_code": "N_8ba4007215eb8a9c"
+    },
+    {
+      "node_code": "N_843cd1169bd7270d",
+      "name_zh": "抗病毒治疗与机会感染",
+      "name_en": "",
+      "path": "医学/传染病学/艾滋病与免疫缺陷相关感染/抗病毒治疗与机会感染",
+      "parent_code": "N_8ba4007215eb8a9c"
+    },
+    {
+      "node_code": "N_ca1ba7ce6af10bf7",
+      "name_zh": "AIDS常见机会性感染",
+      "name_en": "",
+      "path": "医学/传染病学/艾滋病与免疫缺陷相关感染/AIDS常见机会性感染",
+      "parent_code": "N_8ba4007215eb8a9c"
+    },
+    {
+      "node_code": "N_2d191a0fc05375c4",
+      "name_zh": "虫媒与人畜共患传染病",
+      "name_en": "",
+      "path": "医学/传染病学/虫媒与人畜共患传染病",
+      "parent_code": "N_acf0aea52426a3d5"
+    },
+    {
+      "node_code": "N_fedbf39ffee27c58",
+      "name_zh": "虫媒病毒病",
+      "name_en": "",
+      "path": "医学/传染病学/虫媒与人畜共患传染病/虫媒病毒病",
+      "parent_code": "N_2d191a0fc05375c4"
+    },
+    {
+      "node_code": "N_62b36a9304de6fc0",
+      "name_zh": "其他人畜共患病",
+      "name_en": "",
+      "path": "医学/传染病学/虫媒与人畜共患传染病/其他人畜共患病",
+      "parent_code": "N_2d191a0fc05375c4"
+    },
+    {
+      "node_code": "N_29529d7d67961822",
+      "name_zh": "出血热与新发传染病",
+      "name_en": "",
+      "path": "医学/传染病学/虫媒与人畜共患传染病/出血热与新发传染病",
+      "parent_code": "N_2d191a0fc05375c4"
+    },
+    {
+      "node_code": "N_a3f8c2edaa490f23",
+      "name_zh": "儿科学",
+      "name_en": "",
+      "path": "医学/儿科学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_c3bbb60d780ac601",
+      "name_zh": "儿童保健",
+      "name_en": "",
+      "path": "医学/儿科学/儿童保健",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_dac08b66f74a26b2",
+      "name_zh": "儿童急诊与重症",
+      "name_en": "",
+      "path": "医学/儿科学/儿童急诊与重症",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_87042295f7954e76",
+      "name_zh": "儿童感染性疾病",
+      "name_en": "",
+      "path": "医学/儿科学/儿童感染性疾病",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_34c75607acf2a793",
+      "name_zh": "儿童神经与遗传代谢",
+      "name_en": "",
+      "path": "医学/儿科学/儿童神经与遗传代谢",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_b3ba711c066bfc38",
+      "name_zh": "免疫与风湿病",
+      "name_en": "",
+      "path": "医学/儿科学/免疫与风湿病",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_a872a4bc78a2867b",
+      "name_zh": "儿科学·呼吸系统疾病",
+      "name_en": "",
+      "path": "医学/儿科学/儿科学·呼吸系统疾病",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_22861f5ce0abdb8d",
+      "name_zh": "心血管疾病",
+      "name_en": "",
+      "path": "医学/儿科学/心血管疾病",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_1cbe2acea54890ea",
+      "name_zh": "新生儿学",
+      "name_en": "",
+      "path": "医学/儿科学/新生儿学",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_d42b3983256b6270",
+      "name_zh": "儿科学·泌尿系统疾病",
+      "name_en": "",
+      "path": "医学/儿科学/儿科学·泌尿系统疾病",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_4f2882c31e92b0ec",
+      "name_zh": "儿科学·消化系统疾病",
+      "name_en": "",
+      "path": "医学/儿科学/儿科学·消化系统疾病",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_501ddf8f9d8d539c",
+      "name_zh": "生长发育与内分泌",
+      "name_en": "",
+      "path": "医学/儿科学/生长发育与内分泌",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_6baf90219bbd8552",
+      "name_zh": "儿科学·神经系统疾病",
+      "name_en": "",
+      "path": "医学/儿科学/儿科学·神经系统疾病",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_966261a4fb7d5237",
+      "name_zh": "血液与肿瘤",
+      "name_en": "",
+      "path": "医学/儿科学/血液与肿瘤",
+      "parent_code": "N_a3f8c2edaa490f23"
+    },
+    {
+      "node_code": "N_22df6525cafc7cae",
+      "name_zh": "免疫学",
+      "name_en": "",
+      "path": "医学/免疫学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_e6652f1883aa9ba3",
+      "name_zh": "免疫分子",
+      "name_en": "",
+      "path": "医学/免疫学/免疫分子",
+      "parent_code": "N_22df6525cafc7cae"
+    },
+    {
+      "node_code": "N_5aeb4603c02777c1",
+      "name_zh": "抗原与抗体",
+      "name_en": "",
+      "path": "医学/免疫学/免疫分子/抗原与抗体",
+      "parent_code": "N_e6652f1883aa9ba3"
+    },
+    {
+      "node_code": "N_490dfd2dedd505c3",
+      "name_zh": "抗原与表位的基本概念",
+      "name_en": "",
+      "path": "医学/免疫学/免疫分子/抗原与抗体/抗原与表位的基本概念",
+      "parent_code": "N_5aeb4603c02777c1"
+    },
+    {
+      "node_code": "N_ce24b2e6b42acb92",
+      "name_zh": "免疫球蛋白的种类与生物学功能（IgG/IgM/IgA/IgE/IgD）",
+      "name_en": "",
+      "path": "医学/免疫学/免疫分子/抗原与抗体/免疫球蛋白的种类与生物学功能（IgG/IgM/IgA/IgE/IgD）",
+      "parent_code": "N_5aeb4603c02777c1"
+    },
+    {
+      "node_code": "N_19ee43389e343900",
+      "name_zh": "补体与免疫调节分子",
+      "name_en": "",
+      "path": "医学/免疫学/免疫分子/补体与免疫调节分子",
+      "parent_code": "N_e6652f1883aa9ba3"
+    },
+    {
+      "node_code": "N_6d99081b3c1e1b94",
+      "name_zh": "补体系统",
+      "name_en": "",
+      "path": "医学/免疫学/免疫分子/补体与免疫调节分子/补体系统",
+      "parent_code": "N_19ee43389e343900"
+    },
+    {
+      "node_code": "N_e6ba7277a13ba3cd",
+      "name_zh": "细胞因子与其他免疫调节分子",
+      "name_en": "",
+      "path": "医学/免疫学/免疫分子/补体与免疫调节分子/细胞因子与其他免疫调节分子",
+      "parent_code": "N_19ee43389e343900"
+    },
+    {
+      "node_code": "N_2ebebc756828c4b9",
+      "name_zh": "免疫学技术",
+      "name_en": "",
+      "path": "医学/免疫学/免疫学技术",
+      "parent_code": "N_22df6525cafc7cae"
+    },
+    {
+      "node_code": "N_87600c83cbbdcf61",
+      "name_zh": "免疫病理",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理",
+      "parent_code": "N_22df6525cafc7cae"
+    },
+    {
+      "node_code": "N_15dd5c9746292620",
+      "name_zh": "超敏反应",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/超敏反应",
+      "parent_code": "N_87600c83cbbdcf61"
+    },
+    {
+      "node_code": "N_63f0bbb4dac5e725",
+      "name_zh": "Ⅰ型超敏反应",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/超敏反应/Ⅰ型超敏反应",
+      "parent_code": "N_15dd5c9746292620"
+    },
+    {
+      "node_code": "N_551685994b602a31",
+      "name_zh": "Ⅱ型与Ⅲ型超敏反应",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/超敏反应/Ⅱ型与Ⅲ型超敏反应",
+      "parent_code": "N_15dd5c9746292620"
+    },
+    {
+      "node_code": "N_c7a656366407274c",
+      "name_zh": "Ⅳ型超敏反应",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/超敏反应/Ⅳ型超敏反应",
+      "parent_code": "N_15dd5c9746292620"
+    },
+    {
+      "node_code": "N_b77fb4bb2355dfe2",
+      "name_zh": "自身免疫病",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/自身免疫病",
+      "parent_code": "N_87600c83cbbdcf61"
+    },
+    {
+      "node_code": "N_1f654a51a8ccde1b",
+      "name_zh": "器官特异性自身免疫病",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/自身免疫病/器官特异性自身免疫病",
+      "parent_code": "N_b77fb4bb2355dfe2"
+    },
+    {
+      "node_code": "N_e2d0009246b63e4a",
+      "name_zh": "系统性自身免疫病",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/自身免疫病/系统性自身免疫病",
+      "parent_code": "N_b77fb4bb2355dfe2"
+    },
+    {
+      "node_code": "N_e140d5ee45ba731d",
+      "name_zh": "免疫缺陷病",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/免疫缺陷病",
+      "parent_code": "N_87600c83cbbdcf61"
+    },
+    {
+      "node_code": "N_041f714fa6e8e520",
+      "name_zh": "原发性免疫缺陷病",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/免疫缺陷病/原发性免疫缺陷病",
+      "parent_code": "N_e140d5ee45ba731d"
+    },
+    {
+      "node_code": "N_fa99973e8edfc9ad",
+      "name_zh": "继发性免疫缺陷病",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/免疫缺陷病/继发性免疫缺陷病",
+      "parent_code": "N_e140d5ee45ba731d"
+    },
+    {
+      "node_code": "N_62f1e0b492918f0d",
+      "name_zh": "移植免疫",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/移植免疫",
+      "parent_code": "N_87600c83cbbdcf61"
+    },
+    {
+      "node_code": "N_64e8da48b52b7cfd",
+      "name_zh": "移植排斥反应的机制",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/移植免疫/移植排斥反应的机制",
+      "parent_code": "N_62f1e0b492918f0d"
+    },
+    {
+      "node_code": "N_48bd37983b841e4e",
+      "name_zh": "移植配型与免疫抑制治疗",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/移植免疫/移植配型与免疫抑制治疗",
+      "parent_code": "N_62f1e0b492918f0d"
+    },
+    {
+      "node_code": "N_769cfb025663dc03",
+      "name_zh": "肿瘤免疫",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/肿瘤免疫",
+      "parent_code": "N_87600c83cbbdcf61"
+    },
+    {
+      "node_code": "N_51c0d9f0d7dc1a40",
+      "name_zh": "肿瘤抗原与免疫逃逸",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/肿瘤免疫/肿瘤抗原与免疫逃逸",
+      "parent_code": "N_769cfb025663dc03"
+    },
+    {
+      "node_code": "N_5de38977a21614e4",
+      "name_zh": "肿瘤免疫治疗",
+      "name_en": "",
+      "path": "医学/免疫学/免疫病理/肿瘤免疫/肿瘤免疫治疗",
+      "parent_code": "N_769cfb025663dc03"
+    },
+    {
+      "node_code": "N_66523318fd474b04",
+      "name_zh": "免疫细胞",
+      "name_en": "",
+      "path": "医学/免疫学/免疫细胞",
+      "parent_code": "N_22df6525cafc7cae"
+    },
+    {
+      "node_code": "N_d72d31187757a0e2",
+      "name_zh": "固有免疫",
+      "name_en": "",
+      "path": "医学/免疫学/免疫细胞/固有免疫",
+      "parent_code": "N_66523318fd474b04"
+    },
+    {
+      "node_code": "N_df0c83c660fed5ca",
+      "name_zh": "屏障结构与固有免疫细胞",
+      "name_en": "",
+      "path": "医学/免疫学/免疫细胞/固有免疫/屏障结构与固有免疫细胞",
+      "parent_code": "N_d72d31187757a0e2"
+    },
+    {
+      "node_code": "N_7233dc799b538cc0",
+      "name_zh": "固有免疫分子（模式识别受体、补体、细胞因子等）",
+      "name_en": "",
+      "path": "医学/免疫学/免疫细胞/固有免疫/固有免疫分子（模式识别受体、补体、细胞因子等）",
+      "parent_code": "N_d72d31187757a0e2"
+    },
+    {
+      "node_code": "N_fc24b0c04c402c28",
+      "name_zh": "适应性免疫",
+      "name_en": "",
+      "path": "医学/免疫学/免疫细胞/适应性免疫",
+      "parent_code": "N_66523318fd474b04"
+    },
+    {
+      "node_code": "N_0229ae26485e0d43",
+      "name_zh": "B细胞与体液免疫",
+      "name_en": "",
+      "path": "医学/免疫学/免疫细胞/适应性免疫/B细胞与体液免疫",
+      "parent_code": "N_fc24b0c04c402c28"
+    },
+    {
+      "node_code": "N_1aeac35e73091270",
+      "name_zh": "T细胞与细胞免疫",
+      "name_en": "",
+      "path": "医学/免疫学/免疫细胞/适应性免疫/T细胞与细胞免疫",
+      "parent_code": "N_fc24b0c04c402c28"
+    },
+    {
+      "node_code": "N_32db59811779f49e",
+      "name_zh": "免疫遗传学",
+      "name_en": "",
+      "path": "医学/免疫学/免疫遗传学",
+      "parent_code": "N_22df6525cafc7cae"
+    },
+    {
+      "node_code": "N_31e1c0a4768442df",
+      "name_zh": "全科医学与内科学",
+      "name_en": "",
+      "path": "医学/全科医学与内科学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_0e668bd7d8c3a138",
+      "name_zh": "全科医学",
+      "name_en": "",
+      "path": "医学/全科医学与内科学/全科医学",
+      "parent_code": "N_31e1c0a4768442df"
+    },
+    {
+      "node_code": "N_fd0b361f92570208",
+      "name_zh": "多病共存管理",
+      "name_en": "",
+      "path": "医学/全科医学与内科学/多病共存管理",
+      "parent_code": "N_31e1c0a4768442df"
+    },
+    {
+      "node_code": "N_3ba6a4c74f81902d",
+      "name_zh": "常见症状诊疗",
+      "name_en": "",
+      "path": "医学/全科医学与内科学/常见症状诊疗",
+      "parent_code": "N_31e1c0a4768442df"
+    },
+    {
+      "node_code": "N_11ab3cfe7ef7e704",
+      "name_zh": "公共卫生",
+      "name_en": "",
+      "path": "医学/公共卫生",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_0e95cba9c06deb29",
+      "name_zh": "全球健康",
+      "name_en": "",
+      "path": "医学/公共卫生/全球健康",
+      "parent_code": "N_11ab3cfe7ef7e704"
+    },
+    {
+      "node_code": "N_e2b59e14a2529994",
+      "name_zh": "卫生服务体系",
+      "name_en": "",
+      "path": "医学/公共卫生/卫生服务体系",
+      "parent_code": "N_11ab3cfe7ef7e704"
+    },
+    {
+      "node_code": "N_7e75986c195fc7d9",
+      "name_zh": "卫生统计与信息",
+      "name_en": "",
+      "path": "医学/公共卫生/卫生统计与信息",
+      "parent_code": "N_11ab3cfe7ef7e704"
+    },
+    {
+      "node_code": "N_d22520f34717acd0",
+      "name_zh": "关节炎与风湿病学",
+      "name_en": "",
+      "path": "医学/关节炎与风湿病学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_39bf1287a7774656",
+      "name_zh": "弥漫性结缔组织病",
+      "name_en": "",
+      "path": "医学/关节炎与风湿病学/弥漫性结缔组织病",
+      "parent_code": "N_d22520f34717acd0"
+    },
+    {
+      "node_code": "N_5bfdd76e4cfdb59d",
+      "name_zh": "脊柱关节病与骨关节病",
+      "name_en": "",
+      "path": "医学/关节炎与风湿病学/脊柱关节病与骨关节病",
+      "parent_code": "N_d22520f34717acd0"
+    },
+    {
+      "node_code": "N_d454eb9e18e96df5",
+      "name_zh": "血管炎与免疫检测",
+      "name_en": "",
+      "path": "医学/关节炎与风湿病学/血管炎与免疫检测",
+      "parent_code": "N_d22520f34717acd0"
+    },
+    {
+      "node_code": "N_bbfc534d16af8e07",
+      "name_zh": "风湿病治疗",
+      "name_en": "",
+      "path": "医学/关节炎与风湿病学/风湿病治疗",
+      "parent_code": "N_d22520f34717acd0"
+    },
+    {
+      "node_code": "N_2a2d97dd1ae211dc",
+      "name_zh": "内分泌与新陈代谢",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_49854073b170094b",
+      "name_zh": "下丘脑-垂体疾病",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/下丘脑-垂体疾病",
+      "parent_code": "N_2a2d97dd1ae211dc"
+    },
+    {
+      "node_code": "N_a0bf4c120b3679c3",
+      "name_zh": "代谢性疾病",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/代谢性疾病",
+      "parent_code": "N_2a2d97dd1ae211dc"
+    },
+    {
+      "node_code": "N_621936314dd041cf",
+      "name_zh": "内分泌检查",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/内分泌检查",
+      "parent_code": "N_2a2d97dd1ae211dc"
+    },
+    {
+      "node_code": "N_b66631508284db2e",
+      "name_zh": "多腺体与神经内分泌疾病",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/多腺体与神经内分泌疾病",
+      "parent_code": "N_2a2d97dd1ae211dc"
+    },
+    {
+      "node_code": "N_78941bff9123e6c4",
+      "name_zh": "水、电解质与酸碱平衡失衡",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/水、电解质与酸碱平衡失衡",
+      "parent_code": "N_2a2d97dd1ae211dc"
+    },
+    {
+      "node_code": "N_8b238dd9aaca68de",
+      "name_zh": "糖尿病与糖代谢疾病",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/糖尿病与糖代谢疾病",
+      "parent_code": "N_2a2d97dd1ae211dc"
+    },
+    {
+      "node_code": "N_ea59de3442e72a96",
+      "name_zh": "脂质与代谢性疾病",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/脂质与代谢性疾病",
+      "parent_code": "N_2a2d97dd1ae211dc"
+    },
+    {
+      "node_code": "N_4f16f1ff6efa6d8a",
+      "name_zh": "腺体疾病",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/腺体疾病",
+      "parent_code": "N_2a2d97dd1ae211dc"
+    },
+    {
+      "node_code": "N_bf0d164957f17235",
+      "name_zh": "下丘脑-垂体",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/腺体疾病/下丘脑-垂体",
+      "parent_code": "N_4f16f1ff6efa6d8a"
+    },
+    {
+      "node_code": "N_b47e2e660e4002e5",
+      "name_zh": "甲状腺与甲状旁腺",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/腺体疾病/甲状腺与甲状旁腺",
+      "parent_code": "N_4f16f1ff6efa6d8a"
+    },
+    {
+      "node_code": "N_1e0aadc9e69e0c24",
+      "name_zh": "甲状腺疾病",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/腺体疾病/甲状腺与甲状旁腺/甲状腺疾病",
+      "parent_code": "N_b47e2e660e4002e5"
+    },
+    {
+      "node_code": "N_181a34f54c62a6c7",
+      "name_zh": "甲状旁腺疾病",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/腺体疾病/甲状腺与甲状旁腺/甲状旁腺疾病",
+      "parent_code": "N_b47e2e660e4002e5"
+    },
+    {
+      "node_code": "N_706ab41ee57f2d37",
+      "name_zh": "肾上腺与性腺",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/腺体疾病/肾上腺与性腺",
+      "parent_code": "N_4f16f1ff6efa6d8a"
+    },
+    {
+      "node_code": "N_20cf900f5844e00a",
+      "name_zh": "肾上腺疾病",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/腺体疾病/肾上腺与性腺/肾上腺疾病",
+      "parent_code": "N_706ab41ee57f2d37"
+    },
+    {
+      "node_code": "N_914a6de4092adbae",
+      "name_zh": "性腺疾病",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/腺体疾病/肾上腺与性腺/性腺疾病",
+      "parent_code": "N_706ab41ee57f2d37"
+    },
+    {
+      "node_code": "N_1c17b6d19d7970bb",
+      "name_zh": "骨与性内分泌疾病",
+      "name_en": "",
+      "path": "医学/内分泌与新陈代谢/骨与性内分泌疾病",
+      "parent_code": "N_2a2d97dd1ae211dc"
+    },
+    {
+      "node_code": "N_5f061f12d1202976",
+      "name_zh": "医学信息学",
+      "name_en": "",
+      "path": "医学/医学信息学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_4a303268f28847e9",
+      "name_zh": "临床信息系统",
+      "name_en": "",
+      "path": "医学/医学信息学/临床信息系统",
+      "parent_code": "N_5f061f12d1202976"
+    },
+    {
+      "node_code": "N_9ac36c61d8470e4d",
+      "name_zh": "临床决策支持与人工智能",
+      "name_en": "",
+      "path": "医学/医学信息学/临床决策支持与人工智能",
+      "parent_code": "N_5f061f12d1202976"
+    },
+    {
+      "node_code": "N_a388639bae8f8ba8",
+      "name_zh": "健康数据治理",
+      "name_en": "",
+      "path": "医学/医学信息学/健康数据治理",
+      "parent_code": "N_5f061f12d1202976"
+    },
+    {
+      "node_code": "N_fa9f0d40975cf347",
+      "name_zh": "医学信息基础",
+      "name_en": "",
+      "path": "医学/医学信息学/医学信息基础",
+      "parent_code": "N_5f061f12d1202976"
+    },
+    {
+      "node_code": "N_b37e8f758b0ac155",
+      "name_zh": "生物信息学",
+      "name_en": "",
+      "path": "医学/医学信息学/生物信息学",
+      "parent_code": "N_5f061f12d1202976"
+    },
+    {
+      "node_code": "N_1ed3f15e76dc54ce",
+      "name_zh": "医学影像学",
+      "name_en": "",
+      "path": "医学/医学影像学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_99b381e7c48d6126",
+      "name_zh": "CT",
+      "name_en": "",
+      "path": "医学/医学影像学/CT",
+      "parent_code": "N_1ed3f15e76dc54ce"
+    },
+    {
+      "node_code": "N_c9f5ec9b6b9d7ae9",
+      "name_zh": "MRI",
+      "name_en": "",
+      "path": "医学/医学影像学/MRI",
+      "parent_code": "N_1ed3f15e76dc54ce"
+    },
+    {
+      "node_code": "N_e1cbd24e09704220",
+      "name_zh": "X线与数字摄影",
+      "name_en": "",
+      "path": "医学/医学影像学/X线与数字摄影",
+      "parent_code": "N_1ed3f15e76dc54ce"
+    },
+    {
+      "node_code": "N_7f7c4e4561a4cb55",
+      "name_zh": "介入影像学",
+      "name_en": "",
+      "path": "医学/医学影像学/介入影像学",
+      "parent_code": "N_1ed3f15e76dc54ce"
+    },
+    {
+      "node_code": "N_0edbaff7529bea9a",
+      "name_zh": "医学影像基础",
+      "name_en": "",
+      "path": "医学/医学影像学/医学影像基础",
+      "parent_code": "N_1ed3f15e76dc54ce"
+    },
+    {
+      "node_code": "N_56682f50206ef4a0",
+      "name_zh": "系统影像诊断",
+      "name_en": "",
+      "path": "医学/医学影像学/系统影像诊断",
+      "parent_code": "N_1ed3f15e76dc54ce"
+    },
+    {
+      "node_code": "N_ffb819ef9a13a9c4",
+      "name_zh": "中枢神经系统影像诊断",
+      "name_en": "",
+      "path": "医学/医学影像学/系统影像诊断/中枢神经系统影像诊断",
+      "parent_code": "N_56682f50206ef4a0"
+    },
+    {
+      "node_code": "N_9631667c4d75c844",
+      "name_zh": "胸部影像诊断",
+      "name_en": "",
+      "path": "医学/医学影像学/系统影像诊断/胸部影像诊断",
+      "parent_code": "N_56682f50206ef4a0"
+    },
+    {
+      "node_code": "N_7d0a1ecc304e71a7",
+      "name_zh": "腹部与盆腔影像诊断",
+      "name_en": "",
+      "path": "医学/医学影像学/系统影像诊断/腹部与盆腔影像诊断",
+      "parent_code": "N_56682f50206ef4a0"
+    },
+    {
+      "node_code": "N_2b452eb62960515c",
+      "name_zh": "骨关节与软组织影像诊断",
+      "name_en": "",
+      "path": "医学/医学影像学/系统影像诊断/骨关节与软组织影像诊断",
+      "parent_code": "N_56682f50206ef4a0"
+    },
+    {
+      "node_code": "N_039ac01801f4b2c7",
+      "name_zh": "超声医学",
+      "name_en": "",
+      "path": "医学/医学影像学/超声医学",
+      "parent_code": "N_1ed3f15e76dc54ce"
+    },
+    {
+      "node_code": "N_17c1dfbed33e2348",
+      "name_zh": "医学微生物学",
+      "name_en": "",
+      "path": "医学/医学微生物学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_08de6055e873bba3",
+      "name_zh": "感染与控制",
+      "name_en": "",
+      "path": "医学/医学微生物学/感染与控制",
+      "parent_code": "N_17c1dfbed33e2348"
+    },
+    {
+      "node_code": "N_50d52a798a6f9268",
+      "name_zh": "病毒学",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学",
+      "parent_code": "N_17c1dfbed33e2348"
+    },
+    {
+      "node_code": "N_e36fb0c96c70dd28",
+      "name_zh": "呼吸道病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/呼吸道病毒",
+      "parent_code": "N_50d52a798a6f9268"
+    },
+    {
+      "node_code": "N_7efda928517f8a04",
+      "name_zh": "流感病毒与其他呼吸道病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/呼吸道病毒/流感病毒与其他呼吸道病毒",
+      "parent_code": "N_e36fb0c96c70dd28"
+    },
+    {
+      "node_code": "N_9e1cb37f5053546e",
+      "name_zh": "冠状病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/呼吸道病毒/冠状病毒",
+      "parent_code": "N_e36fb0c96c70dd28"
+    },
+    {
+      "node_code": "N_a47777dfb1f6fe1e",
+      "name_zh": "肠道病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/肠道病毒",
+      "parent_code": "N_50d52a798a6f9268"
+    },
+    {
+      "node_code": "N_3f938a72b19e0f85",
+      "name_zh": "脊髓灰质炎病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/肠道病毒/脊髓灰质炎病毒",
+      "parent_code": "N_a47777dfb1f6fe1e"
+    },
+    {
+      "node_code": "N_461e8d7aba8cda9b",
+      "name_zh": "柯萨奇病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/肠道病毒/柯萨奇病毒",
+      "parent_code": "N_a47777dfb1f6fe1e"
+    },
+    {
+      "node_code": "N_1a80414d9262eea1",
+      "name_zh": "埃可病毒与其他肠道病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/肠道病毒/埃可病毒与其他肠道病毒",
+      "parent_code": "N_a47777dfb1f6fe1e"
+    },
+    {
+      "node_code": "N_7e5533ab0506013f",
+      "name_zh": "肝炎病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/肝炎病毒",
+      "parent_code": "N_50d52a798a6f9268"
+    },
+    {
+      "node_code": "N_841ca33e5769ab32",
+      "name_zh": "甲型与戊型肝炎病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/肝炎病毒/甲型与戊型肝炎病毒",
+      "parent_code": "N_7e5533ab0506013f"
+    },
+    {
+      "node_code": "N_38e7e531526447c0",
+      "name_zh": "乙型、丙型与丁型肝炎病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/肝炎病毒/乙型、丙型与丁型肝炎病毒",
+      "parent_code": "N_7e5533ab0506013f"
+    },
+    {
+      "node_code": "N_fa5b14dd27f4f411",
+      "name_zh": "疱疹病毒与逆转录病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/疱疹病毒与逆转录病毒",
+      "parent_code": "N_50d52a798a6f9268"
+    },
+    {
+      "node_code": "N_08240a751d44760d",
+      "name_zh": "疱疹病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/疱疹病毒与逆转录病毒/疱疹病毒",
+      "parent_code": "N_fa5b14dd27f4f411"
+    },
+    {
+      "node_code": "N_e29335c92af98e45",
+      "name_zh": "逆转录病毒与人类免疫缺陷病毒（HIV）",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/疱疹病毒与逆转录病毒/逆转录病毒与人类免疫缺陷病毒（HIV）",
+      "parent_code": "N_fa5b14dd27f4f411"
+    },
+    {
+      "node_code": "N_dbabe78cdf002db7",
+      "name_zh": "虫媒病毒与其他病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/虫媒病毒与其他病毒",
+      "parent_code": "N_50d52a798a6f9268"
+    },
+    {
+      "node_code": "N_193603d411899ea4",
+      "name_zh": "虫媒病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/虫媒病毒与其他病毒/虫媒病毒",
+      "parent_code": "N_dbabe78cdf002db7"
+    },
+    {
+      "node_code": "N_f5474e2c4c05bfda",
+      "name_zh": "出血热病毒与其他病毒",
+      "name_en": "",
+      "path": "医学/医学微生物学/病毒学/虫媒病毒与其他病毒/出血热病毒与其他病毒",
+      "parent_code": "N_dbabe78cdf002db7"
+    },
+    {
+      "node_code": "N_ef0fbb4ad3a1ba49",
+      "name_zh": "真菌与其他",
+      "name_en": "",
+      "path": "医学/医学微生物学/真菌与其他",
+      "parent_code": "N_17c1dfbed33e2348"
+    },
+    {
+      "node_code": "N_5c709b1758b9a35e",
+      "name_zh": "细菌学",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学",
+      "parent_code": "N_17c1dfbed33e2348"
+    },
+    {
+      "node_code": "N_08206abc91d39102",
+      "name_zh": "球菌与革兰阳性菌（葡萄球菌、链球菌、肠球菌等）",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学/球菌与革兰阳性菌（葡萄球菌、链球菌、肠球菌等）",
+      "parent_code": "N_5c709b1758b9a35e"
+    },
+    {
+      "node_code": "N_87e5bc8cc09fde2c",
+      "name_zh": "致病性球菌（葡萄球菌、链球菌、肠球菌等）",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学/球菌与革兰阳性菌（葡萄球菌、链球菌、肠球菌等）/致病性球菌（葡萄球菌、链球菌、肠球菌等）",
+      "parent_code": "N_08206abc91d39102"
+    },
+    {
+      "node_code": "N_7803569cf0d6f464",
+      "name_zh": "革兰阳性杆菌（炭疽芽胞杆菌、白喉棒状杆菌、李斯特菌等）",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学/球菌与革兰阳性菌（葡萄球菌、链球菌、肠球菌等）/革兰阳性杆菌（炭疽芽胞杆菌、白喉棒状杆菌、李斯特菌等）",
+      "parent_code": "N_08206abc91d39102"
+    },
+    {
+      "node_code": "N_c6a1c0d2689fe66b",
+      "name_zh": "肠道杆菌与其他革兰阴性菌（大肠埃希菌、志贺菌、沙门菌、弧菌、幽门螺杆菌等）",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学/肠道杆菌与其他革兰阴性菌（大肠埃希菌、志贺菌、沙门菌、弧菌、幽门螺杆菌等）",
+      "parent_code": "N_5c709b1758b9a35e"
+    },
+    {
+      "node_code": "N_71837c340d9a6a1e",
+      "name_zh": "肠道杆菌（大肠埃希菌、志贺菌、沙门菌、弧菌等）",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学/肠道杆菌与其他革兰阴性菌（大肠埃希菌、志贺菌、沙门菌、弧菌、幽门螺杆菌等）/肠道杆菌（大肠埃希菌、志贺菌、沙门菌、弧菌等）",
+      "parent_code": "N_c6a1c0d2689fe66b"
+    },
+    {
+      "node_code": "N_0f221331beb2bb15",
+      "name_zh": "其他革兰阴性菌（幽门螺杆菌、军团菌、流感嗜血杆菌等）",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学/肠道杆菌与其他革兰阴性菌（大肠埃希菌、志贺菌、沙门菌、弧菌、幽门螺杆菌等）/其他革兰阴性菌（幽门螺杆菌、军团菌、流感嗜血杆菌等）",
+      "parent_code": "N_c6a1c0d2689fe66b"
+    },
+    {
+      "node_code": "N_9503cd95b6b3a7ba",
+      "name_zh": "厌氧菌与分枝杆菌（梭菌、类杆菌、结核分枝杆菌等）",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学/厌氧菌与分枝杆菌（梭菌、类杆菌、结核分枝杆菌等）",
+      "parent_code": "N_5c709b1758b9a35e"
+    },
+    {
+      "node_code": "N_56617c0258311bd2",
+      "name_zh": "厌氧菌（破伤风梭菌、产气荚膜梭菌、类杆菌等）",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学/厌氧菌与分枝杆菌（梭菌、类杆菌、结核分枝杆菌等）/厌氧菌（破伤风梭菌、产气荚膜梭菌、类杆菌等）",
+      "parent_code": "N_9503cd95b6b3a7ba"
+    },
+    {
+      "node_code": "N_77b884420f22c48d",
+      "name_zh": "分枝杆菌（结核分枝杆菌、麻风分枝杆菌等）",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学/厌氧菌与分枝杆菌（梭菌、类杆菌、结核分枝杆菌等）/分枝杆菌（结核分枝杆菌、麻风分枝杆菌等）",
+      "parent_code": "N_9503cd95b6b3a7ba"
+    },
+    {
+      "node_code": "N_1285d1053f25de47",
+      "name_zh": "其他原核细胞型微生物（支原体、衣原体、立克次体、螺旋体）",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学/其他原核细胞型微生物（支原体、衣原体、立克次体、螺旋体）",
+      "parent_code": "N_5c709b1758b9a35e"
+    },
+    {
+      "node_code": "N_84d6f6d533dc1d3f",
+      "name_zh": "支原体与衣原体",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学/其他原核细胞型微生物（支原体、衣原体、立克次体、螺旋体）/支原体与衣原体",
+      "parent_code": "N_1285d1053f25de47"
+    },
+    {
+      "node_code": "N_5ff24c2c13bbad1c",
+      "name_zh": "立克次体与螺旋体",
+      "name_en": "",
+      "path": "医学/医学微生物学/细菌学/其他原核细胞型微生物（支原体、衣原体、立克次体、螺旋体）/立克次体与螺旋体",
+      "parent_code": "N_1285d1053f25de47"
+    },
+    {
+      "node_code": "N_d2ea9a30cf338997",
+      "name_zh": "医学心理学",
+      "name_en": "",
+      "path": "医学/医学心理学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_9388a802219bccd6",
+      "name_zh": "主要理论流派",
+      "name_en": "",
+      "path": "医学/医学心理学/主要理论流派",
+      "parent_code": "N_d2ea9a30cf338997"
+    },
+    {
+      "node_code": "N_fd42f1659c25be27",
+      "name_zh": "应激与心身疾病",
+      "name_en": "",
+      "path": "医学/医学心理学/应激与心身疾病",
+      "parent_code": "N_d2ea9a30cf338997"
+    },
+    {
+      "node_code": "N_139e0bb62317cdea",
+      "name_zh": "心理学基础",
+      "name_en": "",
+      "path": "医学/医学心理学/心理学基础",
+      "parent_code": "N_d2ea9a30cf338997"
+    },
+    {
+      "node_code": "N_b43922879ea8d538",
+      "name_zh": "心理评估与干预",
+      "name_en": "",
+      "path": "医学/医学心理学/心理评估与干预",
+      "parent_code": "N_d2ea9a30cf338997"
+    },
+    {
+      "node_code": "N_1a01d30f26a93f06",
+      "name_zh": "医学检验学",
+      "name_en": "",
+      "path": "医学/医学检验学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_c7a152b0c080c572",
+      "name_zh": "临床常用免疫学检测",
+      "name_en": "",
+      "path": "医学/医学检验学/临床常用免疫学检测",
+      "parent_code": "N_1a01d30f26a93f06"
+    },
+    {
+      "node_code": "N_2f5e4b6089e4d866",
+      "name_zh": "临床常用生物化学检测",
+      "name_en": "",
+      "path": "医学/医学检验学/临床常用生物化学检测",
+      "parent_code": "N_1a01d30f26a93f06"
+    },
+    {
+      "node_code": "N_1dbbc5a8272840b2",
+      "name_zh": "临床常见病原体检测",
+      "name_en": "",
+      "path": "医学/医学检验学/临床常见病原体检测",
+      "parent_code": "N_1a01d30f26a93f06"
+    },
+    {
+      "node_code": "N_ff33280252dafd2c",
+      "name_zh": "临床血液学检测",
+      "name_en": "",
+      "path": "医学/医学检验学/临床血液学检测",
+      "parent_code": "N_1a01d30f26a93f06"
+    },
+    {
+      "node_code": "N_ca6647c1af5b43a8",
+      "name_zh": "实验诊断概论",
+      "name_en": "",
+      "path": "医学/医学检验学/实验诊断概论",
+      "parent_code": "N_1a01d30f26a93f06"
+    },
+    {
+      "node_code": "N_8223e8db9a6eb59b",
+      "name_zh": "常用肝脏功能实验室检测",
+      "name_en": "",
+      "path": "医学/医学检验学/常用肝脏功能实验室检测",
+      "parent_code": "N_1a01d30f26a93f06"
+    },
+    {
+      "node_code": "N_e8f1cb07e79b6b12",
+      "name_zh": "常用肾脏功能实验室检测",
+      "name_en": "",
+      "path": "医学/医学检验学/常用肾脏功能实验室检测",
+      "parent_code": "N_1a01d30f26a93f06"
+    },
+    {
+      "node_code": "N_c7d82b6c46e7022f",
+      "name_zh": "排泄物、分泌物及体液检测",
+      "name_en": "",
+      "path": "医学/医学检验学/排泄物、分泌物及体液检测",
+      "parent_code": "N_1a01d30f26a93f06"
+    },
+    {
+      "node_code": "N_dfdd67971ed46dc1",
+      "name_zh": "血栓与止血检测",
+      "name_en": "",
+      "path": "医学/医学检验学/血栓与止血检测",
+      "parent_code": "N_1a01d30f26a93f06"
+    },
+    {
+      "node_code": "N_634edb922006fca9",
+      "name_zh": "医学统计学",
+      "name_en": "",
+      "path": "医学/医学统计学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_d3ee92fb89de9852",
+      "name_zh": "回归与多元分析",
+      "name_en": "",
+      "path": "医学/医学统计学/回归与多元分析",
+      "parent_code": "N_634edb922006fca9"
+    },
+    {
+      "node_code": "N_3fabddd95931649e",
+      "name_zh": "研究设计",
+      "name_en": "",
+      "path": "医学/医学统计学/研究设计",
+      "parent_code": "N_634edb922006fca9"
+    },
+    {
+      "node_code": "N_2ccade6ae34fd625",
+      "name_zh": "统计描述与推断",
+      "name_en": "",
+      "path": "医学/医学统计学/统计描述与推断",
+      "parent_code": "N_634edb922006fca9"
+    },
+    {
+      "node_code": "N_957028fab4f63166",
+      "name_zh": "医学遗传学",
+      "name_en": "",
+      "path": "医学/医学遗传学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_d03044f41d1e8e5b",
+      "name_zh": "罕见病与综合征",
+      "name_en": "",
+      "path": "医学/医学遗传学/罕见病与综合征",
+      "parent_code": "N_957028fab4f63166"
+    },
+    {
+      "node_code": "N_15d9568b04d26e82",
+      "name_zh": "遗传分子机制",
+      "name_en": "",
+      "path": "医学/医学遗传学/遗传分子机制",
+      "parent_code": "N_957028fab4f63166"
+    },
+    {
+      "node_code": "N_92a3e8959fbbbd3b",
+      "name_zh": "遗传病类型",
+      "name_en": "",
+      "path": "医学/医学遗传学/遗传病类型",
+      "parent_code": "N_957028fab4f63166"
+    },
+    {
+      "node_code": "N_88512dbcd9c1ccee",
+      "name_zh": "遗传诊断与咨询",
+      "name_en": "",
+      "path": "医学/医学遗传学/遗传诊断与咨询",
+      "parent_code": "N_957028fab4f63166"
+    },
+    {
+      "node_code": "N_fc978dccb365df96",
+      "name_zh": "医患沟通",
+      "name_en": "",
+      "path": "医学/医患沟通",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_93b704832244af51",
+      "name_zh": "医学伦理",
+      "name_en": "",
+      "path": "医学/医患沟通/医学伦理",
+      "parent_code": "N_fc978dccb365df96"
+    },
+    {
+      "node_code": "N_c40c9520c0b33371",
+      "name_zh": "沟通理论与技能",
+      "name_en": "",
+      "path": "医学/医患沟通/沟通理论与技能",
+      "parent_code": "N_fc978dccb365df96"
+    },
+    {
+      "node_code": "N_0a2a2a9c759d6fea",
+      "name_zh": "特殊情境沟通",
+      "name_en": "",
+      "path": "医学/医患沟通/特殊情境沟通",
+      "parent_code": "N_fc978dccb365df96"
+    },
+    {
+      "node_code": "N_a55ce299cfc3d31a",
+      "name_zh": "医用基础科学",
+      "name_en": "",
+      "path": "医学/医用基础科学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_8dc7928288e8aab7",
+      "name_zh": "医学生物学",
+      "name_en": "",
+      "path": "医学/医用基础科学/医学生物学",
+      "parent_code": "N_a55ce299cfc3d31a"
+    },
+    {
+      "node_code": "N_783077b26c95a86a",
+      "name_zh": "医用物理学",
+      "name_en": "",
+      "path": "医学/医用基础科学/医用物理学",
+      "parent_code": "N_a55ce299cfc3d31a"
+    },
+    {
+      "node_code": "N_29f674caba609066",
+      "name_zh": "医用高等数学",
+      "name_en": "",
+      "path": "医学/医用基础科学/医用高等数学",
+      "parent_code": "N_a55ce299cfc3d31a"
+    },
+    {
+      "node_code": "N_4d404ad33b9f32a6",
+      "name_zh": "基础化学与有机化学",
+      "name_en": "",
+      "path": "医学/医用基础科学/基础化学与有机化学",
+      "parent_code": "N_a55ce299cfc3d31a"
+    },
+    {
+      "node_code": "N_b5c7c86df3a85b67",
+      "name_zh": "卫生政策与医疗服务",
+      "name_en": "",
+      "path": "医学/卫生政策与医疗服务",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_db415e420bebd802",
+      "name_zh": "卫生政策与医疗服务·医学信息与循证决策",
+      "name_en": "",
+      "path": "医学/卫生政策与医疗服务/卫生政策与医疗服务·医学信息与循证决策",
+      "parent_code": "N_b5c7c86df3a85b67"
+    },
+    {
+      "node_code": "N_b89c6f00e8359921",
+      "name_zh": "卫生政策与医疗服务·卫生法规与伦理",
+      "name_en": "",
+      "path": "医学/卫生政策与医疗服务/卫生政策与医疗服务·卫生法规与伦理",
+      "parent_code": "N_b5c7c86df3a85b67"
+    },
+    {
+      "node_code": "N_41254e2246a66684",
+      "name_zh": "卫生政策与医疗服务·卫生系统与医院管理",
+      "name_en": "",
+      "path": "医学/卫生政策与医疗服务/卫生政策与医疗服务·卫生系统与医院管理",
+      "parent_code": "N_b5c7c86df3a85b67"
+    },
+    {
+      "node_code": "N_143a0cc4f7255fb3",
+      "name_zh": "卫生政策与医疗服务·卫生经济与医保支付",
+      "name_en": "",
+      "path": "医学/卫生政策与医疗服务/卫生政策与医疗服务·卫生经济与医保支付",
+      "parent_code": "N_b5c7c86df3a85b67"
+    },
+    {
+      "node_code": "N_614ded6d6e3a7128",
+      "name_zh": "卫生政策与管理",
+      "name_en": "",
+      "path": "医学/卫生政策与管理",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_3c9a5a4cb4d718ea",
+      "name_zh": "卫生政策与管理·医学信息与循证决策",
+      "name_en": "",
+      "path": "医学/卫生政策与管理/卫生政策与管理·医学信息与循证决策",
+      "parent_code": "N_614ded6d6e3a7128"
+    },
+    {
+      "node_code": "N_aa589de35329fbec",
+      "name_zh": "卫生政策与管理·卫生法规与伦理",
+      "name_en": "",
+      "path": "医学/卫生政策与管理/卫生政策与管理·卫生法规与伦理",
+      "parent_code": "N_614ded6d6e3a7128"
+    },
+    {
+      "node_code": "N_23e34f02eb71248c",
+      "name_zh": "卫生政策与管理·卫生系统与医院管理",
+      "name_en": "",
+      "path": "医学/卫生政策与管理/卫生政策与管理·卫生系统与医院管理",
+      "parent_code": "N_614ded6d6e3a7128"
+    },
+    {
+      "node_code": "N_6ef86d738ee3c2d0",
+      "name_zh": "卫生政策与管理·卫生经济与医保支付",
+      "name_en": "",
+      "path": "医学/卫生政策与管理/卫生政策与管理·卫生经济与医保支付",
+      "parent_code": "N_614ded6d6e3a7128"
+    },
+    {
+      "node_code": "N_0040e7245e30fa9f",
+      "name_zh": "口腔医学",
+      "name_en": "",
+      "path": "医学/口腔医学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_28c32d56359d6d27",
+      "name_zh": "口腔修复与种植",
+      "name_en": "",
+      "path": "医学/口腔医学/口腔修复与种植",
+      "parent_code": "N_0040e7245e30fa9f"
+    },
+    {
+      "node_code": "N_251888f183e372b2",
+      "name_zh": "口腔正畸与儿童口腔",
+      "name_en": "",
+      "path": "医学/口腔医学/口腔正畸与儿童口腔",
+      "parent_code": "N_0040e7245e30fa9f"
+    },
+    {
+      "node_code": "N_d6c5ec1a5934ad4b",
+      "name_zh": "口腔预防与基础医学",
+      "name_en": "",
+      "path": "医学/口腔医学/口腔预防与基础医学",
+      "parent_code": "N_0040e7245e30fa9f"
+    },
+    {
+      "node_code": "N_4f9e1f2e6fa72824",
+      "name_zh": "口腔颌面外科",
+      "name_en": "",
+      "path": "医学/口腔医学/口腔颌面外科",
+      "parent_code": "N_0040e7245e30fa9f"
+    },
+    {
+      "node_code": "N_b83696c131f984c3",
+      "name_zh": "牙体牙髓病学",
+      "name_en": "",
+      "path": "医学/口腔医学/牙体牙髓病学",
+      "parent_code": "N_0040e7245e30fa9f"
+    },
+    {
+      "node_code": "N_67c9afef77a06835",
+      "name_zh": "牙周与口腔黏膜病",
+      "name_en": "",
+      "path": "医学/口腔医学/牙周与口腔黏膜病",
+      "parent_code": "N_0040e7245e30fa9f"
+    },
+    {
+      "node_code": "N_3603012359c68acc",
+      "name_zh": "呼吸系统",
+      "name_en": "",
+      "path": "医学/呼吸系统",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_8a96edbfb1879622",
+      "name_zh": "呼吸危重症与呼吸功能障碍",
+      "name_en": "",
+      "path": "医学/呼吸系统/呼吸危重症与呼吸功能障碍",
+      "parent_code": "N_3603012359c68acc"
+    },
+    {
+      "node_code": "N_b74a060df3d49fce",
+      "name_zh": "体外膜式氧合",
+      "name_en": "",
+      "path": "医学/呼吸系统/呼吸危重症与呼吸功能障碍/体外膜式氧合",
+      "parent_code": "N_8a96edbfb1879622"
+    },
+    {
+      "node_code": "N_ef67d3b22aef7b49",
+      "name_zh": "呼吸衰竭",
+      "name_en": "",
+      "path": "医学/呼吸系统/呼吸危重症与呼吸功能障碍/呼吸衰竭",
+      "parent_code": "N_8a96edbfb1879622"
+    },
+    {
+      "node_code": "N_7b21043517333ec0",
+      "name_zh": "急性呼吸窘迫综合征（ARDS）",
+      "name_en": "",
+      "path": "医学/呼吸系统/呼吸危重症与呼吸功能障碍/急性呼吸窘迫综合征（ARDS）",
+      "parent_code": "N_8a96edbfb1879622"
+    },
+    {
+      "node_code": "N_ec86323bd5cd7a1f",
+      "name_zh": "机械通气",
+      "name_en": "",
+      "path": "医学/呼吸系统/呼吸危重症与呼吸功能障碍/机械通气",
+      "parent_code": "N_8a96edbfb1879622"
+    },
+    {
+      "node_code": "N_6f08c89f8177ea4e",
+      "name_zh": "气道疾病",
+      "name_en": "",
+      "path": "医学/呼吸系统/气道疾病",
+      "parent_code": "N_3603012359c68acc"
+    },
+    {
+      "node_code": "N_0c43f1a397458295",
+      "name_zh": "支气管哮喘",
+      "name_en": "",
+      "path": "医学/呼吸系统/气道疾病/支气管哮喘",
+      "parent_code": "N_6f08c89f8177ea4e"
+    },
+    {
+      "node_code": "N_3664787bd669aa59",
+      "name_zh": "慢性阻塞性肺疾病",
+      "name_en": "",
+      "path": "医学/呼吸系统/气道疾病/慢性阻塞性肺疾病",
+      "parent_code": "N_6f08c89f8177ea4e"
+    },
+    {
+      "node_code": "N_03fd2d226fed7c77",
+      "name_zh": "支气管扩张症",
+      "name_en": "",
+      "path": "医学/呼吸系统/气道疾病/支气管扩张症",
+      "parent_code": "N_6f08c89f8177ea4e"
+    },
+    {
+      "node_code": "N_7759b2f7ddd53c78",
+      "name_zh": "睡眠与呼吸调节障碍",
+      "name_en": "",
+      "path": "医学/呼吸系统/睡眠与呼吸调节障碍",
+      "parent_code": "N_3603012359c68acc"
+    },
+    {
+      "node_code": "N_c0aec120e9124ed4",
+      "name_zh": "纵隔疾病",
+      "name_en": "",
+      "path": "医学/呼吸系统/纵隔疾病",
+      "parent_code": "N_3603012359c68acc"
+    },
+    {
+      "node_code": "N_85bbf4f0c3e17251",
+      "name_zh": "肺疾病",
+      "name_en": "",
+      "path": "医学/呼吸系统/肺疾病",
+      "parent_code": "N_3603012359c68acc"
+    },
+    {
+      "node_code": "N_0946764b9e54010a",
+      "name_zh": "肺部感染性疾病",
+      "name_en": "",
+      "path": "医学/呼吸系统/肺疾病/肺部感染性疾病",
+      "parent_code": "N_85bbf4f0c3e17251"
+    },
+    {
+      "node_code": "N_5454cb110008fba9",
+      "name_zh": "肺部肿瘤与肺癌",
+      "name_en": "",
+      "path": "医学/呼吸系统/肺疾病/肺部肿瘤与肺癌",
+      "parent_code": "N_85bbf4f0c3e17251"
+    },
+    {
+      "node_code": "N_5551edd308e55dd4",
+      "name_zh": "肺部血管疾病",
+      "name_en": "",
+      "path": "医学/呼吸系统/肺疾病/肺部血管疾病",
+      "parent_code": "N_85bbf4f0c3e17251"
+    },
+    {
+      "node_code": "N_fffe97979129bef1",
+      "name_zh": "间质性肺疾病与弥漫性肺疾病",
+      "name_en": "",
+      "path": "医学/呼吸系统/肺疾病/间质性肺疾病与弥漫性肺疾病",
+      "parent_code": "N_85bbf4f0c3e17251"
+    },
+    {
+      "node_code": "N_3fd6d142adda6723",
+      "name_zh": "胸膜与胸腔疾病",
+      "name_en": "",
+      "path": "医学/呼吸系统/胸膜与胸腔疾病",
+      "parent_code": "N_3603012359c68acc"
+    },
+    {
+      "node_code": "N_31aef81a61de351b",
+      "name_zh": "膈疾病",
+      "name_en": "",
+      "path": "医学/呼吸系统/膈疾病",
+      "parent_code": "N_3603012359c68acc"
+    },
+    {
+      "node_code": "N_8bdad726e64af644",
+      "name_zh": "外科学",
+      "name_en": "",
+      "path": "医学/外科学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_b8fdf4dfc77f2d6f",
+      "name_zh": "器官移植与显微外科",
+      "name_en": "",
+      "path": "医学/外科学/器官移植与显微外科",
+      "parent_code": "N_8bdad726e64af644"
+    },
+    {
+      "node_code": "N_a39264c6b39b5dc0",
+      "name_zh": "外科总论",
+      "name_en": "",
+      "path": "医学/外科学/外科总论",
+      "parent_code": "N_8bdad726e64af644"
+    },
+    {
+      "node_code": "N_f001b6ff3f864e4d",
+      "name_zh": "围手术期管理",
+      "name_en": "",
+      "path": "医学/外科学/外科总论/围手术期管理",
+      "parent_code": "N_a39264c6b39b5dc0"
+    },
+    {
+      "node_code": "N_04d4aac7703a74f3",
+      "name_zh": "外科休克与复苏",
+      "name_en": "",
+      "path": "医学/外科学/外科总论/外科休克与复苏",
+      "parent_code": "N_a39264c6b39b5dc0"
+    },
+    {
+      "node_code": "N_84ba6445567f69dd",
+      "name_zh": "外科创伤与急救",
+      "name_en": "",
+      "path": "医学/外科学/外科总论/外科创伤与急救",
+      "parent_code": "N_a39264c6b39b5dc0"
+    },
+    {
+      "node_code": "N_e58ce2d4c379d10e",
+      "name_zh": "外科基础与诊断",
+      "name_en": "",
+      "path": "医学/外科学/外科总论/外科基础与诊断",
+      "parent_code": "N_a39264c6b39b5dc0"
+    },
+    {
+      "node_code": "N_81e5d3dede8badf1",
+      "name_zh": "外科感染",
+      "name_en": "",
+      "path": "医学/外科学/外科总论/外科感染",
+      "parent_code": "N_a39264c6b39b5dc0"
+    },
+    {
+      "node_code": "N_99ce0676e4ba00ed",
+      "name_zh": "外科手术学基本操作",
+      "name_en": "",
+      "path": "医学/外科学/外科总论/外科手术学基本操作",
+      "parent_code": "N_a39264c6b39b5dc0"
+    },
+    {
+      "node_code": "N_1fdb9871712790dd",
+      "name_zh": "外科营养与代谢",
+      "name_en": "",
+      "path": "医学/外科学/外科总论/外科营养与代谢",
+      "parent_code": "N_a39264c6b39b5dc0"
+    },
+    {
+      "node_code": "N_51f949f3c53be385",
+      "name_zh": "整形烧伤外科",
+      "name_en": "",
+      "path": "医学/外科学/整形烧伤外科",
+      "parent_code": "N_8bdad726e64af644"
+    },
+    {
+      "node_code": "N_4c6d01222d6012f6",
+      "name_zh": "普通外科",
+      "name_en": "",
+      "path": "医学/外科学/普通外科",
+      "parent_code": "N_8bdad726e64af644"
+    },
+    {
+      "node_code": "N_5ff643f3e5b4951d",
+      "name_zh": "围术期处理",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/围术期处理",
+      "parent_code": "N_4c6d01222d6012f6"
+    },
+    {
+      "node_code": "N_03a110cc2b875ec7",
+      "name_zh": "小儿外科",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/小儿外科",
+      "parent_code": "N_4c6d01222d6012f6"
+    },
+    {
+      "node_code": "N_e25d4b6e7a11ed34",
+      "name_zh": "甲状腺乳腺与疝",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/甲状腺乳腺与疝",
+      "parent_code": "N_4c6d01222d6012f6"
+    },
+    {
+      "node_code": "N_336d23bd5c5b053d",
+      "name_zh": "甲状腺疾病的外科治疗",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/甲状腺乳腺与疝/甲状腺疾病的外科治疗",
+      "parent_code": "N_e25d4b6e7a11ed34"
+    },
+    {
+      "node_code": "N_38ef99e955a5de40",
+      "name_zh": "乳腺疾病的外科治疗",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/甲状腺乳腺与疝/乳腺疾病的外科治疗",
+      "parent_code": "N_e25d4b6e7a11ed34"
+    },
+    {
+      "node_code": "N_eb6c9da4a8aa5f33",
+      "name_zh": "疝与腹壁疾病",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/甲状腺乳腺与疝/疝与腹壁疾病",
+      "parent_code": "N_e25d4b6e7a11ed34"
+    },
+    {
+      "node_code": "N_56e3b574118c2971",
+      "name_zh": "肛周与盆底疾病",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/肛周与盆底疾病",
+      "parent_code": "N_4c6d01222d6012f6"
+    },
+    {
+      "node_code": "N_91e09a3f0ae0052a",
+      "name_zh": "肝胆胰脾外科",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/肝胆胰脾外科",
+      "parent_code": "N_4c6d01222d6012f6"
+    },
+    {
+      "node_code": "N_65620ad1e9993b97",
+      "name_zh": "肝脏外科",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/肝胆胰脾外科/肝脏外科",
+      "parent_code": "N_91e09a3f0ae0052a"
+    },
+    {
+      "node_code": "N_f89ea8b130bf2563",
+      "name_zh": "胆道外科",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/肝胆胰脾外科/胆道外科",
+      "parent_code": "N_91e09a3f0ae0052a"
+    },
+    {
+      "node_code": "N_4a8f6d436ac5366b",
+      "name_zh": "胰腺外科",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/肝胆胰脾外科/胰腺外科",
+      "parent_code": "N_91e09a3f0ae0052a"
+    },
+    {
+      "node_code": "N_fc0cbe173d4798dd",
+      "name_zh": "脾脏外科",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/肝胆胰脾外科/脾脏外科",
+      "parent_code": "N_91e09a3f0ae0052a"
+    },
+    {
+      "node_code": "N_ac6eb9a4bab93f8b",
+      "name_zh": "胃肠外科",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/胃肠外科",
+      "parent_code": "N_4c6d01222d6012f6"
+    },
+    {
+      "node_code": "N_e44013a161e603b4",
+      "name_zh": "胃十二指肠外科",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/胃肠外科/胃十二指肠外科",
+      "parent_code": "N_ac6eb9a4bab93f8b"
+    },
+    {
+      "node_code": "N_653a69225b2f914b",
+      "name_zh": "小肠与结直肠外科",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/胃肠外科/小肠与结直肠外科",
+      "parent_code": "N_ac6eb9a4bab93f8b"
+    },
+    {
+      "node_code": "N_e60a45c71af86d5f",
+      "name_zh": "腹部感染",
+      "name_en": "",
+      "path": "医学/外科学/普通外科/腹部感染",
+      "parent_code": "N_4c6d01222d6012f6"
+    },
+    {
+      "node_code": "N_07ed9d56bd8f4df8",
+      "name_zh": "泌尿外科学",
+      "name_en": "",
+      "path": "医学/外科学/泌尿外科学",
+      "parent_code": "N_8bdad726e64af644"
+    },
+    {
+      "node_code": "N_da40ac17bdbdf0a9",
+      "name_zh": "前列腺疾病",
+      "name_en": "",
+      "path": "医学/外科学/泌尿外科学/前列腺疾病",
+      "parent_code": "N_07ed9d56bd8f4df8"
+    },
+    {
+      "node_code": "N_fcdb3996e3a2be37",
+      "name_zh": "泌尿外科学·男科学",
+      "name_en": "",
+      "path": "医学/外科学/泌尿外科学/泌尿外科学·男科学",
+      "parent_code": "N_07ed9d56bd8f4df8"
+    },
+    {
+      "node_code": "N_6ceee9e2b9cb2b8d",
+      "name_zh": "男性性功能障碍",
+      "name_en": "",
+      "path": "医学/外科学/泌尿外科学/泌尿外科学·男科学/男性性功能障碍",
+      "parent_code": "N_fcdb3996e3a2be37"
+    },
+    {
+      "node_code": "N_619135ec2f6280f6",
+      "name_zh": "男性不育及其他男性生殖系统疾病",
+      "name_en": "",
+      "path": "医学/外科学/泌尿外科学/泌尿外科学·男科学/男性不育及其他男性生殖系统疾病",
+      "parent_code": "N_fcdb3996e3a2be37"
+    },
+    {
+      "node_code": "N_356e84783b967001",
+      "name_zh": "肾肿瘤",
+      "name_en": "",
+      "path": "医学/外科学/泌尿外科学/肾肿瘤",
+      "parent_code": "N_07ed9d56bd8f4df8"
+    },
+    {
+      "node_code": "N_3c88205ff5c9decf",
+      "name_zh": "膀胱疾病",
+      "name_en": "",
+      "path": "医学/外科学/泌尿外科学/膀胱疾病",
+      "parent_code": "N_07ed9d56bd8f4df8"
+    },
+    {
+      "node_code": "N_083af51913f2a11b",
+      "name_zh": "输尿管疾病",
+      "name_en": "",
+      "path": "医学/外科学/泌尿外科学/输尿管疾病",
+      "parent_code": "N_07ed9d56bd8f4df8"
+    },
+    {
+      "node_code": "N_8059b14fddc660f0",
+      "name_zh": "外科学·神经外科学",
+      "name_en": "",
+      "path": "医学/外科学/外科学·神经外科学",
+      "parent_code": "N_8bdad726e64af644"
+    },
+    {
+      "node_code": "N_ccad9d056dfc5a88",
+      "name_zh": "外科学·神经外科学·脊髓疾病",
+      "name_en": "",
+      "path": "医学/外科学/外科学·神经外科学/外科学·神经外科学·脊髓疾病",
+      "parent_code": "N_8059b14fddc660f0"
+    },
+    {
+      "node_code": "N_fef1b736059a03f4",
+      "name_zh": "脑肿瘤",
+      "name_en": "",
+      "path": "医学/外科学/外科学·神经外科学/脑肿瘤",
+      "parent_code": "N_8059b14fddc660f0"
+    },
+    {
+      "node_code": "N_3636f1724bcf9578",
+      "name_zh": "脑血管外科",
+      "name_en": "",
+      "path": "医学/外科学/外科学·神经外科学/脑血管外科",
+      "parent_code": "N_8059b14fddc660f0"
+    },
+    {
+      "node_code": "N_ee38c49a3d0b7b02",
+      "name_zh": "外科学·神经外科学·脑血管病",
+      "name_en": "",
+      "path": "医学/外科学/外科学·神经外科学/外科学·神经外科学·脑血管病",
+      "parent_code": "N_8059b14fddc660f0"
+    },
+    {
+      "node_code": "N_41ca50de0f01633f",
+      "name_zh": "颅内血肿",
+      "name_en": "",
+      "path": "医学/外科学/外科学·神经外科学/颅内血肿",
+      "parent_code": "N_8059b14fddc660f0"
+    },
+    {
+      "node_code": "N_621945ba019c6549",
+      "name_zh": "颅脑损伤",
+      "name_en": "",
+      "path": "医学/外科学/外科学·神经外科学/颅脑损伤",
+      "parent_code": "N_8059b14fddc660f0"
+    },
+    {
+      "node_code": "N_7a0a2e11ac48f30e",
+      "name_zh": "颅颈交界与先天畸形",
+      "name_en": "",
+      "path": "医学/外科学/外科学·神经外科学/颅颈交界与先天畸形",
+      "parent_code": "N_8059b14fddc660f0"
+    },
+    {
+      "node_code": "N_640fb1a77827fe59",
+      "name_zh": "胸心血管外科",
+      "name_en": "",
+      "path": "医学/外科学/胸心血管外科",
+      "parent_code": "N_8bdad726e64af644"
+    },
+    {
+      "node_code": "N_66a8e0b33c24fcce",
+      "name_zh": "心脏大血管外科学",
+      "name_en": "",
+      "path": "医学/外科学/胸心血管外科/心脏大血管外科学",
+      "parent_code": "N_640fb1a77827fe59"
+    },
+    {
+      "node_code": "N_655fb7a765ca7a35",
+      "name_zh": "先天性心脏病的外科治疗",
+      "name_en": "",
+      "path": "医学/外科学/胸心血管外科/心脏大血管外科学/先天性心脏病的外科治疗",
+      "parent_code": "N_66a8e0b33c24fcce"
+    },
+    {
+      "node_code": "N_13cc6a19f9938e27",
+      "name_zh": "后天性心脏病的外科治疗",
+      "name_en": "",
+      "path": "医学/外科学/胸心血管外科/心脏大血管外科学/后天性心脏病的外科治疗",
+      "parent_code": "N_66a8e0b33c24fcce"
+    },
+    {
+      "node_code": "N_63c3879ab399e456",
+      "name_zh": "大血管外科疾病",
+      "name_en": "",
+      "path": "医学/外科学/胸心血管外科/心脏大血管外科学/大血管外科疾病",
+      "parent_code": "N_66a8e0b33c24fcce"
+    },
+    {
+      "node_code": "N_432bfa3d8ce98a25",
+      "name_zh": "胸外科学",
+      "name_en": "",
+      "path": "医学/外科学/胸心血管外科/胸外科学",
+      "parent_code": "N_640fb1a77827fe59"
+    },
+    {
+      "node_code": "N_a6e3efc24a75108c",
+      "name_zh": "肺部疾病的外科治疗",
+      "name_en": "",
+      "path": "医学/外科学/胸心血管外科/胸外科学/肺部疾病的外科治疗",
+      "parent_code": "N_432bfa3d8ce98a25"
+    },
+    {
+      "node_code": "N_cb1c1677218b9346",
+      "name_zh": "食管疾病的外科治疗",
+      "name_en": "",
+      "path": "医学/外科学/胸心血管外科/胸外科学/食管疾病的外科治疗",
+      "parent_code": "N_432bfa3d8ce98a25"
+    },
+    {
+      "node_code": "N_4bb4b3c307fdd754",
+      "name_zh": "纵隔与胸壁疾病",
+      "name_en": "",
+      "path": "医学/外科学/胸心血管外科/胸外科学/纵隔与胸壁疾病",
+      "parent_code": "N_432bfa3d8ce98a25"
+    },
+    {
+      "node_code": "N_a96e65b6f1c97073",
+      "name_zh": "血管外科学",
+      "name_en": "",
+      "path": "医学/外科学/血管外科学",
+      "parent_code": "N_8bdad726e64af644"
+    },
+    {
+      "node_code": "N_658ca4d578be2577",
+      "name_zh": "肠系膜与内脏血管疾病",
+      "name_en": "",
+      "path": "医学/外科学/血管外科学/肠系膜与内脏血管疾病",
+      "parent_code": "N_a96e65b6f1c97073"
+    },
+    {
+      "node_code": "N_2e9a4c43ae648515",
+      "name_zh": "妇科学",
+      "name_en": "",
+      "path": "医学/妇科学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_ec0d3c50272c3b70",
+      "name_zh": "卵巢与输卵管疾病",
+      "name_en": "",
+      "path": "医学/妇科学/卵巢与输卵管疾病",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_f224aa3ee4b93429",
+      "name_zh": "妇科内分泌与月经异常",
+      "name_en": "",
+      "path": "医学/妇科学/妇科内分泌与月经异常",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_14c9be1decf89228",
+      "name_zh": "妇科基础与诊断",
+      "name_en": "",
+      "path": "医学/妇科学/妇科基础与诊断",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_c1935d1c9d5fb9db",
+      "name_zh": "妇科急症",
+      "name_en": "",
+      "path": "医学/妇科学/妇科急症",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_9834f26074c148c8",
+      "name_zh": "妇科手术",
+      "name_en": "",
+      "path": "医学/妇科学/妇科手术",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_e0fa0a05c24b9e15",
+      "name_zh": "妇科炎症与感染",
+      "name_en": "",
+      "path": "医学/妇科学/妇科炎症与感染",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_1e01c6cb5a1c025d",
+      "name_zh": "妇科肿瘤",
+      "name_en": "",
+      "path": "医学/妇科学/妇科肿瘤",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_59f269c9fe10b79f",
+      "name_zh": "子宫疾病",
+      "name_en": "",
+      "path": "医学/妇科学/子宫疾病",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_9941b699b2f820c5",
+      "name_zh": "宫颈、阴道与外阴疾病",
+      "name_en": "",
+      "path": "医学/妇科学/宫颈、阴道与外阴疾病",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_a390cf938e170d17",
+      "name_zh": "月经异常与妇科内分泌疾病",
+      "name_en": "",
+      "path": "医学/妇科学/月经异常与妇科内分泌疾病",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_1a63c4117230662f",
+      "name_zh": "生殖器官发育异常",
+      "name_en": "",
+      "path": "医学/妇科学/生殖器官发育异常",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_7d1afd0f9633514a",
+      "name_zh": "计划生育与盆底",
+      "name_en": "",
+      "path": "医学/妇科学/计划生育与盆底",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_8bb8fc777303776e",
+      "name_zh": "附件疾病",
+      "name_en": "",
+      "path": "医学/妇科学/附件疾病",
+      "parent_code": "N_2e9a4c43ae648515"
+    },
+    {
+      "node_code": "N_88e55f837b454a8b",
+      "name_zh": "康复学",
+      "name_en": "",
+      "path": "医学/康复学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_a40fe4b3856a70fe",
+      "name_zh": "临床康复",
+      "name_en": "",
+      "path": "医学/康复学/临床康复",
+      "parent_code": "N_88e55f837b454a8b"
+    },
+    {
+      "node_code": "N_9ca874945da30319",
+      "name_zh": "作业治疗 OT 与言语治疗 ST",
+      "name_en": "",
+      "path": "医学/康复学/作业治疗 OT 与言语治疗 ST",
+      "parent_code": "N_88e55f837b454a8b"
+    },
+    {
+      "node_code": "N_3f1f484105f6dd9b",
+      "name_zh": "康复医学基础",
+      "name_en": "",
+      "path": "医学/康复学/康复医学基础",
+      "parent_code": "N_88e55f837b454a8b"
+    },
+    {
+      "node_code": "N_c21bd8841d7810e6",
+      "name_zh": "康复基础科学",
+      "name_en": "",
+      "path": "医学/康复学/康复基础科学",
+      "parent_code": "N_88e55f837b454a8b"
+    },
+    {
+      "node_code": "N_a1f7d4b6795c3121",
+      "name_zh": "康复工程",
+      "name_en": "",
+      "path": "医学/康复学/康复工程",
+      "parent_code": "N_88e55f837b454a8b"
+    },
+    {
+      "node_code": "N_cb8398ff3c97e18c",
+      "name_zh": "康复心理与社会康复",
+      "name_en": "",
+      "path": "医学/康复学/康复心理与社会康复",
+      "parent_code": "N_88e55f837b454a8b"
+    },
+    {
+      "node_code": "N_f4585b6c30223fa4",
+      "name_zh": "康复治疗技术",
+      "name_en": "",
+      "path": "医学/康复学/康复治疗技术",
+      "parent_code": "N_88e55f837b454a8b"
+    },
+    {
+      "node_code": "N_db0e233ac9560e78",
+      "name_zh": "康复管理",
+      "name_en": "",
+      "path": "医学/康复学/康复管理",
+      "parent_code": "N_88e55f837b454a8b"
+    },
+    {
+      "node_code": "N_3cc0209a4521092c",
+      "name_zh": "康复评定",
+      "name_en": "",
+      "path": "医学/康复学/康复评定",
+      "parent_code": "N_88e55f837b454a8b"
+    },
+    {
+      "node_code": "N_35bfccb7792ab4b9",
+      "name_zh": "物理治疗 PT",
+      "name_en": "",
+      "path": "医学/康复学/物理治疗 PT",
+      "parent_code": "N_88e55f837b454a8b"
+    },
+    {
+      "node_code": "N_983ab232c2bda7cd",
+      "name_zh": "特殊人群康复",
+      "name_en": "",
+      "path": "医学/康复学/特殊人群康复",
+      "parent_code": "N_88e55f837b454a8b"
+    },
+    {
+      "node_code": "N_b277f33c1a2e4cb6",
+      "name_zh": "疾病康复与辅具",
+      "name_en": "",
+      "path": "医学/康复学/疾病康复与辅具",
+      "parent_code": "N_88e55f837b454a8b"
+    },
+    {
+      "node_code": "N_1110be42a1dd8cf1",
+      "name_zh": "心血管系统疾病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_aef7572aec73f15d",
+      "name_zh": "心脏病学",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学",
+      "parent_code": "N_1110be42a1dd8cf1"
+    },
+    {
+      "node_code": "N_d1a9f3a7595a8803",
+      "name_zh": "先天性与感染性心脏病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/先天性与感染性心脏病",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_ba4faac77fdbcd15",
+      "name_zh": "先天性心脏病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/先天性与感染性心脏病/先天性心脏病",
+      "parent_code": "N_d1a9f3a7595a8803"
+    },
+    {
+      "node_code": "N_661c69435515ce5b",
+      "name_zh": "感染性心脏病（感染性心内膜炎、心肌炎等）",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/先天性与感染性心脏病/感染性心脏病（感染性心内膜炎、心肌炎等）",
+      "parent_code": "N_d1a9f3a7595a8803"
+    },
+    {
+      "node_code": "N_f14bae5fc991238c",
+      "name_zh": "冠心病与急性冠脉综合征",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/冠心病与急性冠脉综合征",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_de29dd41928ec8c2",
+      "name_zh": "冲动异常",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/冲动异常",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_cc24c03f2a513490",
+      "name_zh": "心力衰竭与心肌病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/心力衰竭与心肌病",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_c33d4cde69389218",
+      "name_zh": "心力衰竭",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/心力衰竭与心肌病/心力衰竭",
+      "parent_code": "N_cc24c03f2a513490"
+    },
+    {
+      "node_code": "N_b0684f6b09093916",
+      "name_zh": "心肌病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/心力衰竭与心肌病/心肌病",
+      "parent_code": "N_cc24c03f2a513490"
+    },
+    {
+      "node_code": "N_2ef16a64d522da4c",
+      "name_zh": "心包疾病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/心包疾病",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_e04ee00a37df52e5",
+      "name_zh": "心律失常",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/心律失常",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_d8346a71bfc23ae7",
+      "name_zh": "快速性心律失常",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/心律失常/快速性心律失常",
+      "parent_code": "N_e04ee00a37df52e5"
+    },
+    {
+      "node_code": "N_21fc0f47ada5bc8e",
+      "name_zh": "缓慢性心律失常",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/心律失常/缓慢性心律失常",
+      "parent_code": "N_e04ee00a37df52e5"
+    },
+    {
+      "node_code": "N_d0b5fee0fa4f6113",
+      "name_zh": "心脏瓣膜疾病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/心脏瓣膜疾病",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_9c9988c9dfefaa94",
+      "name_zh": "房室阻滞",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/房室阻滞",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_1d4c540af01b77c5",
+      "name_zh": "抗心律失常药物",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/抗心律失常药物",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_0373e9b2d2a33ad3",
+      "name_zh": "无脉性电活动",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/无脉性电活动",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_2a5a0ad2df823598",
+      "name_zh": "期前收缩",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/期前收缩",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_9d57a5450c8c019e",
+      "name_zh": "正性肌力药物",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/正性肌力药物",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_0c4f7d47d16ef901",
+      "name_zh": "窦性停搏",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/心脏病学/窦性停搏",
+      "parent_code": "N_aef7572aec73f15d"
+    },
+    {
+      "node_code": "N_1a9ba14ef4506739",
+      "name_zh": "血压异常",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/血压异常",
+      "parent_code": "N_1110be42a1dd8cf1"
+    },
+    {
+      "node_code": "N_649f245be32ee355",
+      "name_zh": "低血压",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/血压异常/低血压",
+      "parent_code": "N_1a9ba14ef4506739"
+    },
+    {
+      "node_code": "N_412c2c37463966d5",
+      "name_zh": "高血压",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/血压异常/高血压",
+      "parent_code": "N_1a9ba14ef4506739"
+    },
+    {
+      "node_code": "N_07ca060dc5594b4c",
+      "name_zh": "血管疾病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/血管疾病",
+      "parent_code": "N_1110be42a1dd8cf1"
+    },
+    {
+      "node_code": "N_6fe47f3ea9098ca9",
+      "name_zh": "主动脉疾病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/血管疾病/主动脉疾病",
+      "parent_code": "N_07ca060dc5594b4c"
+    },
+    {
+      "node_code": "N_0d125dbc33cbca41",
+      "name_zh": "冠状动、静脉疾病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/血管疾病/冠状动、静脉疾病",
+      "parent_code": "N_07ca060dc5594b4c"
+    },
+    {
+      "node_code": "N_67f796f14e06b4d1",
+      "name_zh": "动脉疾病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/血管疾病/动脉疾病",
+      "parent_code": "N_07ca060dc5594b4c"
+    },
+    {
+      "node_code": "N_5e9d57510a717377",
+      "name_zh": "毛细血管疾病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/血管疾病/毛细血管疾病",
+      "parent_code": "N_07ca060dc5594b4c"
+    },
+    {
+      "node_code": "N_7dc52d4ff4c65459",
+      "name_zh": "肺动、静脉疾病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/血管疾病/肺动、静脉疾病",
+      "parent_code": "N_07ca060dc5594b4c"
+    },
+    {
+      "node_code": "N_c9ae15fae0c4d089",
+      "name_zh": "静脉疾病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/血管疾病/静脉疾病",
+      "parent_code": "N_07ca060dc5594b4c"
+    },
+    {
+      "node_code": "N_003616ca8c72dd49",
+      "name_zh": "颈动、静脉疾病",
+      "name_en": "",
+      "path": "医学/心血管系统疾病/血管疾病/颈动、静脉疾病",
+      "parent_code": "N_07ca060dc5594b4c"
+    },
+    {
+      "node_code": "N_3c6f93fd18bde42f",
+      "name_zh": "急救与危重症护理",
+      "name_en": "",
+      "path": "医学/急救与危重症护理",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_4b078886d185d651",
+      "name_zh": "危重症医学",
+      "name_en": "",
+      "path": "医学/急救与危重症护理/危重症医学",
+      "parent_code": "N_3c6f93fd18bde42f"
+    },
+    {
+      "node_code": "N_e527acb37378a12a",
+      "name_zh": "心肺复苏",
+      "name_en": "",
+      "path": "医学/急救与危重症护理/心肺复苏",
+      "parent_code": "N_3c6f93fd18bde42f"
+    },
+    {
+      "node_code": "N_7ce820f4bf9ab84a",
+      "name_zh": "急诊医学",
+      "name_en": "",
+      "path": "医学/急救与危重症护理/急诊医学",
+      "parent_code": "N_3c6f93fd18bde42f"
+    },
+    {
+      "node_code": "N_70b45ca2a6e78842",
+      "name_zh": "灾难医学",
+      "name_en": "",
+      "path": "医学/急救与危重症护理/灾难医学",
+      "parent_code": "N_3c6f93fd18bde42f"
+    },
+    {
+      "node_code": "N_c65cf507f0004070",
+      "name_zh": "护理学",
+      "name_en": "",
+      "path": "医学/护理学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_053d720a554ddf6f",
+      "name_zh": "临床专科护理",
+      "name_en": "",
+      "path": "医学/护理学/临床专科护理",
+      "parent_code": "N_c65cf507f0004070"
+    },
+    {
+      "node_code": "N_818d4cf1301e1bd4",
+      "name_zh": "基础护理学",
+      "name_en": "",
+      "path": "医学/护理学/基础护理学",
+      "parent_code": "N_c65cf507f0004070"
+    },
+    {
+      "node_code": "N_ff9e28143831b237",
+      "name_zh": "基础护理技术",
+      "name_en": "",
+      "path": "医学/护理学/基础护理技术",
+      "parent_code": "N_c65cf507f0004070"
+    },
+    {
+      "node_code": "N_4a91392e6e62316d",
+      "name_zh": "康复与长期照护",
+      "name_en": "",
+      "path": "医学/护理学/康复与长期照护",
+      "parent_code": "N_c65cf507f0004070"
+    },
+    {
+      "node_code": "N_6699df09d81ff66e",
+      "name_zh": "急危重症与灾害护理",
+      "name_en": "",
+      "path": "医学/护理学/急危重症与灾害护理",
+      "parent_code": "N_c65cf507f0004070"
+    },
+    {
+      "node_code": "N_8ab05cd5920154c1",
+      "name_zh": "护理人文与职业素养",
+      "name_en": "",
+      "path": "医学/护理学/护理人文与职业素养",
+      "parent_code": "N_c65cf507f0004070"
+    },
+    {
+      "node_code": "N_76f5f62ee9d51a35",
+      "name_zh": "护理信息学与智慧护理",
+      "name_en": "",
+      "path": "医学/护理学/护理信息学与智慧护理",
+      "parent_code": "N_c65cf507f0004070"
+    },
+    {
+      "node_code": "N_dffc1d24db17c838",
+      "name_zh": "护理教育与科研",
+      "name_en": "",
+      "path": "医学/护理学/护理教育与科研",
+      "parent_code": "N_c65cf507f0004070"
+    },
+    {
+      "node_code": "N_47ea2b7f95b1ee4b",
+      "name_zh": "护理管理与教育",
+      "name_en": "",
+      "path": "医学/护理学/护理管理与教育",
+      "parent_code": "N_c65cf507f0004070"
+    },
+    {
+      "node_code": "N_973e0b1929852571",
+      "name_zh": "护理管理与质量",
+      "name_en": "",
+      "path": "医学/护理学/护理管理与质量",
+      "parent_code": "N_c65cf507f0004070"
+    },
+    {
+      "node_code": "N_531e8aa2125b34c0",
+      "name_zh": "社区与公共卫生护理",
+      "name_en": "",
+      "path": "医学/护理学/社区与公共卫生护理",
+      "parent_code": "N_c65cf507f0004070"
+    },
+    {
+      "node_code": "N_ddd16802c4b675db",
+      "name_zh": "社区与慢病护理",
+      "name_en": "",
+      "path": "医学/护理学/社区与慢病护理",
+      "parent_code": "N_c65cf507f0004070"
+    },
+    {
+      "node_code": "N_c37551dc6a79cdd2",
+      "name_zh": "核医学",
+      "name_en": "",
+      "path": "医学/核医学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_2cc86562226c8155",
+      "name_zh": "PET显像",
+      "name_en": "",
+      "path": "医学/核医学/PET显像",
+      "parent_code": "N_c37551dc6a79cdd2"
+    },
+    {
+      "node_code": "N_9effc1e8b3697e70",
+      "name_zh": "SPECT显像",
+      "name_en": "",
+      "path": "医学/核医学/SPECT显像",
+      "parent_code": "N_c37551dc6a79cdd2"
+    },
+    {
+      "node_code": "N_7267708ef823b269",
+      "name_zh": "分子影像",
+      "name_en": "",
+      "path": "医学/核医学/分子影像",
+      "parent_code": "N_c37551dc6a79cdd2"
+    },
+    {
+      "node_code": "N_589326bf0b8c3ecd",
+      "name_zh": "核医学基础",
+      "name_en": "",
+      "path": "医学/核医学/核医学基础",
+      "parent_code": "N_c37551dc6a79cdd2"
+    },
+    {
+      "node_code": "N_76bf8016527aff38",
+      "name_zh": "核素治疗",
+      "name_en": "",
+      "path": "医学/核医学/核素治疗",
+      "parent_code": "N_c37551dc6a79cdd2"
+    },
+    {
+      "node_code": "N_c52586dc1d572a5b",
+      "name_zh": "脏器核医学",
+      "name_en": "",
+      "path": "医学/核医学/脏器核医学",
+      "parent_code": "N_c37551dc6a79cdd2"
+    },
+    {
+      "node_code": "N_f0978dc82d8f6702",
+      "name_zh": "毒理学",
+      "name_en": "",
+      "path": "医学/毒理学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_e1c333c8a3de8a20",
+      "name_zh": "临床与法医毒理",
+      "name_en": "",
+      "path": "医学/毒理学/临床与法医毒理",
+      "parent_code": "N_f0978dc82d8f6702"
+    },
+    {
+      "node_code": "N_0b0b12c1346451b2",
+      "name_zh": "乌头类中药毒",
+      "name_en": "",
+      "path": "医学/毒理学/临床与法医毒理/乌头类中药毒",
+      "parent_code": "N_e1c333c8a3de8a20"
+    },
+    {
+      "node_code": "N_6c51fa6883b3b657",
+      "name_zh": "医用药物中毒",
+      "name_en": "",
+      "path": "医学/毒理学/临床与法医毒理/医用药物中毒",
+      "parent_code": "N_e1c333c8a3de8a20"
+    },
+    {
+      "node_code": "N_736bb7e09acaa63d",
+      "name_zh": "工业与农业毒物",
+      "name_en": "",
+      "path": "医学/毒理学/临床与法医毒理/工业与农业毒物",
+      "parent_code": "N_e1c333c8a3de8a20"
+    },
+    {
+      "node_code": "N_866b0df9a66f9625",
+      "name_zh": "杀鼠剂与灭鼠药",
+      "name_en": "",
+      "path": "医学/毒理学/临床与法医毒理/杀鼠剂与灭鼠药",
+      "parent_code": "N_e1c333c8a3de8a20"
+    },
+    {
+      "node_code": "N_388d6b7b7d096fa7",
+      "name_zh": "毒蕈",
+      "name_en": "",
+      "path": "医学/毒理学/临床与法医毒理/毒蕈",
+      "parent_code": "N_e1c333c8a3de8a20"
+    },
+    {
+      "node_code": "N_1ff4a66309ab0a01",
+      "name_zh": "物理因素中毒",
+      "name_en": "",
+      "path": "医学/毒理学/临床与法医毒理/物理因素中毒",
+      "parent_code": "N_e1c333c8a3de8a20"
+    },
+    {
+      "node_code": "N_75666d8101784713",
+      "name_zh": "蛇毒与动物毒",
+      "name_en": "",
+      "path": "医学/毒理学/临床与法医毒理/蛇毒与动物毒",
+      "parent_code": "N_e1c333c8a3de8a20"
+    },
+    {
+      "node_code": "N_7e844cfb9aba1d2d",
+      "name_zh": "金属与化学毒物",
+      "name_en": "",
+      "path": "医学/毒理学/临床与法医毒理/金属与化学毒物",
+      "parent_code": "N_e1c333c8a3de8a20"
+    },
+    {
+      "node_code": "N_2bfa6c8faa5604c1",
+      "name_zh": "安全性评价",
+      "name_en": "",
+      "path": "医学/毒理学/安全性评价",
+      "parent_code": "N_f0978dc82d8f6702"
+    },
+    {
+      "node_code": "N_78f6296fc2a43ff7",
+      "name_zh": "毒理学原理",
+      "name_en": "",
+      "path": "医学/毒理学/毒理学原理",
+      "parent_code": "N_f0978dc82d8f6702"
+    },
+    {
+      "node_code": "N_efac4277fb110f90",
+      "name_zh": "系统与分支毒理",
+      "name_en": "",
+      "path": "医学/毒理学/系统与分支毒理",
+      "parent_code": "N_f0978dc82d8f6702"
+    },
+    {
+      "node_code": "N_5dfe12f8e49e79ad",
+      "name_zh": "泌尿系统",
+      "name_en": "",
+      "path": "医学/泌尿系统",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_26baf00e6235f184",
+      "name_zh": "泌尿外科",
+      "name_en": "",
+      "path": "医学/泌尿系统/泌尿外科",
+      "parent_code": "N_5dfe12f8e49e79ad"
+    },
+    {
+      "node_code": "N_3e5c75053be7cbbb",
+      "name_zh": "泌尿系统·男科学",
+      "name_en": "",
+      "path": "医学/泌尿系统/泌尿系统·男科学",
+      "parent_code": "N_5dfe12f8e49e79ad"
+    },
+    {
+      "node_code": "N_d7fce32d6247ce1f",
+      "name_zh": "肾脏病学",
+      "name_en": "",
+      "path": "医学/泌尿系统/肾脏病学",
+      "parent_code": "N_5dfe12f8e49e79ad"
+    },
+    {
+      "node_code": "N_50a3388295f1e5b0",
+      "name_zh": "急性肾损伤",
+      "name_en": "",
+      "path": "医学/泌尿系统/肾脏病学/急性肾损伤",
+      "parent_code": "N_d7fce32d6247ce1f"
+    },
+    {
+      "node_code": "N_98450b9144a3a427",
+      "name_zh": "水电解质与酸碱失衡",
+      "name_en": "",
+      "path": "医学/泌尿系统/肾脏病学/水电解质与酸碱失衡",
+      "parent_code": "N_d7fce32d6247ce1f"
+    },
+    {
+      "node_code": "N_4456c0151649aee3",
+      "name_zh": "尿路感染",
+      "name_en": "",
+      "path": "医学/泌尿系统/尿路感染",
+      "parent_code": "N_5dfe12f8e49e79ad"
+    },
+    {
+      "node_code": "N_1fec318752907df5",
+      "name_zh": "急性与慢性肾功能衰竭",
+      "name_en": "",
+      "path": "医学/泌尿系统/急性与慢性肾功能衰竭",
+      "parent_code": "N_5dfe12f8e49e79ad"
+    },
+    {
+      "node_code": "N_96c38cdbd2ad67f3",
+      "name_zh": "肾小球疾病",
+      "name_en": "",
+      "path": "医学/泌尿系统/肾小球疾病",
+      "parent_code": "N_5dfe12f8e49e79ad"
+    },
+    {
+      "node_code": "N_19ec59ef004e69aa",
+      "name_zh": "原发性肾小球疾病",
+      "name_en": "",
+      "path": "医学/泌尿系统/肾小球疾病/原发性肾小球疾病",
+      "parent_code": "N_96c38cdbd2ad67f3"
+    },
+    {
+      "node_code": "N_3c8ed99517a09e44",
+      "name_zh": "继发性肾小球疾病",
+      "name_en": "",
+      "path": "医学/泌尿系统/肾小球疾病/继发性肾小球疾病",
+      "parent_code": "N_96c38cdbd2ad67f3"
+    },
+    {
+      "node_code": "N_2f9a5c14c0b2520c",
+      "name_zh": "肾小管与间质疾病",
+      "name_en": "",
+      "path": "医学/泌尿系统/肾小管与间质疾病",
+      "parent_code": "N_5dfe12f8e49e79ad"
+    },
+    {
+      "node_code": "N_1141226a0b21c3ea",
+      "name_zh": "肾脏替代治疗",
+      "name_en": "",
+      "path": "医学/泌尿系统/肾脏替代治疗",
+      "parent_code": "N_5dfe12f8e49e79ad"
+    },
+    {
+      "node_code": "N_29a7649c46f5ea1c",
+      "name_zh": "血液透析",
+      "name_en": "",
+      "path": "医学/泌尿系统/肾脏替代治疗/血液透析",
+      "parent_code": "N_1141226a0b21c3ea"
+    },
+    {
+      "node_code": "N_1e67845c0b4288b3",
+      "name_zh": "腹膜透析",
+      "name_en": "",
+      "path": "医学/泌尿系统/肾脏替代治疗/腹膜透析",
+      "parent_code": "N_1141226a0b21c3ea"
+    },
+    {
+      "node_code": "N_35924a601c963c45",
+      "name_zh": "其他血液净化技术",
+      "name_en": "",
+      "path": "医学/泌尿系统/肾脏替代治疗/其他血液净化技术",
+      "parent_code": "N_1141226a0b21c3ea"
+    },
+    {
+      "node_code": "N_14e3bedd5020a9e1",
+      "name_zh": "肾血管与遗传性肾病",
+      "name_en": "",
+      "path": "医学/泌尿系统/肾血管与遗传性肾病",
+      "parent_code": "N_5dfe12f8e49e79ad"
+    },
+    {
+      "node_code": "N_fd1f47039dcf8a91",
+      "name_zh": "法医学",
+      "name_en": "",
+      "path": "医学/法医学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_18e38a646f971a9b",
+      "name_zh": "临床法医学与精神病学",
+      "name_en": "",
+      "path": "医学/法医学/临床法医学与精神病学",
+      "parent_code": "N_fd1f47039dcf8a91"
+    },
+    {
+      "node_code": "N_a8f40acfa562b9ce",
+      "name_zh": "法医学证据与司法实践",
+      "name_en": "",
+      "path": "医学/法医学/法医学证据与司法实践",
+      "parent_code": "N_fd1f47039dcf8a91"
+    },
+    {
+      "node_code": "N_767d11d9d80cc9f3",
+      "name_zh": "法医毒物分析",
+      "name_en": "",
+      "path": "医学/法医学/法医毒物分析",
+      "parent_code": "N_fd1f47039dcf8a91"
+    },
+    {
+      "node_code": "N_3af7025cb5106028",
+      "name_zh": "法医物证学",
+      "name_en": "",
+      "path": "医学/法医学/法医物证学",
+      "parent_code": "N_fd1f47039dcf8a91"
+    },
+    {
+      "node_code": "N_5dcc03d862831db4",
+      "name_zh": "法医病理学",
+      "name_en": "",
+      "path": "医学/法医学/法医病理学",
+      "parent_code": "N_fd1f47039dcf8a91"
+    },
+    {
+      "node_code": "N_479a8918a3c9091a",
+      "name_zh": "流行病学",
+      "name_en": "",
+      "path": "医学/流行病学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_3a87a9a739253ba2",
+      "name_zh": "临床流行病学与循证医学",
+      "name_en": "",
+      "path": "医学/流行病学/临床流行病学与循证医学",
+      "parent_code": "N_479a8918a3c9091a"
+    },
+    {
+      "node_code": "N_039523fd2ed4a57e",
+      "name_zh": "传染病流行病学",
+      "name_en": "",
+      "path": "医学/流行病学/传染病流行病学",
+      "parent_code": "N_479a8918a3c9091a"
+    },
+    {
+      "node_code": "N_2427da4b7f928b01",
+      "name_zh": "公共卫生监测",
+      "name_en": "",
+      "path": "医学/流行病学/公共卫生监测",
+      "parent_code": "N_479a8918a3c9091a"
+    },
+    {
+      "node_code": "N_b7015fb1913e38a2",
+      "name_zh": "病原体与急性传染病",
+      "name_en": "",
+      "path": "医学/流行病学/公共卫生监测/病原体与急性传染病",
+      "parent_code": "N_2427da4b7f928b01"
+    },
+    {
+      "node_code": "N_f2eb2f064b0f3ab3",
+      "name_zh": "慢性病与分子流行病学",
+      "name_en": "",
+      "path": "医学/流行病学/慢性病与分子流行病学",
+      "parent_code": "N_479a8918a3c9091a"
+    },
+    {
+      "node_code": "N_450b73afa763c58c",
+      "name_zh": "流行病学基础",
+      "name_en": "",
+      "path": "医学/流行病学/流行病学基础",
+      "parent_code": "N_479a8918a3c9091a"
+    },
+    {
+      "node_code": "N_06341affcb7604f1",
+      "name_zh": "流行病学方法",
+      "name_en": "",
+      "path": "医学/流行病学/流行病学方法",
+      "parent_code": "N_479a8918a3c9091a"
+    },
+    {
+      "node_code": "N_3a1cf614a1faf6b6",
+      "name_zh": "消化系统",
+      "name_en": "",
+      "path": "医学/消化系统",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_0037454647effe7b",
+      "name_zh": "消化系统症状与综合征",
+      "name_en": "",
+      "path": "医学/消化系统/消化系统症状与综合征",
+      "parent_code": "N_3a1cf614a1faf6b6"
+    },
+    {
+      "node_code": "N_df52b93d6cffb167",
+      "name_zh": "消化系统·肠道疾病",
+      "name_en": "",
+      "path": "医学/消化系统/消化系统·肠道疾病",
+      "parent_code": "N_3a1cf614a1faf6b6"
+    },
+    {
+      "node_code": "N_e8cf1cf5969699f8",
+      "name_zh": "消化系统·胰腺疾病",
+      "name_en": "",
+      "path": "医学/消化系统/消化系统·胰腺疾病",
+      "parent_code": "N_3a1cf614a1faf6b6"
+    },
+    {
+      "node_code": "N_cac2f10da7af2a35",
+      "name_zh": "食管与胃疾病",
+      "name_en": "",
+      "path": "医学/消化系统/食管与胃疾病",
+      "parent_code": "N_3a1cf614a1faf6b6"
+    },
+    {
+      "node_code": "N_88c936c69b131483",
+      "name_zh": "消化内镜",
+      "name_en": "",
+      "path": "医学/消化系统/消化内镜",
+      "parent_code": "N_3a1cf614a1faf6b6"
+    },
+    {
+      "node_code": "N_e8bec1081c0cc119",
+      "name_zh": "肝脏疾病",
+      "name_en": "",
+      "path": "医学/消化系统/肝脏疾病",
+      "parent_code": "N_3a1cf614a1faf6b6"
+    },
+    {
+      "node_code": "N_025373a98cfa5d02",
+      "name_zh": "脂肪性肝病与药物性肝损伤",
+      "name_en": "",
+      "path": "医学/消化系统/肝脏疾病/脂肪性肝病与药物性肝损伤",
+      "parent_code": "N_e8bec1081c0cc119"
+    },
+    {
+      "node_code": "N_a5475c53e5783ae8",
+      "name_zh": "脂肪性肝病",
+      "name_en": "",
+      "path": "医学/消化系统/肝脏疾病/脂肪性肝病与药物性肝损伤/脂肪性肝病",
+      "parent_code": "N_025373a98cfa5d02"
+    },
+    {
+      "node_code": "N_5423592ddbbd09bd",
+      "name_zh": "药物性肝损伤",
+      "name_en": "",
+      "path": "医学/消化系统/肝脏疾病/脂肪性肝病与药物性肝损伤/药物性肝损伤",
+      "parent_code": "N_025373a98cfa5d02"
+    },
+    {
+      "node_code": "N_447c19fa0ddca544",
+      "name_zh": "肝硬化与门静脉高压",
+      "name_en": "",
+      "path": "医学/消化系统/肝脏疾病/肝硬化与门静脉高压",
+      "parent_code": "N_e8bec1081c0cc119"
+    },
+    {
+      "node_code": "N_23b760290c271e0b",
+      "name_zh": "肝硬化",
+      "name_en": "",
+      "path": "医学/消化系统/肝脏疾病/肝硬化与门静脉高压/肝硬化",
+      "parent_code": "N_447c19fa0ddca544"
+    },
+    {
+      "node_code": "N_aa437cdf4c403dca",
+      "name_zh": "门静脉高压症",
+      "name_en": "",
+      "path": "医学/消化系统/肝脏疾病/肝硬化与门静脉高压/门静脉高压症",
+      "parent_code": "N_447c19fa0ddca544"
+    },
+    {
+      "node_code": "N_3288d87d7fedcbd6",
+      "name_zh": "肝衰竭与肝性脑病",
+      "name_en": "",
+      "path": "医学/消化系统/肝脏疾病/肝衰竭与肝性脑病",
+      "parent_code": "N_e8bec1081c0cc119"
+    },
+    {
+      "node_code": "N_25f53c401e08dc93",
+      "name_zh": "肝衰竭与肝性脑病·肝衰竭",
+      "name_en": "",
+      "path": "医学/消化系统/肝脏疾病/肝衰竭与肝性脑病/肝衰竭与肝性脑病·肝衰竭",
+      "parent_code": "N_3288d87d7fedcbd6"
+    },
+    {
+      "node_code": "N_a224d5c424a32d90",
+      "name_zh": "肝性脑病",
+      "name_en": "",
+      "path": "医学/消化系统/肝脏疾病/肝衰竭与肝性脑病/肝性脑病",
+      "parent_code": "N_3288d87d7fedcbd6"
+    },
+    {
+      "node_code": "N_ec9b444b97653ae8",
+      "name_zh": "肝脏肿瘤",
+      "name_en": "",
+      "path": "医学/消化系统/肝脏疾病/肝脏肿瘤",
+      "parent_code": "N_e8bec1081c0cc119"
+    },
+    {
+      "node_code": "N_38e13d9a4db4d2d3",
+      "name_zh": "胆胰疾病",
+      "name_en": "",
+      "path": "医学/消化系统/胆胰疾病",
+      "parent_code": "N_3a1cf614a1faf6b6"
+    },
+    {
+      "node_code": "N_8a4a926aa419ae91",
+      "name_zh": "胆道疾病",
+      "name_en": "",
+      "path": "医学/消化系统/胆胰疾病/胆道疾病",
+      "parent_code": "N_38e13d9a4db4d2d3"
+    },
+    {
+      "node_code": "N_bd349fe0014c0be4",
+      "name_zh": "胆胰疾病·胰腺疾病",
+      "name_en": "",
+      "path": "医学/消化系统/胆胰疾病/胆胰疾病·胰腺疾病",
+      "parent_code": "N_38e13d9a4db4d2d3"
+    },
+    {
+      "node_code": "N_45ec201f7ea510c2",
+      "name_zh": "食管胃肠疾病",
+      "name_en": "",
+      "path": "医学/消化系统/食管胃肠疾病",
+      "parent_code": "N_3a1cf614a1faf6b6"
+    },
+    {
+      "node_code": "N_9ec952c347ebc8f6",
+      "name_zh": "食管疾病",
+      "name_en": "",
+      "path": "医学/消化系统/食管胃肠疾病/食管疾病",
+      "parent_code": "N_45ec201f7ea510c2"
+    },
+    {
+      "node_code": "N_e16b2cfe59a435a7",
+      "name_zh": "胃与十二指肠疾病",
+      "name_en": "",
+      "path": "医学/消化系统/食管胃肠疾病/胃与十二指肠疾病",
+      "parent_code": "N_45ec201f7ea510c2"
+    },
+    {
+      "node_code": "N_d3e57a17b6dc6502",
+      "name_zh": "食管胃肠疾病·肠道疾病",
+      "name_en": "",
+      "path": "医学/消化系统/食管胃肠疾病/食管胃肠疾病·肠道疾病",
+      "parent_code": "N_45ec201f7ea510c2"
+    },
+    {
+      "node_code": "N_7b2d1ce21cfdd124",
+      "name_zh": "热带医学",
+      "name_en": "",
+      "path": "医学/热带医学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_cddfe2ebbc31a017",
+      "name_zh": "旅行医学与防控",
+      "name_en": "",
+      "path": "医学/热带医学/旅行医学与防控",
+      "parent_code": "N_7b2d1ce21cfdd124"
+    },
+    {
+      "node_code": "N_eb6296e2b5cb1a14",
+      "name_zh": "热带传染病",
+      "name_en": "",
+      "path": "医学/热带医学/热带传染病",
+      "parent_code": "N_7b2d1ce21cfdd124"
+    },
+    {
+      "node_code": "N_e172452f66448106",
+      "name_zh": "热带寄生虫病",
+      "name_en": "",
+      "path": "医学/热带医学/热带寄生虫病",
+      "parent_code": "N_7b2d1ce21cfdd124"
+    },
+    {
+      "node_code": "N_6e16eec39839c56a",
+      "name_zh": "热带环境与职业健康",
+      "name_en": "",
+      "path": "医学/热带医学/热带环境与职业健康",
+      "parent_code": "N_7b2d1ce21cfdd124"
+    },
+    {
+      "node_code": "N_6068dc081b8a7e11",
+      "name_zh": "特种医学（军事/航空航天/航海/高原）",
+      "name_en": "",
+      "path": "医学/特种医学（军事/航空航天/航海/高原）",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_73b6cdc044a6a9f4",
+      "name_zh": "军事与灾难医学",
+      "name_en": "",
+      "path": "医学/特种医学（军事/航空航天/航海/高原）/军事与灾难医学",
+      "parent_code": "N_6068dc081b8a7e11"
+    },
+    {
+      "node_code": "N_c0fa923a1bdc5460",
+      "name_zh": "极端环境医学",
+      "name_en": "",
+      "path": "医学/特种医学（军事/航空航天/航海/高原）/极端环境医学",
+      "parent_code": "N_6068dc081b8a7e11"
+    },
+    {
+      "node_code": "N_11025f7be88b2d21",
+      "name_zh": "航空航天与航海医学",
+      "name_en": "",
+      "path": "医学/特种医学（军事/航空航天/航海/高原）/航空航天与航海医学",
+      "parent_code": "N_6068dc081b8a7e11"
+    },
+    {
+      "node_code": "N_0059914fe03c75b9",
+      "name_zh": "高原与运动医学",
+      "name_en": "",
+      "path": "医学/特种医学（军事/航空航天/航海/高原）/高原与运动医学",
+      "parent_code": "N_6068dc081b8a7e11"
+    },
+    {
+      "node_code": "N_2cde2b2fe5968c38",
+      "name_zh": "环境与职业卫生",
+      "name_en": "",
+      "path": "医学/环境与职业卫生",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_a2af4e3e82a93fc5",
+      "name_zh": "卫生毒理与风险评估",
+      "name_en": "",
+      "path": "医学/环境与职业卫生/卫生毒理与风险评估",
+      "parent_code": "N_2cde2b2fe5968c38"
+    },
+    {
+      "node_code": "N_d99d585f48d5cd00",
+      "name_zh": "环境卫生学",
+      "name_en": "",
+      "path": "医学/环境与职业卫生/环境卫生学",
+      "parent_code": "N_2cde2b2fe5968c38"
+    },
+    {
+      "node_code": "N_32d66802430e9741",
+      "name_zh": "职业卫生与职业病",
+      "name_en": "",
+      "path": "医学/环境与职业卫生/职业卫生与职业病",
+      "parent_code": "N_2cde2b2fe5968c38"
+    },
+    {
+      "node_code": "N_d1e06cbe683a8bb7",
+      "name_zh": "生物化学与分子生物学",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_a8f4a75ca55544ea",
+      "name_zh": "分子生物学",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/分子生物学",
+      "parent_code": "N_d1e06cbe683a8bb7"
+    },
+    {
+      "node_code": "N_628991693dbbd09e",
+      "name_zh": "中心法则",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/分子生物学/中心法则",
+      "parent_code": "N_a8f4a75ca55544ea"
+    },
+    {
+      "node_code": "N_9eceabb762f93bf5",
+      "name_zh": "DNA的复制与修复",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/分子生物学/中心法则/DNA的复制与修复",
+      "parent_code": "N_628991693dbbd09e"
+    },
+    {
+      "node_code": "N_59f10e612c6ff7d9",
+      "name_zh": "转录与翻译",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/分子生物学/中心法则/转录与翻译",
+      "parent_code": "N_628991693dbbd09e"
+    },
+    {
+      "node_code": "N_4cf8d6499905b347",
+      "name_zh": "基因表达调控与技术",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/分子生物学/基因表达调控与技术",
+      "parent_code": "N_a8f4a75ca55544ea"
+    },
+    {
+      "node_code": "N_141cd2a011055a4e",
+      "name_zh": "原核与真核基因表达调控",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/分子生物学/基因表达调控与技术/原核与真核基因表达调控",
+      "parent_code": "N_4cf8d6499905b347"
+    },
+    {
+      "node_code": "N_38f43d9cfd068b67",
+      "name_zh": "基因工程与分子生物学技术",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/分子生物学/基因表达调控与技术/基因工程与分子生物学技术",
+      "parent_code": "N_4cf8d6499905b347"
+    },
+    {
+      "node_code": "N_01ac415550512f2a",
+      "name_zh": "物质代谢",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢",
+      "parent_code": "N_d1e06cbe683a8bb7"
+    },
+    {
+      "node_code": "N_b23e7f821b12a5cb",
+      "name_zh": "糖代谢",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/糖代谢",
+      "parent_code": "N_01ac415550512f2a"
+    },
+    {
+      "node_code": "N_6d64735718a76f14",
+      "name_zh": "糖的分解代谢（糖酵解、三羧酸循环等）",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/糖代谢/糖的分解代谢（糖酵解、三羧酸循环等）",
+      "parent_code": "N_b23e7f821b12a5cb"
+    },
+    {
+      "node_code": "N_074be9be4e2dfbd0",
+      "name_zh": "糖原代谢",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/糖代谢/糖原代谢",
+      "parent_code": "N_b23e7f821b12a5cb"
+    },
+    {
+      "node_code": "N_93edfa83b2093556",
+      "name_zh": "糖异生与血糖调节",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/糖代谢/糖异生与血糖调节",
+      "parent_code": "N_b23e7f821b12a5cb"
+    },
+    {
+      "node_code": "N_37e98d93abebcab9",
+      "name_zh": "脂质代谢",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/脂质代谢",
+      "parent_code": "N_01ac415550512f2a"
+    },
+    {
+      "node_code": "N_28a4e2b63ffc3124",
+      "name_zh": "脂肪酸与甘油三酯代谢",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/脂质代谢/脂肪酸与甘油三酯代谢",
+      "parent_code": "N_37e98d93abebcab9"
+    },
+    {
+      "node_code": "N_1bda25e0d063b7b3",
+      "name_zh": "磷脂",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/脂质代谢/磷脂",
+      "parent_code": "N_37e98d93abebcab9"
+    },
+    {
+      "node_code": "N_ddf59593a8f0dcb3",
+      "name_zh": "胆固醇代谢与血浆脂蛋白",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/脂质代谢/胆固醇代谢与血浆脂蛋白",
+      "parent_code": "N_37e98d93abebcab9"
+    },
+    {
+      "node_code": "N_78a50406dba08a9c",
+      "name_zh": "氨基酸代谢",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/氨基酸代谢",
+      "parent_code": "N_01ac415550512f2a"
+    },
+    {
+      "node_code": "N_4f51cfbc3e9dd78c",
+      "name_zh": "氨基酸的分解代谢与尿素循环",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/氨基酸代谢/氨基酸的分解代谢与尿素循环",
+      "parent_code": "N_78a50406dba08a9c"
+    },
+    {
+      "node_code": "N_6b677e967c3cc9d4",
+      "name_zh": "个别氨基酸代谢与一碳单位",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/氨基酸代谢/个别氨基酸代谢与一碳单位",
+      "parent_code": "N_78a50406dba08a9c"
+    },
+    {
+      "node_code": "N_25dfeea85eaf0fc1",
+      "name_zh": "核苷酸代谢",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/核苷酸代谢",
+      "parent_code": "N_01ac415550512f2a"
+    },
+    {
+      "node_code": "N_5bc0d34bb567fc8a",
+      "name_zh": "嘌呤核苷酸代谢",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/核苷酸代谢/嘌呤核苷酸代谢",
+      "parent_code": "N_25dfeea85eaf0fc1"
+    },
+    {
+      "node_code": "N_5f9611e7d303f91c",
+      "name_zh": "嘧啶核苷酸代谢",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/核苷酸代谢/嘧啶核苷酸代谢",
+      "parent_code": "N_25dfeea85eaf0fc1"
+    },
+    {
+      "node_code": "N_ae846c84b293f92a",
+      "name_zh": "物质代谢的整合与调节",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/物质代谢/物质代谢的整合与调节",
+      "parent_code": "N_01ac415550512f2a"
+    },
+    {
+      "node_code": "N_7e37b5e3d19380a9",
+      "name_zh": "生物大分子",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/生物大分子",
+      "parent_code": "N_d1e06cbe683a8bb7"
+    },
+    {
+      "node_code": "N_10e47db923968a94",
+      "name_zh": "蛋白质的结构与功能",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/生物大分子/蛋白质的结构与功能",
+      "parent_code": "N_7e37b5e3d19380a9"
+    },
+    {
+      "node_code": "N_048d8f40801fee0e",
+      "name_zh": "蛋白质的分子组成与各级结构",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/生物大分子/蛋白质的结构与功能/蛋白质的分子组成与各级结构",
+      "parent_code": "N_10e47db923968a94"
+    },
+    {
+      "node_code": "N_f1478795f8c0bd45",
+      "name_zh": "蛋白质结构与功能的关系及理化性质",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/生物大分子/蛋白质的结构与功能/蛋白质结构与功能的关系及理化性质",
+      "parent_code": "N_10e47db923968a94"
+    },
+    {
+      "node_code": "N_43eaf11fd2db7c95",
+      "name_zh": "核酸的结构与功能",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/生物大分子/核酸的结构与功能",
+      "parent_code": "N_7e37b5e3d19380a9"
+    },
+    {
+      "node_code": "N_0f3dbdc997764f5f",
+      "name_zh": "DNA与RNA的结构",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/生物大分子/核酸的结构与功能/DNA与RNA的结构",
+      "parent_code": "N_43eaf11fd2db7c95"
+    },
+    {
+      "node_code": "N_8bd8be591c93d838",
+      "name_zh": "核酸的理化性质与研究技术",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/生物大分子/核酸的结构与功能/核酸的理化性质与研究技术",
+      "parent_code": "N_43eaf11fd2db7c95"
+    },
+    {
+      "node_code": "N_b6623823944251fe",
+      "name_zh": "酶",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/生物大分子/酶",
+      "parent_code": "N_7e37b5e3d19380a9"
+    },
+    {
+      "node_code": "N_bfb24218eaacfc84",
+      "name_zh": "酶的分子结构与功能",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/生物大分子/酶/酶的分子结构与功能",
+      "parent_code": "N_b6623823944251fe"
+    },
+    {
+      "node_code": "N_9722c506e472a23a",
+      "name_zh": "酶促反应动力学与酶活性调节",
+      "name_en": "",
+      "path": "医学/生物化学与分子生物学/生物大分子/酶/酶促反应动力学与酶活性调节",
+      "parent_code": "N_b6623823944251fe"
+    },
+    {
+      "node_code": "N_f1f3a010052402db",
+      "name_zh": "生理学",
+      "name_en": "",
+      "path": "医学/生理学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_2aad3d519c2bb4c6",
+      "name_zh": "器官系统生理",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理",
+      "parent_code": "N_f1f3a010052402db"
+    },
+    {
+      "node_code": "N_b7884992e035a549",
+      "name_zh": "呼吸与消化生理",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理/呼吸与消化生理",
+      "parent_code": "N_2aad3d519c2bb4c6"
+    },
+    {
+      "node_code": "N_01f9cffea904f175",
+      "name_zh": "呼吸生理",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理/呼吸与消化生理/呼吸生理",
+      "parent_code": "N_b7884992e035a549"
+    },
+    {
+      "node_code": "N_9fad73f574ef1c89",
+      "name_zh": "消化生理",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理/呼吸与消化生理/消化生理",
+      "parent_code": "N_b7884992e035a549"
+    },
+    {
+      "node_code": "N_43044cad47478b8d",
+      "name_zh": "泌尿与体温能量",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理/泌尿与体温能量",
+      "parent_code": "N_2aad3d519c2bb4c6"
+    },
+    {
+      "node_code": "N_0fcd40638231e700",
+      "name_zh": "尿的生成与排出",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理/泌尿与体温能量/尿的生成与排出",
+      "parent_code": "N_43044cad47478b8d"
+    },
+    {
+      "node_code": "N_14e1fccd5ebd80f4",
+      "name_zh": "能量代谢与体温调节",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理/泌尿与体温能量/能量代谢与体温调节",
+      "parent_code": "N_43044cad47478b8d"
+    },
+    {
+      "node_code": "N_2d9eabc16d3a875a",
+      "name_zh": "生殖",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理/生殖",
+      "parent_code": "N_2aad3d519c2bb4c6"
+    },
+    {
+      "node_code": "N_a764b8851095cc3d",
+      "name_zh": "男性生殖生理",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理/生殖/男性生殖生理",
+      "parent_code": "N_2d9eabc16d3a875a"
+    },
+    {
+      "node_code": "N_8f9af367d52efe79",
+      "name_zh": "女性生殖生理与妊娠",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理/生殖/女性生殖生理与妊娠",
+      "parent_code": "N_2d9eabc16d3a875a"
+    },
+    {
+      "node_code": "N_feca36efdfc6ac4f",
+      "name_zh": "血液与循环生理",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理/血液与循环生理",
+      "parent_code": "N_2aad3d519c2bb4c6"
+    },
+    {
+      "node_code": "N_cad24b8a0249a03c",
+      "name_zh": "血液的组成与功能",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理/血液与循环生理/血液的组成与功能",
+      "parent_code": "N_feca36efdfc6ac4f"
+    },
+    {
+      "node_code": "N_7b034587ef8a7390",
+      "name_zh": "心脏与血管生理",
+      "name_en": "",
+      "path": "医学/生理学/器官系统生理/血液与循环生理/心脏与血管生理",
+      "parent_code": "N_feca36efdfc6ac4f"
+    },
+    {
+      "node_code": "N_09e1fffecb8e1f4c",
+      "name_zh": "生长发育和衰老",
+      "name_en": "",
+      "path": "医学/生理学/生长发育和衰老",
+      "parent_code": "N_f1f3a010052402db"
+    },
+    {
+      "node_code": "N_91f761af7b777f63",
+      "name_zh": "神经与内分泌生理",
+      "name_en": "",
+      "path": "医学/生理学/神经与内分泌生理",
+      "parent_code": "N_f1f3a010052402db"
+    },
+    {
+      "node_code": "N_2c0f1becf9f309a2",
+      "name_zh": "神经系统的功能",
+      "name_en": "",
+      "path": "医学/生理学/神经与内分泌生理/神经系统的功能",
+      "parent_code": "N_91f761af7b777f63"
+    },
+    {
+      "node_code": "N_599658c2fefe520e",
+      "name_zh": "神经元",
+      "name_en": "",
+      "path": "医学/生理学/神经与内分泌生理/神经系统的功能/神经元",
+      "parent_code": "N_2c0f1becf9f309a2"
+    },
+    {
+      "node_code": "N_8f689109f57423ca",
+      "name_zh": "突触传递与神经递质",
+      "name_en": "",
+      "path": "医学/生理学/神经与内分泌生理/神经系统的功能/突触传递与神经递质",
+      "parent_code": "N_2c0f1becf9f309a2"
+    },
+    {
+      "node_code": "N_376f5132f6b3c10e",
+      "name_zh": "感觉功能与神经系统对运动的调控",
+      "name_en": "",
+      "path": "医学/生理学/神经与内分泌生理/神经系统的功能/感觉功能与神经系统对运动的调控",
+      "parent_code": "N_2c0f1becf9f309a2"
+    },
+    {
+      "node_code": "N_a0cc096d1b116bee",
+      "name_zh": "自主神经调节与脑的高级功能",
+      "name_en": "",
+      "path": "医学/生理学/神经与内分泌生理/神经系统的功能/自主神经调节与脑的高级功能",
+      "parent_code": "N_2c0f1becf9f309a2"
+    },
+    {
+      "node_code": "N_8c2dd47ec47907a7",
+      "name_zh": "内分泌系统的功能",
+      "name_en": "",
+      "path": "医学/生理学/神经与内分泌生理/内分泌系统的功能",
+      "parent_code": "N_91f761af7b777f63"
+    },
+    {
+      "node_code": "N_3eabf6cb5b750075",
+      "name_zh": "激素作用的一般原理与下丘脑-垂体",
+      "name_en": "",
+      "path": "医学/生理学/神经与内分泌生理/内分泌系统的功能/激素作用的一般原理与下丘脑-垂体",
+      "parent_code": "N_8c2dd47ec47907a7"
+    },
+    {
+      "node_code": "N_e2e76935b95b0997",
+      "name_zh": "甲状腺、肾上腺、胰岛等内分泌腺的生理功能",
+      "name_en": "",
+      "path": "医学/生理学/神经与内分泌生理/内分泌系统的功能/甲状腺、肾上腺、胰岛等内分泌腺的生理功能",
+      "parent_code": "N_8c2dd47ec47907a7"
+    },
+    {
+      "node_code": "N_847232f5e9ae6cea",
+      "name_zh": "细胞与基本生理",
+      "name_en": "",
+      "path": "医学/生理学/细胞与基本生理",
+      "parent_code": "N_f1f3a010052402db"
+    },
+    {
+      "node_code": "N_10b394aaf02ef628",
+      "name_zh": "病理学",
+      "name_en": "",
+      "path": "医学/病理学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_f392b510d57b5729",
+      "name_zh": "局部血液循环障碍与肿瘤病理",
+      "name_en": "",
+      "path": "医学/病理学/局部血液循环障碍与肿瘤病理",
+      "parent_code": "N_10b394aaf02ef628"
+    },
+    {
+      "node_code": "N_20cbd782f3c85803",
+      "name_zh": "炎症与修复",
+      "name_en": "",
+      "path": "医学/病理学/炎症与修复",
+      "parent_code": "N_10b394aaf02ef628"
+    },
+    {
+      "node_code": "N_d36eb75c5d9ae9e3",
+      "name_zh": "病理技术",
+      "name_en": "",
+      "path": "医学/病理学/病理技术",
+      "parent_code": "N_10b394aaf02ef628"
+    },
+    {
+      "node_code": "N_7e5b8ef27cc51fca",
+      "name_zh": "系统病理学",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学",
+      "parent_code": "N_10b394aaf02ef628"
+    },
+    {
+      "node_code": "N_7223fac8e0e55a99",
+      "name_zh": "传染病",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/传染病",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_8d1f6ee76b55b54a",
+      "name_zh": "内分泌系统疾病",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/内分泌系统疾病",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_726d39776d713e7e",
+      "name_zh": "系统病理学·呼吸系统疾病",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/系统病理学·呼吸系统疾病",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_43f3b60d680091fa",
+      "name_zh": "系统病理学·心血管系统疾病",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/系统病理学·心血管系统疾病",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_fea029df0e2b6aeb",
+      "name_zh": "系统病理学·泌尿系统疾病",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/系统病理学·泌尿系统疾病",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_6f4687b166b418a7",
+      "name_zh": "系统病理学·消化系统疾病",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/系统病理学·消化系统疾病",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_f785ce26e1232594",
+      "name_zh": "淋巴造血系统疾病",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/淋巴造血系统疾病",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_973a8662f58d806e",
+      "name_zh": "环境和营养性疾病",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/环境和营养性疾病",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_4d4f4cd835053ab8",
+      "name_zh": "生殖系统与乳腺疾病",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/生殖系统与乳腺疾病",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_416ee19c9348baa2",
+      "name_zh": "病理学诊断与研究技术",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/病理学诊断与研究技术",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_9ab8d3c30b1f2a19",
+      "name_zh": "系统病理学·神经系统疾病",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/系统病理学·神经系统疾病",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_0dbea35c6d51b24e",
+      "name_zh": "肌肉骨骼及软组织系统",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/肌肉骨骼及软组织系统",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_939b26b61beb3f6c",
+      "name_zh": "遗传性疾病和儿童疾病",
+      "name_en": "",
+      "path": "医学/病理学/系统病理学/遗传性疾病和儿童疾病",
+      "parent_code": "N_7e5b8ef27cc51fca"
+    },
+    {
+      "node_code": "N_a6afb0c6d29991c3",
+      "name_zh": "细胞与组织损伤",
+      "name_en": "",
+      "path": "医学/病理学/细胞与组织损伤",
+      "parent_code": "N_10b394aaf02ef628"
+    },
+    {
+      "node_code": "N_d34986574a0a7a39",
+      "name_zh": "病理生理学",
+      "name_en": "",
+      "path": "医学/病理生理学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_d3c22e4529b8b8a4",
+      "name_zh": "器官功能衰竭",
+      "name_en": "",
+      "path": "医学/病理生理学/器官功能衰竭",
+      "parent_code": "N_d34986574a0a7a39"
+    },
+    {
+      "node_code": "N_20af03033b025618",
+      "name_zh": "心功能不全",
+      "name_en": "",
+      "path": "医学/病理生理学/器官功能衰竭/心功能不全",
+      "parent_code": "N_d3c22e4529b8b8a4"
+    },
+    {
+      "node_code": "N_180528dcb75f9def",
+      "name_zh": "呼吸功能不全",
+      "name_en": "",
+      "path": "医学/病理生理学/器官功能衰竭/呼吸功能不全",
+      "parent_code": "N_d3c22e4529b8b8a4"
+    },
+    {
+      "node_code": "N_828817680b7d536d",
+      "name_zh": "肝功能不全",
+      "name_en": "",
+      "path": "医学/病理生理学/器官功能衰竭/肝功能不全",
+      "parent_code": "N_d3c22e4529b8b8a4"
+    },
+    {
+      "node_code": "N_5878f381a9b5b073",
+      "name_zh": "肾功能不全",
+      "name_en": "",
+      "path": "医学/病理生理学/器官功能衰竭/肾功能不全",
+      "parent_code": "N_d3c22e4529b8b8a4"
+    },
+    {
+      "node_code": "N_dd7c5c1f9a1a9791",
+      "name_zh": "多器官功能障碍综合征",
+      "name_en": "",
+      "path": "医学/病理生理学/器官功能衰竭/多器官功能障碍综合征",
+      "parent_code": "N_d3c22e4529b8b8a4"
+    },
+    {
+      "node_code": "N_31ed47880c76cd4a",
+      "name_zh": "基本病理过程",
+      "name_en": "",
+      "path": "医学/病理生理学/基本病理过程",
+      "parent_code": "N_d34986574a0a7a39"
+    },
+    {
+      "node_code": "N_86666ccf4dff1631",
+      "name_zh": "水、电解质与酸碱平衡紊乱",
+      "name_en": "",
+      "path": "医学/病理生理学/基本病理过程/水、电解质与酸碱平衡紊乱",
+      "parent_code": "N_31ed47880c76cd4a"
+    },
+    {
+      "node_code": "N_b38c786e27688cd8",
+      "name_zh": "缺氧",
+      "name_en": "",
+      "path": "医学/病理生理学/基本病理过程/缺氧",
+      "parent_code": "N_31ed47880c76cd4a"
+    },
+    {
+      "node_code": "N_86b070553496a5c2",
+      "name_zh": "应激",
+      "name_en": "",
+      "path": "医学/病理生理学/基本病理过程/应激",
+      "parent_code": "N_31ed47880c76cd4a"
+    },
+    {
+      "node_code": "N_d7061bd92a2fda1a",
+      "name_zh": "发热",
+      "name_en": "",
+      "path": "医学/病理生理学/基本病理过程/发热",
+      "parent_code": "N_31ed47880c76cd4a"
+    },
+    {
+      "node_code": "N_d566ca8a3f1870ed",
+      "name_zh": "休克与缺血-再灌注损伤",
+      "name_en": "",
+      "path": "医学/病理生理学/基本病理过程/休克与缺血-再灌注损伤",
+      "parent_code": "N_31ed47880c76cd4a"
+    },
+    {
+      "node_code": "N_a3b46891a7e66995",
+      "name_zh": "休克",
+      "name_en": "",
+      "path": "医学/病理生理学/基本病理过程/休克与缺血-再灌注损伤/休克",
+      "parent_code": "N_d566ca8a3f1870ed"
+    },
+    {
+      "node_code": "N_2621ae2fb1d2e347",
+      "name_zh": "缺血-再灌注损伤",
+      "name_en": "",
+      "path": "医学/病理生理学/基本病理过程/休克与缺血-再灌注损伤/缺血-再灌注损伤",
+      "parent_code": "N_d566ca8a3f1870ed"
+    },
+    {
+      "node_code": "N_387676cd8d4198ee",
+      "name_zh": "凝血与抗凝血功能紊乱",
+      "name_en": "",
+      "path": "医学/病理生理学/基本病理过程/凝血与抗凝血功能紊乱",
+      "parent_code": "N_31ed47880c76cd4a"
+    },
+    {
+      "node_code": "N_7fbf9f884477120c",
+      "name_zh": "病理生理分子机制",
+      "name_en": "",
+      "path": "医学/病理生理学/病理生理分子机制",
+      "parent_code": "N_d34986574a0a7a39"
+    },
+    {
+      "node_code": "N_2c2400aa9db06fe6",
+      "name_zh": "皮肤病学与性病学",
+      "name_en": "",
+      "path": "医学/皮肤病学与性病学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_6d1d70a013db2aa7",
+      "name_zh": "变态反应与炎症性皮肤病",
+      "name_en": "",
+      "path": "医学/皮肤病学与性病学/变态反应与炎症性皮肤病",
+      "parent_code": "N_2c2400aa9db06fe6"
+    },
+    {
+      "node_code": "N_577a9dbab6df9f60",
+      "name_zh": "性传播感染",
+      "name_en": "",
+      "path": "医学/皮肤病学与性病学/性传播感染",
+      "parent_code": "N_2c2400aa9db06fe6"
+    },
+    {
+      "node_code": "N_98e828982a75a100",
+      "name_zh": "感染性皮肤病",
+      "name_en": "",
+      "path": "医学/皮肤病学与性病学/感染性皮肤病",
+      "parent_code": "N_2c2400aa9db06fe6"
+    },
+    {
+      "node_code": "N_00fa0136bc4a5091",
+      "name_zh": "皮肤肿瘤与附属器病",
+      "name_en": "",
+      "path": "医学/皮肤病学与性病学/皮肤肿瘤与附属器病",
+      "parent_code": "N_2c2400aa9db06fe6"
+    },
+    {
+      "node_code": "N_6a61da6711bb01df",
+      "name_zh": "自身免疫与大疱性皮病",
+      "name_en": "",
+      "path": "医学/皮肤病学与性病学/自身免疫与大疱性皮病",
+      "parent_code": "N_2c2400aa9db06fe6"
+    },
+    {
+      "node_code": "N_8f0fb66184fb3b55",
+      "name_zh": "眼科学与验光学",
+      "name_en": "",
+      "path": "医学/眼科学与验光学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_cbda6e5807e761d8",
+      "name_zh": "斜弱视与眼眶眼外伤",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/斜弱视与眼眶眼外伤",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_d2b015c49e9f54ad",
+      "name_zh": "晶状体与玻璃体疾病",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/晶状体与玻璃体疾病",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_1d32789dd28b0ce2",
+      "name_zh": "晶状体疾病",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/晶状体疾病",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_45c136a7af4d8c4d",
+      "name_zh": "玻璃体与视网膜疾病",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/玻璃体与视网膜疾病",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_6c65ea1c27297414",
+      "name_zh": "眼前节疾病",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/眼前节疾病",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_2ee9ab46e0ddf91d",
+      "name_zh": "眼后节疾病",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/眼后节疾病",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_161fdf18a4fc3ac2",
+      "name_zh": "眼外伤",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/眼外伤",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_60e5851b006a1867",
+      "name_zh": "眼眶疾病",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/眼眶疾病",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_e7e52a927a6324f4",
+      "name_zh": "眼肿瘤",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/眼肿瘤",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_260707270aa8a0c7",
+      "name_zh": "眼表疾病",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/眼表疾病",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_deb79e149dc33242",
+      "name_zh": "眼附属器疾病",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/眼附属器疾病",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_9b946b5b9c7cd74e",
+      "name_zh": "葡萄膜疾病",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/葡萄膜疾病",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_955d98ff3faacfb2",
+      "name_zh": "视光学",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/视光学",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_e1bd931cce38839b",
+      "name_zh": "视神经疾病",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/视神经疾病",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_d59f345288e687ab",
+      "name_zh": "青光眼",
+      "name_en": "",
+      "path": "医学/眼科学与验光学/青光眼",
+      "parent_code": "N_8f0fb66184fb3b55"
+    },
+    {
+      "node_code": "N_5197ef6b8affeed7",
+      "name_zh": "神经病学",
+      "name_en": "",
+      "path": "医学/神经病学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_dd507807b8779743",
+      "name_zh": "中枢神经系统感染与周围神经病",
+      "name_en": "",
+      "path": "医学/神经病学/中枢神经系统感染与周围神经病",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_39852d944b97e0c7",
+      "name_zh": "发作性与神经免疫病",
+      "name_en": "",
+      "path": "医学/神经病学/发作性与神经免疫病",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_7697f4fdd43d2cd5",
+      "name_zh": "周围神经疾病",
+      "name_en": "",
+      "path": "医学/神经病学/周围神经疾病",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_bdf62ff66999ed6a",
+      "name_zh": "神经病学·神经外科学",
+      "name_en": "",
+      "path": "医学/神经病学/神经病学·神经外科学",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_dcef2c003e89133a",
+      "name_zh": "神经电生理与影像",
+      "name_en": "",
+      "path": "医学/神经病学/神经电生理与影像",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_f7c43bf10bc581af",
+      "name_zh": "神经系统急危重症",
+      "name_en": "",
+      "path": "医学/神经病学/神经系统急危重症",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_d3b72eda06d215a3",
+      "name_zh": "神经肌肉疾病",
+      "name_en": "",
+      "path": "医学/神经病学/神经肌肉疾病",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_f75f7d8c87ba339f",
+      "name_zh": "神经退行性疾病",
+      "name_en": "",
+      "path": "医学/神经病学/神经退行性疾病",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_dd2f791373e5c80a",
+      "name_zh": "神经遗传与发育疾病",
+      "name_en": "",
+      "path": "医学/神经病学/神经遗传与发育疾病",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_af70356208cd0b20",
+      "name_zh": "神经病学·脊髓疾病",
+      "name_en": "",
+      "path": "医学/神经病学/神经病学·脊髓疾病",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_ed19490a473727c4",
+      "name_zh": "神经病学·脑血管病",
+      "name_en": "",
+      "path": "医学/神经病学/神经病学·脑血管病",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_4f62c58564f7a752",
+      "name_zh": "缺血性脑血管病",
+      "name_en": "",
+      "path": "医学/神经病学/神经病学·脑血管病/缺血性脑血管病",
+      "parent_code": "N_ed19490a473727c4"
+    },
+    {
+      "node_code": "N_eecaebaa093c76e9",
+      "name_zh": "出血性脑血管病",
+      "name_en": "",
+      "path": "医学/神经病学/神经病学·脑血管病/出血性脑血管病",
+      "parent_code": "N_ed19490a473727c4"
+    },
+    {
+      "node_code": "N_c40ec59607d58fa1",
+      "name_zh": "脱髓鞘疾病",
+      "name_en": "",
+      "path": "医学/神经病学/脱髓鞘疾病",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_34498f6c54a2de62",
+      "name_zh": "运动障碍疾病",
+      "name_en": "",
+      "path": "医学/神经病学/运动障碍疾病",
+      "parent_code": "N_5197ef6b8affeed7"
+    },
+    {
+      "node_code": "N_db85422efd5abb0d",
+      "name_zh": "精神病学",
+      "name_en": "",
+      "path": "医学/精神病学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_0606d6f8b3c0bf98",
+      "name_zh": "人格障碍与心身疾病",
+      "name_en": "",
+      "path": "医学/精神病学/人格障碍与心身疾病",
+      "parent_code": "N_db85422efd5abb0d"
+    },
+    {
+      "node_code": "N_e0ea60b31902ce30",
+      "name_zh": "儿童青少年与进食睡眠障碍",
+      "name_en": "",
+      "path": "医学/精神病学/儿童青少年与进食睡眠障碍",
+      "parent_code": "N_db85422efd5abb0d"
+    },
+    {
+      "node_code": "N_d68c9827054c27c2",
+      "name_zh": "儿童青少年精神障碍",
+      "name_en": "",
+      "path": "医学/精神病学/儿童青少年精神障碍",
+      "parent_code": "N_db85422efd5abb0d"
+    },
+    {
+      "node_code": "N_fef858db2aed9179",
+      "name_zh": "器质性与物质相关障碍",
+      "name_en": "",
+      "path": "医学/精神病学/器质性与物质相关障碍",
+      "parent_code": "N_db85422efd5abb0d"
+    },
+    {
+      "node_code": "N_793a26b4e6120c27",
+      "name_zh": "心境与焦虑障碍",
+      "name_en": "",
+      "path": "医学/精神病学/心境与焦虑障碍",
+      "parent_code": "N_db85422efd5abb0d"
+    },
+    {
+      "node_code": "N_cb5504087cd1ac71",
+      "name_zh": "情绪与神经症性障碍",
+      "name_en": "",
+      "path": "医学/精神病学/情绪与神经症性障碍",
+      "parent_code": "N_db85422efd5abb0d"
+    },
+    {
+      "node_code": "N_bc31a7bb3fe0da4d",
+      "name_zh": "睡眠、进食与行为相关障碍",
+      "name_en": "",
+      "path": "医学/精神病学/睡眠、进食与行为相关障碍",
+      "parent_code": "N_db85422efd5abb0d"
+    },
+    {
+      "node_code": "N_4130f6502ad9e8ef",
+      "name_zh": "精神分裂症谱系",
+      "name_en": "",
+      "path": "医学/精神病学/精神分裂症谱系",
+      "parent_code": "N_db85422efd5abb0d"
+    },
+    {
+      "node_code": "N_5a03a5cdc837af66",
+      "name_zh": "精神科评估与治疗",
+      "name_en": "",
+      "path": "医学/精神病学/精神科评估与治疗",
+      "parent_code": "N_db85422efd5abb0d"
+    },
+    {
+      "node_code": "N_7970dc097a8fd898",
+      "name_zh": "系统解剖学",
+      "name_en": "",
+      "path": "医学/系统解剖学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_30bee0a4c038b5c6",
+      "name_zh": "局部解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/局部解剖",
+      "parent_code": "N_7970dc097a8fd898"
+    },
+    {
+      "node_code": "N_d6a12a778b03b548",
+      "name_zh": "头颈局解",
+      "name_en": "",
+      "path": "医学/系统解剖学/局部解剖/头颈局解",
+      "parent_code": "N_30bee0a4c038b5c6"
+    },
+    {
+      "node_code": "N_1e181f9e8bd14ce6",
+      "name_zh": "头部局部解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/局部解剖/头颈局解/头部局部解剖",
+      "parent_code": "N_d6a12a778b03b548"
+    },
+    {
+      "node_code": "N_ec79c136216bfd05",
+      "name_zh": "颈部局部解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/局部解剖/头颈局解/颈部局部解剖",
+      "parent_code": "N_d6a12a778b03b548"
+    },
+    {
+      "node_code": "N_5ec242ecea39ba49",
+      "name_zh": "盆部会阴与四肢局解",
+      "name_en": "",
+      "path": "医学/系统解剖学/局部解剖/盆部会阴与四肢局解",
+      "parent_code": "N_30bee0a4c038b5c6"
+    },
+    {
+      "node_code": "N_6267cf986c312ffe",
+      "name_zh": "盆部与会阴局部解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/局部解剖/盆部会阴与四肢局解/盆部与会阴局部解剖",
+      "parent_code": "N_5ec242ecea39ba49"
+    },
+    {
+      "node_code": "N_54c5b2a584946761",
+      "name_zh": "上肢局部解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/局部解剖/盆部会阴与四肢局解/上肢局部解剖",
+      "parent_code": "N_5ec242ecea39ba49"
+    },
+    {
+      "node_code": "N_7256d252a2779a3e",
+      "name_zh": "下肢局部解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/局部解剖/盆部会阴与四肢局解/下肢局部解剖",
+      "parent_code": "N_5ec242ecea39ba49"
+    },
+    {
+      "node_code": "N_2eed0a596c9a45bb",
+      "name_zh": "胸腹局解",
+      "name_en": "",
+      "path": "医学/系统解剖学/局部解剖/胸腹局解",
+      "parent_code": "N_30bee0a4c038b5c6"
+    },
+    {
+      "node_code": "N_eb0b71281e6bb287",
+      "name_zh": "胸部局部解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/局部解剖/胸腹局解/胸部局部解剖",
+      "parent_code": "N_2eed0a596c9a45bb"
+    },
+    {
+      "node_code": "N_7e669bdcddac7c57",
+      "name_zh": "腹部局部解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/局部解剖/胸腹局解/腹部局部解剖",
+      "parent_code": "N_2eed0a596c9a45bb"
+    },
+    {
+      "node_code": "N_588002d121379438",
+      "name_zh": "系统解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖",
+      "parent_code": "N_7970dc097a8fd898"
+    },
+    {
+      "node_code": "N_93594979328aae9c",
+      "name_zh": "内分泌系统",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/内分泌系统",
+      "parent_code": "N_588002d121379438"
+    },
+    {
+      "node_code": "N_39566c3e77e59977",
+      "name_zh": "内脏系统",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/内脏系统",
+      "parent_code": "N_588002d121379438"
+    },
+    {
+      "node_code": "N_1e63f356443bb50d",
+      "name_zh": "消化系统解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/内脏系统/消化系统解剖",
+      "parent_code": "N_39566c3e77e59977"
+    },
+    {
+      "node_code": "N_1cab50de11c6986b",
+      "name_zh": "呼吸系统解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/内脏系统/呼吸系统解剖",
+      "parent_code": "N_39566c3e77e59977"
+    },
+    {
+      "node_code": "N_722f52972a850bcb",
+      "name_zh": "泌尿系统解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/内脏系统/泌尿系统解剖",
+      "parent_code": "N_39566c3e77e59977"
+    },
+    {
+      "node_code": "N_5f595b4ebfdb0d88",
+      "name_zh": "生殖系统解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/内脏系统/生殖系统解剖",
+      "parent_code": "N_39566c3e77e59977"
+    },
+    {
+      "node_code": "N_366e6d6e921d86a7",
+      "name_zh": "神经与感官",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/神经与感官",
+      "parent_code": "N_588002d121379438"
+    },
+    {
+      "node_code": "N_0f94c2126a06618e",
+      "name_zh": "神经系统解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/神经与感官/神经系统解剖",
+      "parent_code": "N_366e6d6e921d86a7"
+    },
+    {
+      "node_code": "N_98a4a65d11a647df",
+      "name_zh": "感觉器官解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/神经与感官/感觉器官解剖",
+      "parent_code": "N_366e6d6e921d86a7"
+    },
+    {
+      "node_code": "N_9d1049ac10948555",
+      "name_zh": "脉管系统",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/脉管系统",
+      "parent_code": "N_588002d121379438"
+    },
+    {
+      "node_code": "N_5530f8da1c636dee",
+      "name_zh": "心血管系统解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/脉管系统/心血管系统解剖",
+      "parent_code": "N_9d1049ac10948555"
+    },
+    {
+      "node_code": "N_7b83057bb1bafaac",
+      "name_zh": "淋巴系统解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/脉管系统/淋巴系统解剖",
+      "parent_code": "N_9d1049ac10948555"
+    },
+    {
+      "node_code": "N_d2aa0d962eaa7061",
+      "name_zh": "运动系统",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/运动系统",
+      "parent_code": "N_588002d121379438"
+    },
+    {
+      "node_code": "N_fac5e4f2c8b9c93e",
+      "name_zh": "骨学",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/运动系统/骨学",
+      "parent_code": "N_d2aa0d962eaa7061"
+    },
+    {
+      "node_code": "N_8da0e162a5d0da13",
+      "name_zh": "关节学",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/运动系统/关节学",
+      "parent_code": "N_d2aa0d962eaa7061"
+    },
+    {
+      "node_code": "N_5a2913d67837b25e",
+      "name_zh": "肌学",
+      "name_en": "",
+      "path": "医学/系统解剖学/系统解剖/运动系统/肌学",
+      "parent_code": "N_d2aa0d962eaa7061"
+    },
+    {
+      "node_code": "N_a689e2b0ead8d2e8",
+      "name_zh": "表面与断层解剖",
+      "name_en": "",
+      "path": "医学/系统解剖学/表面与断层解剖",
+      "parent_code": "N_7970dc097a8fd898"
+    },
+    {
+      "node_code": "N_3dcf3b398259537c",
+      "name_zh": "组织学与胚胎学",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_753bbf768e69418c",
+      "name_zh": "组织学",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学/组织学",
+      "parent_code": "N_3dcf3b398259537c"
+    },
+    {
+      "node_code": "N_5d8e1562366385f5",
+      "name_zh": "器官组织学",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学/组织学/器官组织学",
+      "parent_code": "N_753bbf768e69418c"
+    },
+    {
+      "node_code": "N_a9b7c601954b41f9",
+      "name_zh": "基本组织",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学/组织学/基本组织",
+      "parent_code": "N_753bbf768e69418c"
+    },
+    {
+      "node_code": "N_aaa7e89a136e7a35",
+      "name_zh": "上皮组织",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学/组织学/基本组织/上皮组织",
+      "parent_code": "N_a9b7c601954b41f9"
+    },
+    {
+      "node_code": "N_618f5427142e73f4",
+      "name_zh": "结缔组织",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学/组织学/基本组织/结缔组织",
+      "parent_code": "N_a9b7c601954b41f9"
+    },
+    {
+      "node_code": "N_3cf7e94a49b6092c",
+      "name_zh": "肌组织",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学/组织学/基本组织/肌组织",
+      "parent_code": "N_a9b7c601954b41f9"
+    },
+    {
+      "node_code": "N_280e1b9af0ef4ece",
+      "name_zh": "神经组织",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学/组织学/基本组织/神经组织",
+      "parent_code": "N_a9b7c601954b41f9"
+    },
+    {
+      "node_code": "N_a191722bd540fdd3",
+      "name_zh": "组织学技术",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学/组织学/组织学技术",
+      "parent_code": "N_753bbf768e69418c"
+    },
+    {
+      "node_code": "N_8ef791bd54fe7bee",
+      "name_zh": "胚胎学",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学/胚胎学",
+      "parent_code": "N_3dcf3b398259537c"
+    },
+    {
+      "node_code": "N_b4ce0d159a96843b",
+      "name_zh": "胚胎各论与畸形",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学/胚胎学/胚胎各论与畸形",
+      "parent_code": "N_8ef791bd54fe7bee"
+    },
+    {
+      "node_code": "N_595036b5853bb1a1",
+      "name_zh": "胚胎学的研究方法",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学/胚胎学/胚胎学的研究方法",
+      "parent_code": "N_8ef791bd54fe7bee"
+    },
+    {
+      "node_code": "N_9668d048c0292e38",
+      "name_zh": "胚胎总论",
+      "name_en": "",
+      "path": "医学/组织学与胚胎学/胚胎学/胚胎总论",
+      "parent_code": "N_8ef791bd54fe7bee"
+    },
+    {
+      "node_code": "N_f60dad26ec7ac4df",
+      "name_zh": "结核病",
+      "name_en": "",
+      "path": "医学/结核病",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_860c49b888910f74",
+      "name_zh": "儿童结核病",
+      "name_en": "",
+      "path": "医学/结核病/儿童结核病",
+      "parent_code": "N_f60dad26ec7ac4df"
+    },
+    {
+      "node_code": "N_7a5422bc19cf5bde",
+      "name_zh": "神经系统结核",
+      "name_en": "",
+      "path": "医学/结核病/神经系统结核",
+      "parent_code": "N_f60dad26ec7ac4df"
+    },
+    {
+      "node_code": "N_dd76bb9e4b1b1424",
+      "name_zh": "肺外结核",
+      "name_en": "",
+      "path": "医学/结核病/肺外结核",
+      "parent_code": "N_f60dad26ec7ac4df"
+    },
+    {
+      "node_code": "N_1ba917b812b64856",
+      "name_zh": "肺结核",
+      "name_en": "",
+      "path": "医学/结核病/肺结核",
+      "parent_code": "N_f60dad26ec7ac4df"
+    },
+    {
+      "node_code": "N_3fac3f0a103f4795",
+      "name_zh": "骨与关节结核",
+      "name_en": "",
+      "path": "医学/结核病/骨与关节结核",
+      "parent_code": "N_f60dad26ec7ac4df"
+    },
+    {
+      "node_code": "N_66ba3bc3d2c4972f",
+      "name_zh": "综合临床医学",
+      "name_en": "",
+      "path": "医学/综合临床医学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_8b50a78edc70b2f2",
+      "name_zh": "临床技能与操作",
+      "name_en": "",
+      "path": "医学/综合临床医学/临床技能与操作",
+      "parent_code": "N_66ba3bc3d2c4972f"
+    },
+    {
+      "node_code": "N_8c11c7c1a3ee571c",
+      "name_zh": "循证与临床决策",
+      "name_en": "",
+      "path": "医学/综合临床医学/循证与临床决策",
+      "parent_code": "N_66ba3bc3d2c4972f"
+    },
+    {
+      "node_code": "N_a96180b4a906c07a",
+      "name_zh": "治疗学基础",
+      "name_en": "",
+      "path": "医学/综合临床医学/治疗学基础",
+      "parent_code": "N_66ba3bc3d2c4972f"
+    },
+    {
+      "node_code": "N_318503d15c8cb930",
+      "name_zh": "老年学",
+      "name_en": "",
+      "path": "医学/老年学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_64d5f5972a1acb81",
+      "name_zh": "生物老年学",
+      "name_en": "",
+      "path": "医学/老年学/生物老年学",
+      "parent_code": "N_318503d15c8cb930"
+    },
+    {
+      "node_code": "N_e4d850405dd908ee",
+      "name_zh": "社会老年学",
+      "name_en": "",
+      "path": "医学/老年学/社会老年学",
+      "parent_code": "N_318503d15c8cb930"
+    },
+    {
+      "node_code": "N_59fe3fda964ce628",
+      "name_zh": "老年病学",
+      "name_en": "",
+      "path": "医学/老年病学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_d2cae501ac51da83",
+      "name_zh": "老年医学基础",
+      "name_en": "",
+      "path": "医学/老年病学/老年医学基础",
+      "parent_code": "N_59fe3fda964ce628"
+    },
+    {
+      "node_code": "N_7971bbe0ff3330d7",
+      "name_zh": "老年慢病与照护",
+      "name_en": "",
+      "path": "医学/老年病学/老年慢病与照护",
+      "parent_code": "N_59fe3fda964ce628"
+    },
+    {
+      "node_code": "N_5d118b8a60065508",
+      "name_zh": "老年综合征",
+      "name_en": "",
+      "path": "医学/老年病学/老年综合征",
+      "parent_code": "N_59fe3fda964ce628"
+    },
+    {
+      "node_code": "N_7965621f4bd26c34",
+      "name_zh": "耳鼻咽喉科学（含头颈外科）",
+      "name_en": "",
+      "path": "医学/耳鼻咽喉科学（含头颈外科）",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_7ae6b3eca5b85893",
+      "name_zh": "临床听力学",
+      "name_en": "",
+      "path": "医学/耳鼻咽喉科学（含头颈外科）/临床听力学",
+      "parent_code": "N_7965621f4bd26c34"
+    },
+    {
+      "node_code": "N_1d63759aaa630db4",
+      "name_zh": "咽喉科学",
+      "name_en": "",
+      "path": "医学/耳鼻咽喉科学（含头颈外科）/咽喉科学",
+      "parent_code": "N_7965621f4bd26c34"
+    },
+    {
+      "node_code": "N_ef540bf5f0c1031a",
+      "name_zh": "头颈外科",
+      "name_en": "",
+      "path": "医学/耳鼻咽喉科学（含头颈外科）/头颈外科",
+      "parent_code": "N_7965621f4bd26c34"
+    },
+    {
+      "node_code": "N_4ff7369b852e0320",
+      "name_zh": "耳科学",
+      "name_en": "",
+      "path": "医学/耳鼻咽喉科学（含头颈外科）/耳科学",
+      "parent_code": "N_7965621f4bd26c34"
+    },
+    {
+      "node_code": "N_c434c055a187cf37",
+      "name_zh": "鼻科学",
+      "name_en": "",
+      "path": "医学/耳鼻咽喉科学（含头颈外科）/鼻科学",
+      "parent_code": "N_7965621f4bd26c34"
+    },
+    {
+      "node_code": "N_7ae8db2c6873229e",
+      "name_zh": "肿瘤学与癌变",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_33f764035e60a257",
+      "name_zh": "实体肿瘤",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/实体肿瘤",
+      "parent_code": "N_7ae8db2c6873229e"
+    },
+    {
+      "node_code": "N_3381aa120995d503",
+      "name_zh": "常见系统肿瘤",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/常见系统肿瘤",
+      "parent_code": "N_7ae8db2c6873229e"
+    },
+    {
+      "node_code": "N_030da6fef06dc6aa",
+      "name_zh": "癌变机制",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/癌变机制",
+      "parent_code": "N_7ae8db2c6873229e"
+    },
+    {
+      "node_code": "N_018d85cc8bef8a23",
+      "name_zh": "癌变机制与肿瘤生物学",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/癌变机制与肿瘤生物学",
+      "parent_code": "N_7ae8db2c6873229e"
+    },
+    {
+      "node_code": "N_777ab1d23a41be1d",
+      "name_zh": "肿瘤支持治疗",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/肿瘤支持治疗",
+      "parent_code": "N_7ae8db2c6873229e"
+    },
+    {
+      "node_code": "N_12eedf7380b4a65d",
+      "name_zh": "肿瘤治疗",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/肿瘤治疗",
+      "parent_code": "N_7ae8db2c6873229e"
+    },
+    {
+      "node_code": "N_19a494b41f30d77f",
+      "name_zh": "支持与姑息治疗",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/肿瘤治疗/支持与姑息治疗",
+      "parent_code": "N_12eedf7380b4a65d"
+    },
+    {
+      "node_code": "N_03698c2782710905",
+      "name_zh": "药物治疗",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/肿瘤治疗/药物治疗",
+      "parent_code": "N_12eedf7380b4a65d"
+    },
+    {
+      "node_code": "N_875ec61679714f2f",
+      "name_zh": "化学治疗",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/肿瘤治疗/药物治疗/化学治疗",
+      "parent_code": "N_03698c2782710905"
+    },
+    {
+      "node_code": "N_fcb053431aa6b484",
+      "name_zh": "靶向治疗与免疫治疗等其他药物治疗",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/肿瘤治疗/药物治疗/靶向治疗与免疫治疗等其他药物治疗",
+      "parent_code": "N_03698c2782710905"
+    },
+    {
+      "node_code": "N_e08d1947e510ba51",
+      "name_zh": "肿瘤诊断与分期",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/肿瘤诊断与分期",
+      "parent_code": "N_7ae8db2c6873229e"
+    },
+    {
+      "node_code": "N_1d8d3c3b5a0b7843",
+      "name_zh": "肿瘤预防与康复",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/肿瘤预防与康复",
+      "parent_code": "N_7ae8db2c6873229e"
+    },
+    {
+      "node_code": "N_a9db9d6a086d5237",
+      "name_zh": "血液与淋巴系统肿瘤",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/血液与淋巴系统肿瘤",
+      "parent_code": "N_7ae8db2c6873229e"
+    },
+    {
+      "node_code": "N_ce33aa91821e43d5",
+      "name_zh": "血液系统肿瘤",
+      "name_en": "",
+      "path": "医学/肿瘤学与癌变/血液系统肿瘤",
+      "parent_code": "N_7ae8db2c6873229e"
+    },
+    {
+      "node_code": "N_8ffea2c2513beb42",
+      "name_zh": "药物滥用与成瘾医学",
+      "name_en": "",
+      "path": "医学/药物滥用与成瘾医学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_e33c64cf106cd95f",
+      "name_zh": "常见滥用物质",
+      "name_en": "",
+      "path": "医学/药物滥用与成瘾医学/常见滥用物质",
+      "parent_code": "N_8ffea2c2513beb42"
+    },
+    {
+      "node_code": "N_5c93dac64fbeab2d",
+      "name_zh": "干预与康复",
+      "name_en": "",
+      "path": "医学/药物滥用与成瘾医学/干预与康复",
+      "parent_code": "N_8ffea2c2513beb42"
+    },
+    {
+      "node_code": "N_48c981943566896d",
+      "name_zh": "成瘾机制",
+      "name_en": "",
+      "path": "医学/药物滥用与成瘾医学/成瘾机制",
+      "parent_code": "N_8ffea2c2513beb42"
+    },
+    {
+      "node_code": "N_1d082aaa4de9c249",
+      "name_zh": "药理与药剂学",
+      "name_en": "",
+      "path": "医学/药理与药剂学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_951b935b92fb9a30",
+      "name_zh": "临床药理与药物治疗学",
+      "name_en": "",
+      "path": "医学/药理与药剂学/临床药理与药物治疗学",
+      "parent_code": "N_1d082aaa4de9c249"
+    },
+    {
+      "node_code": "N_7ccc862f0f0c662a",
+      "name_zh": "生药学与天然药物",
+      "name_en": "",
+      "path": "医学/药理与药剂学/生药学与天然药物",
+      "parent_code": "N_1d082aaa4de9c249"
+    },
+    {
+      "node_code": "N_0707407cdcb93332",
+      "name_zh": "药事管理与药物警戒",
+      "name_en": "",
+      "path": "医学/药理与药剂学/药事管理与药物警戒",
+      "parent_code": "N_1d082aaa4de9c249"
+    },
+    {
+      "node_code": "N_9bbdfd056ec7a71d",
+      "name_zh": "药剂学",
+      "name_en": "",
+      "path": "医学/药理与药剂学/药剂学",
+      "parent_code": "N_1d082aaa4de9c249"
+    },
+    {
+      "node_code": "N_4e5108228f8780f1",
+      "name_zh": "药物化学与药物分析",
+      "name_en": "",
+      "path": "医学/药理与药剂学/药物化学与药物分析",
+      "parent_code": "N_1d082aaa4de9c249"
+    },
+    {
+      "node_code": "N_12247f66b86c5baf",
+      "name_zh": "药理学",
+      "name_en": "",
+      "path": "医学/药理学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_1f64b30eadbcdad6",
+      "name_zh": "各系统药理",
+      "name_en": "",
+      "path": "医学/药理学/各系统药理",
+      "parent_code": "N_12247f66b86c5baf"
+    },
+    {
+      "node_code": "N_2fc0926cc866c8d7",
+      "name_zh": "传出神经系统药理",
+      "name_en": "",
+      "path": "医学/药理学/各系统药理/传出神经系统药理",
+      "parent_code": "N_1f64b30eadbcdad6"
+    },
+    {
+      "node_code": "N_38ccac42b4b1d269",
+      "name_zh": "中枢神经系统药理",
+      "name_en": "",
+      "path": "医学/药理学/各系统药理/中枢神经系统药理",
+      "parent_code": "N_1f64b30eadbcdad6"
+    },
+    {
+      "node_code": "N_bae6737c849962c1",
+      "name_zh": "心血管系统药理",
+      "name_en": "",
+      "path": "医学/药理学/各系统药理/心血管系统药理",
+      "parent_code": "N_1f64b30eadbcdad6"
+    },
+    {
+      "node_code": "N_0307cfaad44131c5",
+      "name_zh": "呼吸与消化系统药理",
+      "name_en": "",
+      "path": "医学/药理学/各系统药理/呼吸与消化系统药理",
+      "parent_code": "N_1f64b30eadbcdad6"
+    },
+    {
+      "node_code": "N_2c9a97b4e552d9ca",
+      "name_zh": "泌尿与血液系统药理",
+      "name_en": "",
+      "path": "医学/药理学/各系统药理/泌尿与血液系统药理",
+      "parent_code": "N_1f64b30eadbcdad6"
+    },
+    {
+      "node_code": "N_547d9943850ce662",
+      "name_zh": "内分泌与代谢系统药理",
+      "name_en": "",
+      "path": "医学/药理学/各系统药理/内分泌与代谢系统药理",
+      "parent_code": "N_1f64b30eadbcdad6"
+    },
+    {
+      "node_code": "N_5421b59ba315e5bf",
+      "name_zh": "化学治疗药（抗微生物药、抗寄生虫药、抗肿瘤药）",
+      "name_en": "",
+      "path": "医学/药理学/各系统药理/化学治疗药（抗微生物药、抗寄生虫药、抗肿瘤药）",
+      "parent_code": "N_1f64b30eadbcdad6"
+    },
+    {
+      "node_code": "N_6e49749352e8bbd2",
+      "name_zh": "抗微生物药物",
+      "name_en": "",
+      "path": "医学/药理学/各系统药理/化学治疗药（抗微生物药、抗寄生虫药、抗肿瘤药）/抗微生物药物",
+      "parent_code": "N_5421b59ba315e5bf"
+    },
+    {
+      "node_code": "N_cce626fe2cc3d818",
+      "name_zh": "抗寄生虫药物",
+      "name_en": "",
+      "path": "医学/药理学/各系统药理/化学治疗药（抗微生物药、抗寄生虫药、抗肿瘤药）/抗寄生虫药物",
+      "parent_code": "N_5421b59ba315e5bf"
+    },
+    {
+      "node_code": "N_5b90833171b9dfa6",
+      "name_zh": "抗肿瘤药物",
+      "name_en": "",
+      "path": "医学/药理学/各系统药理/化学治疗药（抗微生物药、抗寄生虫药、抗肿瘤药）/抗肿瘤药物",
+      "parent_code": "N_5421b59ba315e5bf"
+    },
+    {
+      "node_code": "N_c37a6547fd7b45f3",
+      "name_zh": "药动学",
+      "name_en": "",
+      "path": "医学/药理学/药动学",
+      "parent_code": "N_12247f66b86c5baf"
+    },
+    {
+      "node_code": "N_317321c7fb434abc",
+      "name_zh": "药效学",
+      "name_en": "",
+      "path": "医学/药理学/药效学",
+      "parent_code": "N_12247f66b86c5baf"
+    },
+    {
+      "node_code": "N_60d2b88650032fa1",
+      "name_zh": "营养与食品卫生学",
+      "name_en": "",
+      "path": "医学/营养与食品卫生学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_793ba66686a01bb9",
+      "name_zh": "临床营养",
+      "name_en": "",
+      "path": "医学/营养与食品卫生学/临床营养",
+      "parent_code": "N_60d2b88650032fa1"
+    },
+    {
+      "node_code": "N_7c03e1dd7d56ee3a",
+      "name_zh": "公共营养",
+      "name_en": "",
+      "path": "医学/营养与食品卫生学/公共营养",
+      "parent_code": "N_60d2b88650032fa1"
+    },
+    {
+      "node_code": "N_f8516447a5143451",
+      "name_zh": "分子营养学与营养流行病学",
+      "name_en": "",
+      "path": "医学/营养与食品卫生学/分子营养学与营养流行病学",
+      "parent_code": "N_60d2b88650032fa1"
+    },
+    {
+      "node_code": "N_2a57f38281d30213",
+      "name_zh": "基础营养",
+      "name_en": "",
+      "path": "医学/营养与食品卫生学/基础营养",
+      "parent_code": "N_60d2b88650032fa1"
+    },
+    {
+      "node_code": "N_d2555d1eb55f47e6",
+      "name_zh": "营养与营养相关疾病",
+      "name_en": "",
+      "path": "医学/营养与食品卫生学/营养与营养相关疾病",
+      "parent_code": "N_60d2b88650032fa1"
+    },
+    {
+      "node_code": "N_334b7eca432ab887",
+      "name_zh": "食品卫生与安全",
+      "name_en": "",
+      "path": "医学/营养与食品卫生学/食品卫生与安全",
+      "parent_code": "N_60d2b88650032fa1"
+    },
+    {
+      "node_code": "N_418e5ddbe44ad587",
+      "name_zh": "血液及淋巴系疾病",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_0714ae198c1bad82",
+      "name_zh": "血液病学",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病/血液病学",
+      "parent_code": "N_418e5ddbe44ad587"
+    },
+    {
+      "node_code": "N_cf60f37d8e2f3a9c",
+      "name_zh": "出凝血障碍",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病/血液病学/出凝血障碍",
+      "parent_code": "N_0714ae198c1bad82"
+    },
+    {
+      "node_code": "N_43254d0a34e7cbe1",
+      "name_zh": "血栓性疾病",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病/血液病学/血栓性疾病",
+      "parent_code": "N_0714ae198c1bad82"
+    },
+    {
+      "node_code": "N_820842abfe556838",
+      "name_zh": "血液肿瘤",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病/血液病学/血液肿瘤",
+      "parent_code": "N_0714ae198c1bad82"
+    },
+    {
+      "node_code": "N_5d49d0d4bdf97638",
+      "name_zh": "贫血",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病/血液病学/贫血",
+      "parent_code": "N_0714ae198c1bad82"
+    },
+    {
+      "node_code": "N_7d22d58de5354dfb",
+      "name_zh": "输血与造血治疗",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病/血液病学/输血与造血治疗",
+      "parent_code": "N_0714ae198c1bad82"
+    },
+    {
+      "node_code": "N_f5fabc6ae0ef2a6d",
+      "name_zh": "输血与输血安全",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病/血液病学/输血与造血治疗/输血与输血安全",
+      "parent_code": "N_7d22d58de5354dfb"
+    },
+    {
+      "node_code": "N_d6bf7bb3f9c84219",
+      "name_zh": "造血干细胞移植",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病/血液病学/输血与造血治疗/造血干细胞移植",
+      "parent_code": "N_7d22d58de5354dfb"
+    },
+    {
+      "node_code": "N_ed8d07b67aeeab38",
+      "name_zh": "造血系疾病",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病/造血系疾病",
+      "parent_code": "N_418e5ddbe44ad587"
+    },
+    {
+      "node_code": "N_01e442dd86fd8f7e",
+      "name_zh": "淋巴系疾病",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病/造血系疾病/淋巴系疾病",
+      "parent_code": "N_ed8d07b67aeeab38"
+    },
+    {
+      "node_code": "N_012f497692bb1944",
+      "name_zh": "脾及网状内皮系统疾病",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病/造血系疾病/脾及网状内皮系统疾病",
+      "parent_code": "N_ed8d07b67aeeab38"
+    },
+    {
+      "node_code": "N_5169e9bc4e309025",
+      "name_zh": "骨髓疾病",
+      "name_en": "",
+      "path": "医学/血液及淋巴系疾病/造血系疾病/骨髓疾病",
+      "parent_code": "N_ed8d07b67aeeab38"
+    },
+    {
+      "node_code": "N_67c6efa7e09b1a55",
+      "name_zh": "补充医学与替代医学",
+      "name_en": "",
+      "path": "医学/补充医学与替代医学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_3c319d180bf577c1",
+      "name_zh": "传统医学体系",
+      "name_en": "",
+      "path": "医学/补充医学与替代医学/传统医学体系",
+      "parent_code": "N_67c6efa7e09b1a55"
+    },
+    {
+      "node_code": "N_efb8ea96ac4ae68b",
+      "name_zh": "天然产物与膳食补充",
+      "name_en": "",
+      "path": "医学/补充医学与替代医学/天然产物与膳食补充",
+      "parent_code": "N_67c6efa7e09b1a55"
+    },
+    {
+      "node_code": "N_6d2a1d7a50cb48b2",
+      "name_zh": "循证评价",
+      "name_en": "",
+      "path": "医学/补充医学与替代医学/循证评价",
+      "parent_code": "N_67c6efa7e09b1a55"
+    },
+    {
+      "node_code": "N_40a2c3737c9ebc63",
+      "name_zh": "手技与躯体疗法",
+      "name_en": "",
+      "path": "医学/补充医学与替代医学/手技与躯体疗法",
+      "parent_code": "N_67c6efa7e09b1a55"
+    },
+    {
+      "node_code": "N_77c384e5d3535e75",
+      "name_zh": "身心干预",
+      "name_en": "",
+      "path": "医学/补充医学与替代医学/身心干预",
+      "parent_code": "N_67c6efa7e09b1a55"
+    },
+    {
+      "node_code": "N_a946966c5c7019a7",
+      "name_zh": "言语语言病理学与听力学",
+      "name_en": "",
+      "path": "医学/言语语言病理学与听力学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_02beeb39b632ea56",
+      "name_zh": "吞咽障碍",
+      "name_en": "",
+      "path": "医学/言语语言病理学与听力学/吞咽障碍",
+      "parent_code": "N_a946966c5c7019a7"
+    },
+    {
+      "node_code": "N_51fb03e15451bfb2",
+      "name_zh": "听力评估与康复",
+      "name_en": "",
+      "path": "医学/言语语言病理学与听力学/听力评估与康复",
+      "parent_code": "N_a946966c5c7019a7"
+    },
+    {
+      "node_code": "N_ae36a720f9ab1113",
+      "name_zh": "听力障碍",
+      "name_en": "",
+      "path": "医学/言语语言病理学与听力学/听力障碍",
+      "parent_code": "N_a946966c5c7019a7"
+    },
+    {
+      "node_code": "N_c1899993ffb9652f",
+      "name_zh": "听觉言语康复",
+      "name_en": "",
+      "path": "医学/言语语言病理学与听力学/听觉言语康复",
+      "parent_code": "N_a946966c5c7019a7"
+    },
+    {
+      "node_code": "N_31a938e1cee67795",
+      "name_zh": "言语听力学",
+      "name_en": "",
+      "path": "医学/言语语言病理学与听力学/言语听力学",
+      "parent_code": "N_a946966c5c7019a7"
+    },
+    {
+      "node_code": "N_6b5c7e09e2cc8139",
+      "name_zh": "言语语言病理",
+      "name_en": "",
+      "path": "医学/言语语言病理学与听力学/言语语言病理",
+      "parent_code": "N_a946966c5c7019a7"
+    },
+    {
+      "node_code": "N_1cdd8401a378ccb9",
+      "name_zh": "诊断学",
+      "name_en": "",
+      "path": "医学/诊断学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_ade96019ca4c125c",
+      "name_zh": "临床思维与病历",
+      "name_en": "",
+      "path": "医学/诊断学/临床思维与病历",
+      "parent_code": "N_1cdd8401a378ccb9"
+    },
+    {
+      "node_code": "N_7f220c3a320a6398",
+      "name_zh": "器械与影像诊断",
+      "name_en": "",
+      "path": "医学/诊断学/器械与影像诊断",
+      "parent_code": "N_1cdd8401a378ccb9"
+    },
+    {
+      "node_code": "N_40829fd7ecfa1421",
+      "name_zh": "心导管与造影",
+      "name_en": "",
+      "path": "医学/诊断学/器械与影像诊断/心导管与造影",
+      "parent_code": "N_7f220c3a320a6398"
+    },
+    {
+      "node_code": "N_f1b719d5efacb1b9",
+      "name_zh": "心电生理检查",
+      "name_en": "",
+      "path": "医学/诊断学/器械与影像诊断/心电生理检查",
+      "parent_code": "N_7f220c3a320a6398"
+    },
+    {
+      "node_code": "N_65009e8c5329d28c",
+      "name_zh": "无创检查",
+      "name_en": "",
+      "path": "医学/诊断学/器械与影像诊断/无创检查",
+      "parent_code": "N_7f220c3a320a6398"
+    },
+    {
+      "node_code": "N_254d1cb3b2246254",
+      "name_zh": "心电图检查",
+      "name_en": "",
+      "path": "医学/诊断学/器械与影像诊断/无创检查/心电图检查",
+      "parent_code": "N_65009e8c5329d28c"
+    },
+    {
+      "node_code": "N_bce54faeb20cc386",
+      "name_zh": "超声检查与其他无创检查",
+      "name_en": "",
+      "path": "医学/诊断学/器械与影像诊断/无创检查/超声检查与其他无创检查",
+      "parent_code": "N_65009e8c5329d28c"
+    },
+    {
+      "node_code": "N_b4ec57e54661ee93",
+      "name_zh": "实验诊断",
+      "name_en": "",
+      "path": "医学/诊断学/实验诊断",
+      "parent_code": "N_1cdd8401a378ccb9"
+    },
+    {
+      "node_code": "N_9f3045edf423163a",
+      "name_zh": "常见症状",
+      "name_en": "",
+      "path": "医学/诊断学/常见症状",
+      "parent_code": "N_1cdd8401a378ccb9"
+    },
+    {
+      "node_code": "N_9c9f5d645ec3792d",
+      "name_zh": "全身性常见症状",
+      "name_en": "",
+      "path": "医学/诊断学/常见症状/全身性常见症状",
+      "parent_code": "N_9f3045edf423163a"
+    },
+    {
+      "node_code": "N_1d4d757332cf9334",
+      "name_zh": "呼吸系统常见症状",
+      "name_en": "",
+      "path": "医学/诊断学/常见症状/呼吸系统常见症状",
+      "parent_code": "N_9f3045edf423163a"
+    },
+    {
+      "node_code": "N_2a118d83c287c7af",
+      "name_zh": "循环系统常见症状",
+      "name_en": "",
+      "path": "医学/诊断学/常见症状/循环系统常见症状",
+      "parent_code": "N_9f3045edf423163a"
+    },
+    {
+      "node_code": "N_c06e68ce1d928285",
+      "name_zh": "消化系统常见症状",
+      "name_en": "",
+      "path": "医学/诊断学/常见症状/消化系统常见症状",
+      "parent_code": "N_9f3045edf423163a"
+    },
+    {
+      "node_code": "N_6c895ea7b1ed4bfb",
+      "name_zh": "泌尿系统常见症状",
+      "name_en": "",
+      "path": "医学/诊断学/常见症状/泌尿系统常见症状",
+      "parent_code": "N_9f3045edf423163a"
+    },
+    {
+      "node_code": "N_fb435983a005c03b",
+      "name_zh": "神经与精神系统常见症状",
+      "name_en": "",
+      "path": "医学/诊断学/常见症状/神经与精神系统常见症状",
+      "parent_code": "N_9f3045edf423163a"
+    },
+    {
+      "node_code": "N_5e4dc4b8883ba96f",
+      "name_zh": "问诊与体格检查",
+      "name_en": "",
+      "path": "医学/诊断学/问诊与体格检查",
+      "parent_code": "N_1cdd8401a378ccb9"
+    },
+    {
+      "node_code": "N_a9e8d22e5bb95a7e",
+      "name_zh": "一般状态与生命体征检查",
+      "name_en": "",
+      "path": "医学/诊断学/问诊与体格检查/一般状态与生命体征检查",
+      "parent_code": "N_5e4dc4b8883ba96f"
+    },
+    {
+      "node_code": "N_e8eabadb17ff5874",
+      "name_zh": "头颈部检查",
+      "name_en": "",
+      "path": "医学/诊断学/问诊与体格检查/头颈部检查",
+      "parent_code": "N_5e4dc4b8883ba96f"
+    },
+    {
+      "node_code": "N_428dd62045afe356",
+      "name_zh": "胸部与肺部检查",
+      "name_en": "",
+      "path": "医学/诊断学/问诊与体格检查/胸部与肺部检查",
+      "parent_code": "N_5e4dc4b8883ba96f"
+    },
+    {
+      "node_code": "N_8914dcefb20d05f5",
+      "name_zh": "心脏与血管检查",
+      "name_en": "",
+      "path": "医学/诊断学/问诊与体格检查/心脏与血管检查",
+      "parent_code": "N_5e4dc4b8883ba96f"
+    },
+    {
+      "node_code": "N_036a944618f36a0b",
+      "name_zh": "腹部检查",
+      "name_en": "",
+      "path": "医学/诊断学/问诊与体格检查/腹部检查",
+      "parent_code": "N_5e4dc4b8883ba96f"
+    },
+    {
+      "node_code": "N_98d9a697d556c608",
+      "name_zh": "脊柱、四肢与神经系统检查",
+      "name_en": "",
+      "path": "医学/诊断学/问诊与体格检查/脊柱、四肢与神经系统检查",
+      "parent_code": "N_5e4dc4b8883ba96f"
+    },
+    {
+      "node_code": "N_5ce4492e7d7d5dcb",
+      "name_zh": "过敏学（变态反应学）",
+      "name_en": "",
+      "path": "医学/过敏学（变态反应学）",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_4114520ca8093059",
+      "name_zh": "严重过敏与诊治",
+      "name_en": "",
+      "path": "医学/过敏学（变态反应学）/严重过敏与诊治",
+      "parent_code": "N_5ce4492e7d7d5dcb"
+    },
+    {
+      "node_code": "N_47c28843acb066b5",
+      "name_zh": "呼吸道过敏",
+      "name_en": "",
+      "path": "医学/过敏学（变态反应学）/呼吸道过敏",
+      "parent_code": "N_5ce4492e7d7d5dcb"
+    },
+    {
+      "node_code": "N_29ccf53a6865c293",
+      "name_zh": "皮肤与消化道过敏",
+      "name_en": "",
+      "path": "医学/过敏学（变态反应学）/皮肤与消化道过敏",
+      "parent_code": "N_5ce4492e7d7d5dcb"
+    },
+    {
+      "node_code": "N_901d3f8b3efd0f9a",
+      "name_zh": "预防医学",
+      "name_en": "",
+      "path": "医学/预防医学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_96446905c3615f1c",
+      "name_zh": "三级预防",
+      "name_en": "",
+      "path": "医学/预防医学/三级预防",
+      "parent_code": "N_901d3f8b3efd0f9a"
+    },
+    {
+      "node_code": "N_62dd1f2071ea0bd7",
+      "name_zh": "健康教育与健康促进",
+      "name_en": "",
+      "path": "医学/预防医学/健康教育与健康促进",
+      "parent_code": "N_901d3f8b3efd0f9a"
+    },
+    {
+      "node_code": "N_1e7850457954a20e",
+      "name_zh": "卫生政策与体系",
+      "name_en": "",
+      "path": "医学/预防医学/卫生政策与体系",
+      "parent_code": "N_901d3f8b3efd0f9a"
+    },
+    {
+      "node_code": "N_22d0a77ab91023f0",
+      "name_zh": "妇幼与学校卫生",
+      "name_en": "",
+      "path": "医学/预防医学/妇幼与学校卫生",
+      "parent_code": "N_901d3f8b3efd0f9a"
+    },
+    {
+      "node_code": "N_09d60a1ae7f1d231",
+      "name_zh": "慢性病防控",
+      "name_en": "",
+      "path": "医学/预防医学/慢性病防控",
+      "parent_code": "N_901d3f8b3efd0f9a"
+    },
+    {
+      "node_code": "N_747700188e73329b",
+      "name_zh": "流行病学与统计学方法",
+      "name_en": "",
+      "path": "医学/预防医学/流行病学与统计学方法",
+      "parent_code": "N_901d3f8b3efd0f9a"
+    },
+    {
+      "node_code": "N_a4ff3b2e2c52f77c",
+      "name_zh": "预防医学·环境与职业卫生",
+      "name_en": "",
+      "path": "医学/预防医学/预防医学·环境与职业卫生",
+      "parent_code": "N_901d3f8b3efd0f9a"
+    },
+    {
+      "node_code": "N_425d502df1e96ffd",
+      "name_zh": "疾病预防控制",
+      "name_en": "",
+      "path": "医学/预防医学/疾病预防控制",
+      "parent_code": "N_901d3f8b3efd0f9a"
+    },
+    {
+      "node_code": "N_49c297f10edfa6d3",
+      "name_zh": "危险因素",
+      "name_en": "",
+      "path": "医学/预防医学/疾病预防控制/危险因素",
+      "parent_code": "N_425d502df1e96ffd"
+    },
+    {
+      "node_code": "N_afd7f135877e151b",
+      "name_zh": "烟草病学",
+      "name_en": "",
+      "path": "医学/预防医学/疾病预防控制/烟草病学",
+      "parent_code": "N_425d502df1e96ffd"
+    },
+    {
+      "node_code": "N_2408ab3b6b62e55f",
+      "name_zh": "老年与劳动力保健",
+      "name_en": "",
+      "path": "医学/预防医学/老年与劳动力保健",
+      "parent_code": "N_901d3f8b3efd0f9a"
+    },
+    {
+      "node_code": "N_a8a4c516c90cfe7d",
+      "name_zh": "营养与食品安全",
+      "name_en": "",
+      "path": "医学/预防医学/营养与食品安全",
+      "parent_code": "N_901d3f8b3efd0f9a"
+    },
+    {
+      "node_code": "N_c543cd0c931b831c",
+      "name_zh": "预防医学概论",
+      "name_en": "",
+      "path": "医学/预防医学/预防医学概论",
+      "parent_code": "N_901d3f8b3efd0f9a"
+    },
+    {
+      "node_code": "N_2cb3563725748c8f",
+      "name_zh": "骨科学",
+      "name_en": "",
+      "path": "医学/骨科学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_1ca9a149b387a114",
+      "name_zh": "关节外科与运动医学",
+      "name_en": "",
+      "path": "医学/骨科学/关节外科与运动医学",
+      "parent_code": "N_2cb3563725748c8f"
+    },
+    {
+      "node_code": "N_e7969b47e46acfdd",
+      "name_zh": "周围神经卡压与慢性损伤",
+      "name_en": "",
+      "path": "医学/骨科学/关节外科与运动医学/周围神经卡压与慢性损伤",
+      "parent_code": "N_1ca9a149b387a114"
+    },
+    {
+      "node_code": "N_1a0da2b9a5bd896c",
+      "name_zh": "创伤骨科",
+      "name_en": "",
+      "path": "医学/骨科学/创伤骨科",
+      "parent_code": "N_2cb3563725748c8f"
+    },
+    {
+      "node_code": "N_fa279dd890d30c5a",
+      "name_zh": "上肢创伤",
+      "name_en": "",
+      "path": "医学/骨科学/创伤骨科/上肢创伤",
+      "parent_code": "N_1a0da2b9a5bd896c"
+    },
+    {
+      "node_code": "N_0157fd2e422fb4c3",
+      "name_zh": "下肢创伤",
+      "name_en": "",
+      "path": "医学/骨科学/创伤骨科/下肢创伤",
+      "parent_code": "N_1a0da2b9a5bd896c"
+    },
+    {
+      "node_code": "N_72769a71e18fec29",
+      "name_zh": "脊柱与骨盆创伤",
+      "name_en": "",
+      "path": "医学/骨科学/创伤骨科/脊柱与骨盆创伤",
+      "parent_code": "N_1a0da2b9a5bd896c"
+    },
+    {
+      "node_code": "N_20902f46aa90634c",
+      "name_zh": "小儿骨科与康复",
+      "name_en": "",
+      "path": "医学/骨科学/小儿骨科与康复",
+      "parent_code": "N_2cb3563725748c8f"
+    },
+    {
+      "node_code": "N_e9b3cda8748716c5",
+      "name_zh": "足踝与姿势畸形",
+      "name_en": "",
+      "path": "医学/骨科学/小儿骨科与康复/足踝与姿势畸形",
+      "parent_code": "N_20902f46aa90634c"
+    },
+    {
+      "node_code": "N_38326a931c3f5049",
+      "name_zh": "脊柱外科",
+      "name_en": "",
+      "path": "医学/骨科学/脊柱外科",
+      "parent_code": "N_2cb3563725748c8f"
+    },
+    {
+      "node_code": "N_780308bb55f18b35",
+      "name_zh": "颈椎疾病",
+      "name_en": "",
+      "path": "医学/骨科学/脊柱外科/颈椎疾病",
+      "parent_code": "N_38326a931c3f5049"
+    },
+    {
+      "node_code": "N_8292852a4a435b39",
+      "name_zh": "腰椎疾病",
+      "name_en": "",
+      "path": "医学/骨科学/脊柱外科/腰椎疾病",
+      "parent_code": "N_38326a931c3f5049"
+    },
+    {
+      "node_code": "N_3ea1a9c22b5af914",
+      "name_zh": "脊柱畸形",
+      "name_en": "",
+      "path": "医学/骨科学/脊柱外科/脊柱畸形",
+      "parent_code": "N_38326a931c3f5049"
+    },
+    {
+      "node_code": "N_281fd6745cc46916",
+      "name_zh": "脊柱感染与脊柱肿瘤",
+      "name_en": "",
+      "path": "医学/骨科学/脊柱外科/脊柱感染与脊柱肿瘤",
+      "parent_code": "N_38326a931c3f5049"
+    },
+    {
+      "node_code": "N_864ee06a46db136d",
+      "name_zh": "骨病与骨肿瘤",
+      "name_en": "",
+      "path": "医学/骨科学/骨病与骨肿瘤",
+      "parent_code": "N_2cb3563725748c8f"
+    },
+    {
+      "node_code": "N_54d70db06119eeb5",
+      "name_zh": "骨与关节感染",
+      "name_en": "",
+      "path": "医学/骨科学/骨病与骨肿瘤/骨与关节感染",
+      "parent_code": "N_864ee06a46db136d"
+    },
+    {
+      "node_code": "N_6bf539b87c04cdd4",
+      "name_zh": "骨肿瘤",
+      "name_en": "",
+      "path": "医学/骨科学/骨病与骨肿瘤/骨肿瘤",
+      "parent_code": "N_864ee06a46db136d"
+    },
+    {
+      "node_code": "N_0ab579ab462cdfbd",
+      "name_zh": "代谢性骨病",
+      "name_en": "",
+      "path": "医学/骨科学/骨病与骨肿瘤/代谢性骨病",
+      "parent_code": "N_864ee06a46db136d"
+    },
+    {
+      "node_code": "N_bce6d89789d0bd04",
+      "name_zh": "麻醉学",
+      "name_en": "",
+      "path": "医学/麻醉学",
+      "parent_code": "N_718c8fd8d25ac37c"
+    },
+    {
+      "node_code": "N_4dfb90e9605b6ed0",
+      "name_zh": "专科麻醉与镇痛",
+      "name_en": "",
+      "path": "医学/麻醉学/专科麻醉与镇痛",
+      "parent_code": "N_bce6d89789d0bd04"
+    },
+    {
+      "node_code": "N_64537ee751e1634d",
+      "name_zh": "复苏与生命支持",
+      "name_en": "",
+      "path": "医学/麻醉学/复苏与生命支持",
+      "parent_code": "N_bce6d89789d0bd04"
+    },
+    {
+      "node_code": "N_f1c4f1c4bea49fd8",
+      "name_zh": "麻醉基础",
+      "name_en": "",
+      "path": "医学/麻醉学/麻醉基础",
+      "parent_code": "N_bce6d89789d0bd04"
+    },
+    {
+      "node_code": "N_10a407091db55314",
+      "name_zh": "麻醉方法",
+      "name_en": "",
+      "path": "医学/麻醉学/麻醉方法",
+      "parent_code": "N_bce6d89789d0bd04"
+    },
+    {
+      "node_code": "N_3797dc1569e33e6c",
+      "name_zh": "麻醉监测与并发症",
+      "name_en": "",
+      "path": "医学/麻醉学/麻醉监测与并发症",
+      "parent_code": "N_bce6d89789d0bd04"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "total_tree_nodes": 1381,
+  "selected_nodes": 1381,
+  "full_tree_run": true,
+  "source_unchanged": true,
+  "expert_approved": false,
+  "review_mode": "off",
+  "cross_review": "off",
+  "cross_groups": 0,
+  "cross_verdict_counts": {},
+  "cross_validated_release": false,
+  "model_reviewed": false,
+  "runtime_release": true,
+  "failure_policy": "empty",
+  "unreviewed_candidate_cards": 1381,
+  "accepted_candidate_cards": 0,
+  "empty_boundary_nodes": 0,
+  "status_counts": {
+    "unreviewed_candidate": 1381
+  },
+  "advisory_nodes": 0,
+  "max_depth": 4,
+  "reused_groups": 541,
+  "groups_attempted": 0,
+  "semantic_quality_degraded": false,
+  "staged_rounds": [
+    1
+  ],
+  "transport_unresolved": 0,
+  "technical_failed_attempts": 0
+}

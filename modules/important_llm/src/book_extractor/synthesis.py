@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import sys
 import tempfile
 from collections import Counter, deque
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
@@ -17,6 +18,18 @@ from pathlib import Path
 from threading import Event
 from time import monotonic
 from typing import Any, TypeVar
+
+
+def _request_executor(workers):
+    if os.environ.get('PIPELINE_SHARED_POOL_URL'):
+        parents = Path(__file__).resolve().parents
+        # An installed package may have no pipeline checkout above it. Only
+        # add the known in-checkout helper; configured sharing never falls back.
+        if len(parents) > 4 and (parents[4] / 'shared_request_pool.py').is_file():
+            sys.path.insert(0, str(parents[4]))
+        from shared_request_pool import SharedExecutor
+        return SharedExecutor(max_workers=workers)
+    return ThreadPoolExecutor(max_workers=workers)
 
 from instructor.core.exceptions import IncompleteOutputException
 from openai import APIStatusError
@@ -499,7 +512,7 @@ def _verify_records(
     """
     if workers < 1:
         raise ValueError("verification workers must be positive")
-    if workers == 1 or len(records) < 2:
+    if (workers == 1 or len(records) < 2) and not os.environ.get('PIPELINE_SHARED_POOL_URL'):
         return _verify_records_serial(
             records, source, client, directory, candidate_lookup=candidate_lookup
         )
@@ -531,7 +544,7 @@ def _verify_records(
 
     completed: dict[int, tuple[list[Record], list[dict[str, Any]]]] = {}
     remaining = iter(enumerate(records))
-    with ThreadPoolExecutor(max_workers=workers) as pool:
+    with _request_executor(workers) as pool:
         pending = {}
         for _ in range(min(workers, len(records))):
             index, record = next(remaining)
@@ -1284,7 +1297,7 @@ def synthesize(
 
     verification_errors: list[dict] = []
     # 单线程也逐批复核，保留调用者线程上下文；两种调度输出顺序一致。
-    if workers == 1:
+    if workers == 1 and not os.environ.get('PIPELINE_SHARED_POOL_URL'):
         for job in jobs:
             found, issues = run_job(job)
             for record in found:
@@ -1297,7 +1310,7 @@ def synthesize(
         verified_rows: dict[tuple[int, int], tuple[list[Record], list[dict]]] = {}
         ready: deque[tuple[int, int, Record]] = deque()
         remaining = iter(enumerate(jobs))
-        with ThreadPoolExecutor(max_workers=workers) as pool:
+        with _request_executor(workers) as pool:
             pending = {}
             for _ in range(min(workers, len(jobs))):
                 index, job = next(remaining)

@@ -106,6 +106,17 @@ class PortableTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             p.prepare_cleaning(self.books, extract, self.root/'clean_input')
 
+    def test_clean_preparation_resume_rejects_modified_context_snapshot(self):
+        extract, _ = self.make_extraction()
+        out = self.root / 'clean_input'
+        result = p.prepare_cleaning(self.books, extract, out)
+        self.assertEqual(p.read(out / 'PREPARED.json')['input_sha256'], p.digest(out / 'INPUT.json'))
+        self.assertEqual(p.prepare_cleaning(self.books, extract, out), result)
+        result[0]['source_context']['head_window'] = 'Invented context'
+        p.write(out / 'INPUT.json', result)
+        with self.assertRaisesRegex(ValueError, 'snapshot'):
+            p.prepare_cleaning(self.books, extract, out)
+
     def test_missing_scope_is_not_content_drop(self):
         extract, _ = self.make_extraction()
         with self.assertRaises(ValueError):

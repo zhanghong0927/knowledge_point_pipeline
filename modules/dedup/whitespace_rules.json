@@ -1,0 +1,638 @@
+{
+  "version": "whitespace-v1-20261015",
+  "scope": "Only whitespace/case differences in the named field and exact full path; no ID whitelist",
+  "review": "Prior model-assisted sample audit confirmed by the primary agent; not human expert review",
+  "sources": [
+    {
+      "file": "ROOT_REDUNDANCY_DECISIONS.json",
+      "sha256": "7d058ad1b1df6beb1b8df2d5b3dfd0f6c1e5e1db4a8416bcd8cb51bb9ba56463"
+    },
+    {
+      "file": "全量同分支空白变体重复.json",
+      "sha256": "9b7541da866f3f5cb7198ee466c138538953df0027ca43199abe407b2794dcef"
+    }
+  ],
+  "rules": [
+    {
+      "main_tags": "电气工程/电机与电工磁性机械/特种与微特电机/控制微电机/交流与直流伺服电动机",
+      "field": "knowledge_point",
+      "variants": [
+        "aircraft servomotor",
+        "aircraft servo motor"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电机与电工磁性机械/直流电机",
+      "field": "name",
+      "variants": [
+        "电枢绕组 180° 抽头",
+        "电枢绕组180°抽头"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电机与电工磁性机械/电机理论与分析设计基础/电机磁路与电磁场计算",
+      "field": "name",
+      "variants": [
+        "距齿根1/3处的磁密",
+        "距齿根 1/3 处的磁密"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/高电压与绝缘技术/过电压防护与绝缘配合/外部过电压与雷电防护",
+      "field": "knowledge_point",
+      "variants": [
+        "lightning overvoltage",
+        "lightning over voltage"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电力系统及其自动化/电力系统继电保护与安全自动装置",
+      "field": "knowledge_point",
+      "variants": [
+        "over current relay",
+        "overcurrent relay"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/新兴能源与储能技术/物理与机械储能技术/抽水蓄能技术",
+      "field": "knowledge_point",
+      "variants": [
+        "pumped-storage using sea water",
+        "pumped-storage using seawater"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电机与电工磁性机械/交流同步电机",
+      "field": "name",
+      "variants": [
+        "（旋）转（电） 枢式交流发电机",
+        "（旋）转（电）枢式交流发电机"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/新兴能源与储能技术/其他新能源及分布式储能集成/海洋能与地热能及生物质能发电/潮汐能与波浪能发电技术",
+      "field": "knowledge_point",
+      "variants": [
+        "sea shore wave power generator",
+        "seashore wave power generator"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电工理论与电磁场/恒定磁场与时变电磁场/平面电磁波传播与辐射/趋肤效应与电磁屏蔽原理",
+      "field": "knowledge_point",
+      "variants": [
+        "skin effect",
+        "skineffect"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电机与电工磁性机械/特种与微特电机/步进电机",
+      "field": "knowledge_point",
+      "variants": [
+        "step motor",
+        "stepmotor"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电气测量与智能仪器仪表/基本电磁参量测量/功率与电能计量",
+      "field": "knowledge_point",
+      "variants": [
+        "watt meter",
+        "wattmeter"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电机与电工磁性机械/交流同步电机/电励磁同步电机",
+      "field": "name",
+      "variants": [
+        "同步发电机-整流器式励磁装置",
+        "同步发电机-整流器式励磁装 置"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电工理论与电磁场/电磁兼容与电磁环境",
+      "field": "knowledge_point",
+      "variants": [
+        "intra system electromagnetic compatibility",
+        "intrasystem electromagnetic compatibility"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电路与电子系统/数字电子技术与逻辑设计/数字逻辑基础与代数",
+      "field": "name",
+      "variants": [
+        "“非”门",
+        "“非” 门"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/光电子学与光纤技术/发光与光电转换器件/光电探测器与光敏器件/光电二极管与PIN及雪崩光电二极管",
+      "field": "knowledge_point",
+      "variants": [
+        "photodiode",
+        "photo diode"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电气测量与智能仪器仪表/基本电磁参量测量/功率与电能计量",
+      "field": "name",
+      "variants": [
+        "自动记录瓦特计",
+        "自动记录 瓦特计"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电路与电子系统/混合信号与数模转换系统/数模转换器",
+      "field": "name",
+      "variants": [
+        "数-模转换器",
+        "数 - 模转换器"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电力电子与电气传动/基本电力电子变换电路拓扑",
+      "field": "name",
+      "variants": [
+        "间接直流变流器",
+        "间接直流 变流器"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电力系统及其自动化/电力系统自动化与监控",
+      "field": "knowledge_point",
+      "variants": [
+        "automatic generation control (AGC)",
+        "automatic generation control(AGC)"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/控制科学与自动化系统/过程控制与工业自动化/工业自动化控制系统/分布式控制系统与集散控制",
+      "field": "knowledge_point",
+      "variants": [
+        "distributed control system (DCS)",
+        "distributed control system(DCS)"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/光电子学与光纤技术/发光与光电转换器件/光电探测器与光敏器件/光电二极管与PIN及雪崩光电二极管",
+      "field": "name",
+      "variants": [
+        "锗拉通雪崩光电二极管",
+        "锗拉通雪崩光电 二极管"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电路与电子系统/混合信号与数模转换系统",
+      "field": "name",
+      "variants": [
+        "数字-模拟混合电路",
+        "数字 - 模拟混合电路"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/光电子学与光纤技术/发光与光电转换器件/光电探测器与光敏器件/光电二极管与PIN及雪崩光电二极管",
+      "field": "knowledge_point",
+      "variants": [
+        "silicon photodiode",
+        "silicon photo diode"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电气测量与智能仪器仪表/传感器与非电量电测",
+      "field": "knowledge_point",
+      "variants": [
+        "ultrasonic levelmeter",
+        "ultrasonic level meter"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/微电子学与半导体器件/分立半导体器件/场效应晶体管/平面金属氧化物半导体场效应管",
+      "field": "name",
+      "variants": [
+        "埋沟MOSFET",
+        "埋沟 MOSFET"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/光电子学与光纤技术/激光器原理与技术/半导体激光器",
+      "field": "name",
+      "variants": [
+        "双稳态[半导体] 激光二极管",
+        "双稳态[半导体]激光二极管"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/光电子学与光纤技术/发光与光电转换器件/光电探测器与光敏器件",
+      "field": "name",
+      "variants": [
+        "外延台 面光电（敏）晶体管",
+        "外延台面光电（敏）晶体管"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/微电子学与半导体器件/功率半导体器件/功率二极管与晶闸管/快恢复与功率肖特基二极管",
+      "field": "name",
+      "variants": [
+        "快恢复外延二极管",
+        "快恢复外 延二极管"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/光电子学与光纤技术/激光器原理与技术/半导体激光器",
+      "field": "name",
+      "variants": [
+        "折叠腔面发射[半导体] 激光器",
+        "折叠腔面发射[半导体]激光器"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/光电子学与光纤技术/激光器原理与技术/半导体激光器/量子阱与量子点激光器",
+      "field": "name",
+      "variants": [
+        "缓变折射率[光电]分限异质结构单量子阱[激光器]",
+        "缓变折射率[光电]分限异质结构单量子阱 [激光器]"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/微电子学与半导体器件/半导体制造工艺与封装测试/前道晶圆制造核心工艺/离子注入与热退火工艺",
+      "field": "name",
+      "variants": [
+        "透过多晶硅 [离子]注入",
+        "透过多晶硅[离子]注入"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/微电子学与半导体器件/分立半导体器件/场效应晶体管/平面金属氧化物半导体场效应管",
+      "field": "name",
+      "variants": [
+        "横向双扩散 MOS 晶体管",
+        "横向双扩散MOS晶体管"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/微电子学与半导体器件/分立半导体器件/场效应晶体管",
+      "field": "name",
+      "variants": [
+        "金属栅[场效应]晶体管",
+        "金属栅[场效应] 晶体管"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/微电子学与半导体器件/分立半导体器件/场效应晶体管/平面金属氧化物半导体场效应管",
+      "field": "name",
+      "variants": [
+        "金属-氧化物-半导体晶体管",
+        "金属 - 氧化物 - 半导体晶体管"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电路与电子系统/数字电子技术与逻辑设计/数字逻辑基础与代数",
+      "field": "name",
+      "variants": [
+        "“或非” 门",
+        "“或非”门"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/微电子学与半导体器件/分立半导体器件/场效应晶体管/平面金属氧化物半导体场效应管",
+      "field": "name",
+      "variants": [
+        "氮化硅 - 二氧化硅轻掺杂漏",
+        "氮化硅-二氧化硅轻掺杂漏"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/微电子学与半导体器件/新型与前沿微纳电子器件",
+      "field": "name",
+      "variants": [
+        "压电体-氧化物-半导体场效应晶体管",
+        "压电体 - 氧化物 - 半导体场效应晶体管"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/光电子学与光纤技术/激光器原理与技术/半导体激光器/法布里-珀罗型与分布反馈型激光器",
+      "field": "name",
+      "variants": [
+        "四分之一波长移相分布反馈 [激光二极管]",
+        "四分之一波长移相分布反馈[激光二极管]"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/微电子学与半导体器件/半导体制造工艺与封装测试/后道封装与三维集成/球栅阵列与倒装芯片封装",
+      "field": "name",
+      "variants": [
+        "载带球栅阵列 [封装]",
+        "载带球栅阵列[封装]"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电气测量与智能仪器仪表/传感器与非电量电测",
+      "field": "name",
+      "variants": [
+        "热电偶温度计",
+        "热电 偶温度计"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电路与电子系统/数字电子技术与逻辑设计/数字逻辑基础与代数/逻辑门电路与晶体管逻辑族TTL与CMOS",
+      "field": "name",
+      "variants": [
+        "晶体管-晶体管逻辑[电路]",
+        "晶体管 - 晶体管逻辑[电路]"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/微电子学与半导体器件/半导体制造工艺与封装测试/后道封装与三维集成/传统引线键合与贴片封装",
+      "field": "name",
+      "variants": [
+        "甚窄[引线]节距四边扁平封装",
+        "甚窄 [引线]节距四边扁平封装"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电力系统及其自动化/电力系统分析与规划/电力系统规划与负荷预测/概率性与可靠性规划",
+      "field": "knowledge_point",
+      "variants": [
+        "loss of load probability(LOLP)",
+        "loss of load probability (LOLP)"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电路与电子系统/模拟电子技术与放大电路/功率放大电路",
+      "field": "knowledge_point",
+      "variants": [
+        "cross over distortion",
+        "crossover distortion"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电路与电子系统/数字电子技术与逻辑设计/数字逻辑基础与代数",
+      "field": "name",
+      "variants": [
+        "“异-或” 门",
+        "“异-或”门"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电工材料与器件/半导体电工材料与敏感器件/光敏与气敏湿敏电工元件/光敏电阻与光电转换电工元件",
+      "field": "knowledge_point",
+      "variants": [
+        "germanium photo sensitive resistance",
+        "germanium photosensitive resistance"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/信号处理与通信传输/数字通信原理与基带传输",
+      "field": "knowledge_point",
+      "variants": [
+        "narrowband frequency modulation",
+        "narrow band frequency modulation"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "电气工程/电路与电子系统/滤波网络与信号调理/无源滤波器",
+      "field": "name",
+      "variants": [
+        "$ \\pi $  形滤波器",
+        "$ \\pi $ 形滤波器"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/热流体与能源动力工程/传热与传质/传热元件、换热设备、保温隔热与热工性能/换热器、散热器与传热设备",
+      "field": "knowledge_point",
+      "variants": [
+        "counterflow heat exchanger",
+        "Counter Flow Heat Exchanger"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/测量与仪器仪表/热工与流体测量/流量、流速与液位测量/差压、容积与质量流量测量",
+      "field": "knowledge_point",
+      "variants": [
+        "electromagnetic flow meter",
+        "electromagnetic flowmeter"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/热流体与能源动力工程/动力机械与热动力系统/锅炉、蒸汽与热动力设备/蒸汽发生、给水、凝汽与回热系统",
+      "field": "knowledge_point",
+      "variants": [
+        "feedwater",
+        "Feed Water"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/测量与仪器仪表/热工与流体测量/流量、流速与液位测量/差压、容积与质量流量测量",
+      "field": "knowledge_point",
+      "variants": [
+        "magnetic flow meter",
+        "magnetic flowmeter"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/测量与仪器仪表/热工与流体测量/流量、流速与液位测量/差压、容积与质量流量测量",
+      "field": "knowledge_point",
+      "variants": [
+        "mass flow meter",
+        "mass flowmeter"
+      ],
+      "equivalent": false
+    },
+    {
+      "main_tags": "机械工程/制造工程与生产系统/铸造、塑性成形与近净成形/板料与管材成形",
+      "field": "knowledge_point",
+      "variants": [
+        "presswork",
+        "Press Work"
+      ],
+      "equivalent": false
+    },
+    {
+      "main_tags": "机械工程/机电一体化、机器人与控制/执行器与机电驱动/电液、电气比例与流体伺服执行系统/电液伺服执行器与伺服阀",
+      "field": "knowledge_point",
+      "variants": [
+        "electrohydraulic servo actuator",
+        "electrohydraulic servoactuator"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/工程材料与表面工程/腐蚀、老化与防护",
+      "field": "knowledge_point",
+      "variants": [
+        "anticorrosion coating",
+        "anti corrosion coating"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/制造工程与生产系统/切削与精密超精密加工",
+      "field": "knowledge_point",
+      "variants": [
+        "shell reamer",
+        "shellreamer"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/机电一体化、机器人与控制/执行器与机电驱动",
+      "field": "knowledge_point",
+      "variants": [
+        "servoactuator",
+        "servo actuator"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/机械设计与基础零部件/机械传动与流体传动/齿轮与啮合传动/圆柱、锥齿轮与蜗杆传动/蜗杆与交错轴齿轮传动",
+      "field": "knowledge_point",
+      "variants": [
+        "worm and wormgear",
+        "Worm and Worm Gear"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "交通运输/铁路运输/铁路桥涵工程",
+      "field": "name",
+      "variants": [
+        "U 形桥台",
+        "U形桥台"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/制造工程与生产系统/连接与装配/焊接与高能束连接",
+      "field": "name",
+      "variants": [
+        "氩弧焊",
+        "氩 弧 焊"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/制造工程与生产系统/连接与装配/焊接与高能束连接/电弧焊与电阻焊",
+      "field": "name",
+      "variants": [
+        "电阻焊",
+        "电 阻 焊"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/工程材料与表面工程/表面工程与涂层/涂层与沉积技术/物理与化学气相沉积",
+      "field": "name",
+      "variants": [
+        "物理气相沉积 (PVD)",
+        "物理气相沉积(PVD)"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/机械设计与基础零部件/机构学与机械原理/平面连杆与凸轮机构/凸轮与间歇运动机构",
+      "field": "name",
+      "variants": [
+        "凸 轮",
+        "凸轮"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/热流体与能源动力工程/流体机械/泵与水力机械",
+      "field": "name",
+      "variants": [
+        "叶片泵",
+        "叶片 泵"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/制造工程与生产系统/制造自动化、数字化与智能化/制造自动化与数控",
+      "field": "name",
+      "variants": [
+        "SINUMERIK802 系列数控系统",
+        "SINUMERIK 802 系列数控系统"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/机械设计与基础零部件/机械传动与流体传动/挠性、摩擦与螺旋传动/带传动",
+      "field": "name",
+      "variants": [
+        "带传动",
+        "带 传动"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/机械设计与基础零部件/机械传动与流体传动/挠性、摩擦与螺旋传动/链传动",
+      "field": "name",
+      "variants": [
+        "链传动",
+        "链 传 动"
+      ],
+      "equivalent": true
+    },
+    {
+      "main_tags": "机械工程/机械设计与基础零部件/机械零部件与标准件/联接、紧固与密封/静密封、动密封与密封系统",
+      "field": "name",
+      "variants": [
+        "O 形密封圈",
+        "O形密封圈"
+      ],
+      "equivalent": true
+    }
+  ]
+}

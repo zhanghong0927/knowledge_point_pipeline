@@ -1,0 +1,80 @@
+{
+  "integration": {
+    "exit_code": 0,
+    "run": 531,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "cleaning": {
+    "exit_code": 0,
+    "run": 57,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "dictionary": {
+    "exit_code": 0,
+    "run": 14,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 0.9570471905171871,
+    "tail": "\n----------------------------------------------------------------------\nRan 14 tests in 0.805s\n\nOK\nOFFLINE_RESULT={\"run\": 14, \"failed\": 0, \"errors\": 0, \"skipped\": 0}"
+  },
+  "classification": {
+    "exit_code": 0,
+    "run": 86,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 1.9188669249415398,
+    "tail": "----------------------------------------------------------------------\nRan 86 tests in 1.742s\n\nOK\n{'expected': 0, 'finished': 0, 'id_sets_equal': True, 'statuses': {}, 'semantic_audit_complete': False, 'extraction_performed': False}\nOFFLINE_RESULT={\"run\": 86, \"failed\": 0, \"errors\": 0, \"skipped\": 0}"
+  },
+  "extraction": {
+    "exit_code": 0,
+    "run": 182,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 3,
+    "seconds": 8.612787589430809,
+    "tail": "Ran 182 tests in 8.333s\n\nOK (skipped=3)\n{\"status\": \"prepared\", \"model_calls\": 0, \"books\": 1, \"manifest\": \"/tmp/tmpabphwae2/cli-recovery/MANIFEST.json\", \"driver_arguments\": [\"--manifest\", \"/tmp/tmpabphwae2/cli-recovery/MANIFEST.json\", \"--out\", \"/tmp/tmpabphwae2/cli-recovery/native\", \"--api-url\", \"http://new-unused\", \"--model\", \"test\", \"--context\", \"65536\", \"--output-tokens\", \"8192\", \"--timeout\", \"900\", \"--book-workers\", \"4\", \"--round-workers\", \"8\", \"2\", \"1\", \"--overlap\", \"4\", \"--repair-batch-size\", \"8\", \"--repair-attempts\", \"2\", \"--repair-max-requests\", \"128\", \"--tokenize-attempts\", \"3\"]}\n{\"status\": \"prepared\", \"model_calls\": 0, \"books\": 1, \"manifest\": \"/tmp/tmp44vd0_gy/cli-recovery/MANIFEST.json\", \"driver_arguments\": [\"--manifest\", \"/tmp/tmp44vd0_gy/cli-recovery/MANIFEST.json\", \"--out\", \"/tmp/tmp44vd0_gy/cli-recovery/native\", \"--api-url\", \"http://new-unused\", \"--model\", \"test\", \"--context\", \"65536\", \"--output-tokens\", \"8192\", \"--timeout\", \"900\", \"--book-workers\", \"4\", \"--round-workers\", \"8\", \"2\", \"1\", \"--overlap\", \"4\", \"--repair-batch-size\", \"8\", \"--repair-attempts\", \"2\", \"--repair-max-requests\", \"128\", \"--tokenize-attempts\", \"3\"]}\nOFFLINE_RESULT={\"run\": 182, \"failed\": 0, \"errors\": 0, \"skipped\": 3}"
+  },
+  "dedup": {
+    "exit_code": 0,
+    "run": 56,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 2.0380281060934067,
+    "tail": "\n----------------------------------------------------------------------\nRan 56 tests in 1.897s\n\nOK\nOFFLINE_RESULT={\"run\": 56, \"failed\": 0, \"errors\": 0, \"skipped\": 0}"
+  },
+  "offline_gate": {
+    "exit_code": 0,
+    "checks_passed": true,
+    "core_changes": [],
+    "interfaces_connected": true
+  },
+  "fixed_assets": {
+    "exit_code": 0,
+    "output": "{\"subjects\": 5, \"version\": \"taxonomy-boundaries-v1-20261015\", \"all_files_verified\": true, \"native_package_files\": 80}\n",
+    "error": ""
+  },
+  "totals": {
+    "run": 926,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 3
+  },
+  "all_passed": true,
+  "external_model_calls": 0,
+  "verification_note": "Integration, cleaning, offline gate and full assets were rerun after repository-contained fixtures and module inventory fixes; unchanged native suites retain their first green Linux receipts.",
+  "date": "2026-10-15",
+  "scope": "Linux offline contracts and local processing; not production or semantic acceptance",
+  "production_run_validated": false,
+  "initial_packaging_errors": "12 missing external recovery fixtures; retained in QA history, fixed by repo-contained fixtures",
+  "review_round1_fixes": [
+    "Document actual single-task resume checks and externally guaranteed content identity",
+    "Explicit integration addition and full delivered-file set check excluding documented local runtime files"
+  ]
+}
