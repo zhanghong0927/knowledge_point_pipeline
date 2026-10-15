@@ -6,7 +6,7 @@ from contextlib import contextmanager
 import hashlib
 import json
 import re
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import subprocess
 import sys
 import socket
@@ -29,8 +29,37 @@ def important_llm_core_changes(root, baseline):
                 or not re.fullmatch(r'[0-9a-f]{64}',proof['current_sha256'])):
             raise ValueError('Invalid native-module integration provenance: '+str(name))
         expected[name]=proof['current_sha256']
-    return [name for name,digest in expected.items()
-            if hashlib.sha256((Path(root)/'modules/important_llm'/name).read_bytes()).hexdigest()!=digest]
+    additions=baseline.get('integration_additions',{}).get('files',{})
+    if not isinstance(additions,dict):
+        raise ValueError('Native-module integration additions must be a mapping')
+    for name,digest in additions.items():
+        if (not isinstance(name,str) or not name or '\\' in name or ':' in name
+                or PurePosixPath(name).is_absolute() or '..' in PurePosixPath(name).parts
+                or PurePosixPath(name).as_posix()!=name or name in expected
+                or not isinstance(digest,str) or not re.fullmatch(r'[0-9a-f]{64}',digest)):
+            raise ValueError('Invalid native-module integration addition: '+str(name))
+        expected[name]=digest
+    module=Path(root)/'modules/important_llm'
+    # Match local environment/output exclusions, never a blanket source suffix rule.
+    local_dirs={'.git','.venv','__pycache__','.pytest_cache','.mypy_cache',
+                '.ruff_cache','work','outputs','dist'}
+    actual=set()
+    links=set()
+    for path in module.rglob('*'):
+        relative=path.relative_to(module)
+        if (any(part in local_dirs or part.endswith('.egg-info') for part in relative.parts)
+                or path.name.startswith('.env') or path.name=='.llm_services.json'
+                or path.suffix in ('.pyc','.pyo','.log')):
+            continue
+        if path.is_symlink():
+            links.add(relative.as_posix())
+        if path.is_file() or path.is_symlink():
+            actual.add(relative.as_posix())
+    changed=(actual ^ set(expected)) | links
+    for name in (actual & set(expected))-links:
+        if hashlib.sha256((module/name).read_bytes()).hexdigest()!=expected[name]:
+            changed.add(name)
+    return sorted(changed)
 
 
 @contextmanager

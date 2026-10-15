@@ -1,7 +1,7 @@
 {
   "integration": {
     "exit_code": 0,
-    "run": 524,
+    "run": 531,
     "failed": 0,
     "errors": 0,
     "skipped": 0
@@ -61,16 +61,20 @@
     "error": ""
   },
   "totals": {
-    "run": 919,
+    "run": 926,
     "failed": 0,
     "errors": 0,
     "skipped": 3
   },
   "all_passed": true,
   "external_model_calls": 0,
-  "verification_note": "Integration, cleaning, offline gate and full assets were rerun after repo-contained fixtures and publishing metadata changes. Unchanged dictionary, classification, extraction and dedup suites retain their first green Linux receipts.",
+  "verification_note": "Integration, cleaning, offline gate and full assets were rerun after repository-contained fixtures and module inventory fixes; unchanged native suites retain their first green Linux receipts.",
   "date": "2026-10-15",
   "scope": "Linux offline contracts and local processing; not production or semantic acceptance",
   "production_run_validated": false,
-  "initial_packaging_errors": "12 missing external recovery fixtures; retained in QA history, fixed by repo-contained fixtures"
+  "initial_packaging_errors": "12 missing external recovery fixtures; retained in QA history, fixed by repo-contained fixtures",
+  "review_round1_fixes": [
+    "Document actual single-task resume checks and externally guaranteed content identity",
+    "Explicit integration addition and full delivered-file set check excluding documented local runtime files"
+  ]
 }

@@ -196,6 +196,13 @@
           "current_sha256": "b9cbbb477bd70f70f47b7e1aa62dadcda77d862711307f8dd3fc539d9f86428b"
         }
       }
+    },
+    "integration_additions": {
+      "date": "2026-10-15",
+      "reason": "Explicitly register the shared request pool integration regression test; retain all original archive pins.",
+      "files": {
+        "tests/test_request_pool_installation.py": "1e68a19a7cae8e63a1eb3b1b87e39dab6facd80fd2348495aaba817250ab9f83"
+      }
     }
   }
 }
