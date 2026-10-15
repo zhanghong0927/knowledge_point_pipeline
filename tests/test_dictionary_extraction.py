@@ -218,7 +218,7 @@ class DictionaryExtractionTests(unittest.TestCase):
         for key in ("screening_workers", "classification_workers", "cleaning_workers"):
             self.assertEqual(config[key], 256)
         self.assertEqual(config["mounting"]["workers"], 256)
-        self.assertEqual(config["mounting"]["boundaries"]["workers"], 256)
+        self.assertEqual(config['mounting']['boundaries']['source'],'project')
         self.assertEqual(config["paths"]["approved_books"], "")
         for stage in pipeline.plan(config, values):
             for task in stage["tasks"]:

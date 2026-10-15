@@ -2,7 +2,7 @@
   "format": 1,
   "source_revision": "a629faa9dc86778ed4bcaa384307c41b3814f57c",
   "files": {
-    ".gitattributes": "8c77a10ce946898b814b0df808fd4dc8e1a86e9c56f8f74ab745ae333a82aa36",
+    ".gitattributes": "94087fd7842d437d8649482a4875a7c747ca3e97e31c08506718064c1439c6d4",
     ".gitignore": "0dfaa3411376ba1a159127aef4b7b0d8ed7269e02312ae874979ee99b9dfb81a",
     "data/tokenizers/qwen3.8-27b/chat_template.jinja": "c3cf9e34abf4f9e36c2d72165aa9c132d3e2a725b6c2586aaa3a8af9d7a81041",
     "data/tokenizers/qwen3.8-27b/tokenizer.json": "0997f410c57a1f4e53b09e4be8f4a172d90edd9564368fb0847030937229b9f3",
@@ -41,11 +41,11 @@
     "src/book_extractor/llm.py": "76dc76c3323792679b179943ab3fe8cd88149b072dcbbca4380879e130fe3da0",
     "src/book_extractor/markdown.py": "a6f0485a8c48952bf63281e746a4316eb91987f7738c202f859b3a8bada4967b",
     "src/book_extractor/models.py": "250206637d3d762d678f4f655e09e578f7fc20f5a41c884a283073786de3accf",
-    "src/book_extractor/pipeline.py": "b9d2b40cf59bc963b54f70149b3173e700149de1792db4fe040c833ead77c921",
+    "src/book_extractor/pipeline.py": "16cd99fd927e9489fb3805f7653dfb9fd49a0aac6a9575b0f7c41bc3fc6c8a76",
     "src/book_extractor/prompts.py": "5d85b219fc33d8f437e1a16e4ace501bd6d791cc6058fa04f0859a3fc48e9307",
     "src/book_extractor/rule_candidates.py": "bc772e1dd162b920e433969ded4a1dd649cb141b9deaa59c8a63a2d1f90bec1b",
     "src/book_extractor/storage.py": "1e6ec4f082dd764d102fb8c2a20a19457383d182e0c82ff6b569303bba4df28e",
-    "src/book_extractor/synthesis.py": "6bb0e55a945b6a120037610bda851e5ef5507393c9fc55b08751aefdfc405bf7",
+    "src/book_extractor/synthesis.py": "1314c759aa45446d238280ca518b291ae8518520bcdb54c87916d5487cd5dbcb",
     "src/book_extractor/telemetry.py": "105fdb4432d62869499caf562e5fc04b757e0e46b0bd2a3592b64e8aba4b8953",
     "src/book_extractor/tokenization.py": "43abc3d4aaa60a93a1c872eba1238d1c73f757ce0e807f206e1c3a15fae18b8c",
     "tests/fixtures/parallel_name_group.json": "ab97faa98c561553132938fbf4f1ab4ac4f2594b8689bfd5d393ed608d6ad859",
@@ -83,5 +83,23 @@
     "tests/test_verification.py": "0ab7a0e6311846d7f24e3882cdd141de7a415af835102575f0044a7841c0acef",
     "tests/test_verification_parallel.py": "21f557f993944284a40f4bbb5dec5f2c2d5093d254508da1c9610854c6520fe5"
   },
-  "note": "Source and selected samples; no secrets or run history."
+  "note": "Source and selected samples; no secrets or run history.",
+  "integration_update": {
+    "date": "2026-10-15",
+    "reason": "Shared request pool integration and byte-preserving Git publication",
+    "files": {
+      ".gitattributes": {
+        "original_sha256": "8c77a10ce946898b814b0df808fd4dc8e1a86e9c56f8f74ab745ae333a82aa36",
+        "current_sha256": "94087fd7842d437d8649482a4875a7c747ca3e97e31c08506718064c1439c6d4"
+      },
+      "src/book_extractor/pipeline.py": {
+        "original_sha256": "b9d2b40cf59bc963b54f70149b3173e700149de1792db4fe040c833ead77c921",
+        "current_sha256": "16cd99fd927e9489fb3805f7653dfb9fd49a0aac6a9575b0f7c41bc3fc6c8a76"
+      },
+      "src/book_extractor/synthesis.py": {
+        "original_sha256": "6bb0e55a945b6a120037610bda851e5ef5507393c9fc55b08751aefdfc405bf7",
+        "current_sha256": "1314c759aa45446d238280ca518b291ae8518520bcdb54c87916d5487cd5dbcb"
+      }
+    }
+  }
 }

@@ -1,23 +1,28 @@
 """Whole-book extraction with isolated entry repair and source-only cleanup."""
 import argparse
+from collections import Counter
 from bisect import bisect_left
 import concurrent.futures
 from datetime import datetime, timezone
+import http.client
 import json
 from pathlib import Path
 import re
 import threading
 import time
 import urllib.request
+import urllib.error
 import uuid
 
 import fullbook_llm_v2 as v2
 import fullbook_v5_structure as structure
 import fullbook_v5_anchors as anchors
+import fullbook_v5_recovery as recovery
 from fullbook_llm_v2 import structural_units, attach_format, book_lock, dispatch_ranges
 from model_range_crop import read, write
 
 VERSION = 'fullbook-structured-v5'
+TRANSPORT_HTTP_STATUSES = frozenset((408, 429, 500, 502, 503, 504))
 PROMPT = v2.PROMPT + '''
 Return only heads OWNED by [lo,hi). Units outside ownership are context, not output.
 Units marked excluded_zone contain no selectable source text. Abbreviation appendices,
@@ -73,6 +78,23 @@ For each task correct its literal source locations and fields; do not invent a n
 unrelated entry. If no reliable explicit head exists for this candidate, entry=null
 with a reason. A bad body alone can be removed while preserving a reliable head.
 '''
+
+
+def classify_transport_error(exc):
+    """Separate transient request transport faults from response/content faults."""
+    code = getattr(exc, 'code', None)
+    if code is None:
+        code = getattr(exc, 'status_code', None)
+    if code is None:
+        match = re.search(r'\bHTTP(?: Error)?\s*(\d{3})\b', str(exc), re.I)
+        if match:
+            code = int(match[1])
+    if code is not None:
+        # HTTPError also inherits URLError; a 404 must never fall through to
+        # the connection-error branch merely because of its exception class.
+        return code, code in TRANSPORT_HTTP_STATUSES
+    return None, isinstance(exc, (urllib.error.URLError, TimeoutError,
+                                  ConnectionError, http.client.IncompleteRead))
 
 
 def normalize(value):
@@ -251,9 +273,19 @@ repair_matches = anchors.repair_matches
 
 class Runner(v2.Runner):
     def __init__(self,args):
+        for name, default in (('repair_batch_size',8),('repair_attempts',2),
+                              ('repair_max_requests',128),('tokenize_attempts',3)):
+            value=getattr(args,name,default)
+            if type(value) is not int or value<1:
+                raise ValueError(f'{name} must be a positive integer')
         super().__init__(args)
         self._token_counts={}
         self._token_count_lock=threading.Lock()
+
+    def run_book(self,spec):
+        if spec.get('recovery_source'):
+            recovery.ensure_separate(spec['recovery_source'],self.args.out)
+        return super().run_book(spec)
 
     def backoff(self,attempt):
         time.sleep(min(2**attempt,4))
@@ -274,8 +306,21 @@ class Runner(v2.Runner):
                 if api_key:headers['Authorization']='Bearer '+api_key
                 request=urllib.request.Request(self.base.removesuffix('/v1')+'/tokenize',
                     data=encoded,headers=headers)
-                with urllib.request.urlopen(request,timeout=self.args.timeout) as response:
-                    size=json.load(response).get('count')
+                retries=getattr(self.args,'tokenize_attempts',3)
+                for token_attempt in range(retries):
+                    try:
+                        with urllib.request.urlopen(request,timeout=self.args.timeout) as response:
+                            size=json.load(response).get('count')
+                        break
+                    except urllib.error.HTTPError as exc:
+                        if exc.code==413:
+                            # Subdivide source structures; this is not an API outage.
+                            return False
+                        if exc.code not in (429,502,503,504) or token_attempt+1==retries:
+                            raise
+                    except (urllib.error.URLError,TimeoutError,ConnectionError):
+                        if token_attempt+1==retries:raise
+                    self.backoff(token_attempt)
                 if type(size) is not int or size<0:
                     raise ValueError('Service /tokenize must return a nonnegative integer count')
                 with self._token_count_lock:self._token_counts[key]=size
@@ -297,8 +342,26 @@ class Runner(v2.Runner):
         identity={'version':VERSION,'book':book,'model':self.args.model,'api_url':self.base,
             'context':self.args.context,'output_tokens':self.args.output_tokens,'overlap':self.args.overlap,
             'attempts':getattr(self.args,'attempts',3),'tokenizer':self.args.tokenizer,
+            'repair_batch_size':getattr(self.args,'repair_batch_size',8),
+            'repair_attempts':getattr(self.args,'repair_attempts',2),
+            'repair_max_requests':getattr(self.args,'repair_max_requests',128),
+            'tokenize_attempts':getattr(self.args,'tokenize_attempts',3),
             'code':{p.name:v2.legacy.digest(p.read_bytes()) for p in code_files},
             'units_sha256':v2.legacy.digest(v2.legacy.encode(units).encode())}
+        origin=(recovery.snapshot(spec['recovery_source'],self.args.out,book,units,identity['units_sha256'])
+                if spec.get('recovery_source') else None)
+        if origin:
+            if (spec.get('recovery_source_sha256') is not None
+                    and spec['recovery_source_sha256']!=v2.legacy.digest(v2.legacy.encode(origin['origin']).encode())):
+                raise ValueError('Prepared recovery source fingerprint differs')
+            identity['recovery_source']=origin['origin']
+            # Validate every reused leaf before dispatching any model requests.
+            for key,state in origin['chunks'].items():
+                if state['status']=='split':continue
+                lo,hi=map(int,key.split('_'))
+                packet=structure.packet(units,lo,hi,self.args.overlap)
+                _,bad,omitted=validate_items(state.get('accepted_raw',[]),packet,text,book)
+                if bad or omitted:raise ValueError('Saved recovery entries no longer match source')
         if (folder/'INPUT.json').exists() and read(folder/'INPUT.json')!=identity:
             raise ValueError('Run identity differs; use a new output directory')
         write(folder/'INPUT.json',identity);write(folder/'units.json',units)
@@ -306,6 +369,7 @@ class Runner(v2.Runner):
         stats={'execution_id':execution_id,'requests':0,'cache_hits':0,'raw_response_reuse':0,
                'request_seconds':0.,'prompt_tokens':0,'completion_tokens':0,'unknown_usage':0,
                'repair_requests':0,'technical_errors':0,'validation_errors':0}
+        stats.update(recovery_reused_entries=0,recovery_reused_repairs=0)
         entries=[];leaves=[];lock=threading.Lock()
 
         def add(key,value=1):
@@ -325,48 +389,114 @@ class Runner(v2.Runner):
                 leaves.append({'lo':lo,'hi':hi,'status':saved['status'],'entries':len(built),
                     'unresolved':len(saved.get('unresolved',[])),
                     'transport_retryable':saved.get('transport_retryable',False),
+                    'transport_failure_unresolved':saved.get('transport_failure_unresolved',
+                        saved.get('transport_retryable',False) or saved.get('http504_unresolved',False)),
                     'http504_unresolved':saved.get('http504_unresolved',False),
                     'technical_failure_unresolved':saved.get('technical_failure_unresolved',False),
                     'excluded_items':len(saved.get('excluded',[])),
+                    'repair_stop_reasons':dict(Counter(item.get('repair_stop_reason','legacy_unclassified')
+                        for item in saved.get('unresolved',[]))),
                     'excluded_units':sum(bool(r.get('excluded_zone')) for r in units[lo:hi])})
 
         def process(lo,hi):
             key=f'{lo:08d}_{hi:08d}';cache=folder/'chunks'/f'{key}.json'
             part=structure.packet(units,lo,hi,self.args.overlap)
+            seed=(origin['chunks'].get(key) if origin else None)
+            if seed and seed['status']=='split' and not cache.exists():
+                write(cache,{'status':'split','mid':seed['mid'],'recovered_from':key})
+                return [(lo,seed['mid']),(seed['mid'],hi)]
             if cache.exists():
                 saved=read(cache)
                 if saved['status']=='split':return [(lo,saved['mid']),(saved['mid'],hi)]
                 if not (saved.get('transport_retryable') and
                         saved.get('transport_round',1)<getattr(self.args,'transport_round',1)):
                     add('cache_hits');complete(lo,hi,saved,part);return
+            seed_accepted={};seed_pending=None;seed_excluded=[]
+            if seed:
+                good,bad,omitted=validate_items(seed.get('accepted_raw',[]),part,text,book)
+                if bad or omitted:raise ValueError('Saved recovery entries no longer match source')
+                seed_accepted={row['built']['id']:row['raw'] for row in good}
+                add('recovery_reused_entries',len(seed_accepted))
+                if seed['status']=='completed':
+                    reused={**seed,'transport_retryable':False,'http504_unresolved':False,
+                            'transport_failure_unresolved':False,
+                            'technical_failure_unresolved':False,'recovered_from':key}
+                    write(cache,reused);complete(lo,hi,reused,part);return
+                tasks=seed.get('unresolved',[])
+                if tasks and all(isinstance(task,dict) and isinstance(task.get('entry'),dict)
+                                 and isinstance(task.get('repair_id'),str) for task in tasks):
+                    if len({task['repair_id'] for task in tasks})!=len(tasks):
+                        raise ValueError('Duplicate recovery source repair IDs')
+                    seed_pending=[]
+                    for task in tasks:
+                        restored=False
+                        for fix in origin['repairs'].get(key,[]):
+                            if not isinstance(fix,dict) or fix.get('repair_id')!=task['repair_id']:
+                                continue
+                            value=fix.get('entry')
+                            if not isinstance(value,dict):continue
+                            try:
+                                if not anchors.check_repair_identity(task['entry'],value,part):continue
+                                valid,invalid,dropped=validate_items([value],part,text,book)
+                            except (KeyError,IndexError,TypeError,ValueError):continue
+                            if invalid or dropped or len(valid)!=1:continue
+                            seed_accepted.setdefault(valid[0]['built']['id'],valid[0]['raw'])
+                            add('recovery_reused_repairs');restored=True;break
+                        if not restored:seed_pending.append(dict(task))
+                    if not seed_pending:
+                        reused={'status':'completed','accepted_raw':list(seed_accepted.values()),
+                                'unresolved':[],'excluded':seed.get('excluded',[]),
+                                'transport_retryable':False,'http504_unresolved':False,
+                                'transport_failure_unresolved':False,
+                                'technical_failure_unresolved':False,'recovered_from':key}
+                        write(cache,reused);complete(lo,hi,reused,part);return
+                seed_excluded=list(seed.get('excluded',[]))
             if all(r.get('excluded_zone') or not r['text'].strip() for r in units[lo:hi]):
                 saved={'status':'completed','accepted_raw':[],'excluded':[],'unresolved':[], 'rule_only':True}
                 write(cache,saved);complete(lo,hi,saved,part);return
             # Reserve space for repair tasks instead of filling the discovery budget.
             reserve={'role':'user','content':'x'*6000}
-            if not self.fits_messages([{'role':'system','content':PROMPT},
+            if seed_pending is None and not self.fits_messages([{'role':'system','content':PROMPT},
                 {'role':'user','content':v2.legacy.encode(part)},reserve]):
                 if hi-lo>1:
                     mid=(lo+hi)//2;write(cache,{'status':'split','mid':mid});return [(lo,mid),(mid,hi)]
                 saved={'status':'oversized_structure','accepted_raw':[],'excluded':[],
                        'unresolved':[{'error':'Intact structure exceeds budget'}]}
                 write(cache,saved);complete(lo,hi,saved,part);return
-            accepted={};pending=None;excluded=[];last_error='';scanned=False
+            accepted=seed_accepted;pending=seed_pending;excluded=seed_excluded;last_error=''
+            scanned=seed_pending is not None
             split=False
             transport_retryable=False;http504_unresolved=False;technical_failure_unresolved=False
+            transport_failure_unresolved=False
             transport_round=getattr(self.args,'transport_round',1)
-            for attempt in range(getattr(self.args,'attempts',3)):
+            attempt=-1;discovery_attempts=0;repair_requests=0
+            repair_tries=Counter();input_blocked=set();output_blocked=set()
+            batch_limit=getattr(self.args,'repair_batch_size',8)
+            item_attempts=getattr(self.args,'repair_attempts',2)
+            request_limit=getattr(self.args,'repair_max_requests',128)
+            while True:
                 repairing=pending is not None
                 request_part={**part}
                 selected=[]
                 if repairing:
+                    if repair_requests>=request_limit:break
                     for task in pending:
+                        rid=task['repair_id']
+                        if rid in input_blocked or repair_tries[rid]>=item_attempts:continue
+                        if len(selected)>=batch_limit:break
                         trial={**part,'repair_tasks':selected+[task]}
                         msgs=[{'role':'system','content':REPAIR_PROMPT},{'role':'user','content':v2.legacy.encode(trial)}]
-                        if not self.fits_messages(msgs):continue
+                        if not self.fits_messages(msgs):
+                            if not selected:input_blocked.add(rid)
+                            continue
                         selected.append(task)
                     if not selected:break
                     request_part['repair_tasks']=selected
+                    repair_requests+=1
+                else:
+                    if discovery_attempts>=getattr(self.args,'attempts',3):break
+                    discovery_attempts+=1
+                attempt+=1
                 messages=[{'role':'system','content':REPAIR_PROMPT if repairing else PROMPT},
                           {'role':'user','content':v2.legacy.encode(request_part)}]
                 if last_error and not repairing:
@@ -378,20 +508,30 @@ class Runner(v2.Runner):
                 if response_path.exists():
                     response=read(response_path);add('raw_response_reuse')
                     technical_failure_unresolved=False
+                    transport_failure_unresolved=False
                 else:
                     payload={'model':self.args.model,'temperature':0,
                         'max_tokens':self.args.output_tokens,'chat_template_kwargs':{'enable_thinking':False},
                         'response_format':{'type':'json_object'},'messages':messages}
                     payload_hash=v2.legacy.digest(v2.legacy.encode(payload).encode())
                     if previous:
-                        if previous.get('http_status')!=504:
+                        previous_code=previous.get('http_status')
+                        retryable_error=(previous_code in TRANSPORT_HTTP_STATUSES if previous_code is not None
+                                         else previous.get('transport_retryable_error',False))
+                        if not retryable_error:
                             technical_failure_unresolved=True
-                            last_error=previous['error'];continue
+                            last_error=previous['error']
+                            if previous_code is not None:
+                                break
+                            if repairing:
+                                for task in selected:repair_tries[task['repair_id']]+=1
+                            continue
                         if previous.get('payload_sha256')!=payload_hash:
                             raise ValueError('Retry payload changed for checkpointed request')
                         if previous['last_round']>=transport_round or previous['transport_attempts']>=3:
                             technical_failure_unresolved=True
-                            http504_unresolved=True
+                            transport_failure_unresolved=True
+                            http504_unresolved=previous_code==504
                             transport_retryable=previous['transport_attempts']<3 and transport_round<3
                             break
                     event('request_started',chunk=key,attempt=attempt+1,repair=repairing)
@@ -404,24 +544,32 @@ class Runner(v2.Runner):
                         add('technical_errors');add('unknown_usage')
                         technical_failure_unresolved=True
                         last_error=f'{type(exc).__name__}: {exc}'
-                        code=getattr(exc,'code',getattr(exc,'status_code',None))
-                        if code is None and re.search(r'\bHTTP(?: Error)?\s*504\b',last_error,re.I):code=504
+                        code,retryable_error=classify_transport_error(exc)
+                        transport_failure_unresolved=retryable_error
                         count=previous.get('transport_attempts',0)+1
                         write(error_path,{'error':last_error,'http_status':code,
+                            'transport_retryable_error':retryable_error,
                             'transport_attempts':count,'last_round':transport_round,
                             'payload_sha256':payload_hash,
                             'rounds':previous.get('rounds',[])+[transport_round]})
                         event('request_failed',chunk=key,attempt=attempt+1,error=last_error)
                         add('request_seconds',time.monotonic()-start)
-                        if code==504:
-                            http504_unresolved=True
+                        if retryable_error:
+                            http504_unresolved=code==504
                             transport_retryable=count<3 and transport_round<3
                             break
-                        if attempt+1<getattr(self.args,'attempts',3):self.backoff(attempt)
+                        if code is not None:
+                            # Repeating a rejected route/auth/payload cannot
+                            # improve it and must not consume model retries.
+                            break
+                        if repairing:
+                            for task in selected:repair_tries[task['repair_id']]+=1
+                        self.backoff(min(attempt,2))
                         continue
                     elapsed=time.monotonic()-start;add('request_seconds',elapsed)
                     write(response_path,response)
                     technical_failure_unresolved=False
+                    transport_failure_unresolved=False
                     usage=response.get('usage') or {}
                     for name in ('prompt_tokens','completion_tokens'):
                         if isinstance(usage.get(name),int):add(name,usage[name])
@@ -429,6 +577,18 @@ class Runner(v2.Runner):
                     event('request_received',chunk=key,attempt=attempt+1,seconds=elapsed,usage=usage)
                 try:
                     choice=response['choices'][0]
+                    if repairing and choice.get('finish_reason')=='length':
+                        if len(selected)>1:
+                            batch_limit=max(1,len(selected)//2)
+                            event('repair_batch_split',chunk=key,attempt=attempt+1,
+                                  selected_items=len(selected),next_batch_limit=batch_limit)
+                        else:
+                            rid=selected[0]['repair_id'];repair_tries[rid]+=1;output_blocked.add(rid)
+                        last_error='Repair response exceeds output budget'
+                        continue
+                    if repairing:
+                        for task in selected:
+                            rid=task['repair_id'];repair_tries[rid]+=1;output_blocked.discard(rid)
                     if choice.get('finish_reason')=='length' and not repairing:
                         split=True;break
                     if choice.get('finish_reason')!='stop':raise ValueError('Incomplete model response')
@@ -477,10 +637,23 @@ class Runner(v2.Runner):
             if split and hi-lo>1 and not accepted:
                 mid=(lo+hi)//2;write(cache,{'status':'split','mid':mid});return [(lo,mid),(mid,hi)]
             unresolved=pending or ([] if scanned and not split else [{'error':last_error or 'Incomplete scan'}])
+            if pending:
+                annotated=[]
+                for task in unresolved:
+                    rid=task['repair_id']
+                    reason=('transport_deferred' if technical_failure_unresolved else
+                            'input_budget' if rid in input_blocked else
+                            'output_budget' if rid in output_blocked else
+                            'attempts_exhausted' if repair_tries[rid]>=item_attempts else
+                            'request_budget')
+                    annotated.append({**task,'repair_attempts':repair_tries[rid],
+                                      'repair_stop_reason':reason})
+                unresolved=annotated
             saved={'status':'completed' if scanned and not unresolved else 'partial',
                    'accepted_raw':list(accepted.values()),'unresolved':unresolved,'excluded':excluded,
                    'transport_retryable':transport_retryable,'http504_unresolved':http504_unresolved,
                    'technical_failure_unresolved':technical_failure_unresolved,
+                   'transport_failure_unresolved':transport_failure_unresolved,
                    'transport_round':transport_round}
             write(cache,saved);complete(lo,hi,saved,part)
             event('chunk_finished',chunk=key,status=saved['status'],entries=len(accepted),unresolved=len(unresolved))
@@ -506,6 +679,11 @@ class Runner(v2.Runner):
             'structural_review':sum(e.get('structural_review_required',False) for e in entries),
             'eligible_entries':sum(e.get('eligible_for_name_screening',False) for e in entries),
             'unresolved_items':sum(x['unresolved'] for x in leaves),
+            'repair_stop_reasons':dict(sum((Counter(x['repair_stop_reasons']) for x in leaves),Counter())),
+            'transport_pending_chunks':sum(x['transport_retryable'] for x in leaves),
+            'transport_unresolved_chunks':sum(x['transport_failure_unresolved'] for x in leaves),
+            # Legacy drivers select later rounds using this field. Keep it as
+            # a compatibility alias for ALL retryable transport failures.
             'http504_pending_chunks':sum(x['transport_retryable'] for x in leaves),
             'http504_unresolved_chunks':sum(x['http504_unresolved'] for x in leaves),
             'technical_failure_unresolved_chunks':sum(x['status']!='completed' and x['technical_failure_unresolved'] for x in leaves),
@@ -530,8 +708,13 @@ def main():
     p.add_argument('--workers',type=int,default=1024);p.add_argument('--book-workers',type=int,default=10)
     p.add_argument('--overlap',type=int,default=4);p.add_argument('--timeout',type=int,default=900)
     p.add_argument('--transport-round',type=int,choices=(1,2,3),default=1)
+    p.add_argument('--repair-batch-size',type=int,default=8)
+    p.add_argument('--repair-attempts',type=int,default=2)
+    p.add_argument('--repair-max-requests',type=int,default=128)
+    p.add_argument('--tokenize-attempts',type=int,default=3)
     args=p.parse_args();args.attempts=3
-    if min(args.workers,args.book_workers,args.output_tokens,args.timeout)<1 or args.overlap<0 or args.context<=args.output_tokens+4096:
+    if min(args.workers,args.book_workers,args.output_tokens,args.timeout,args.repair_batch_size,
+           args.repair_attempts,args.repair_max_requests,args.tokenize_attempts)<1 or args.overlap<0 or args.context<=args.output_tokens+4096:
         p.error('Invalid concurrency or budget settings')
     specs=read(args.manifest)
     if not specs or len({s['identifier'] for s in specs})!=len(specs):p.error('Unique book identifiers required')
@@ -546,6 +729,9 @@ def main():
                 write(args.out/'SUMMARY.json',{'version':VERSION,'expected_books':len(specs),'finished_books':len(summaries),
                     'elapsed_seconds':time.monotonic()-started,'configured_workers':args.workers,
                     'transport_round':args.transport_round,
+                    'transport_pending_chunks':sum(s.get('transport_pending_chunks',0) for s in summaries),
+                    'transport_unresolved_chunks':sum(s.get('transport_unresolved_chunks',0) for s in summaries),
+                    # Compatibility selector for existing v5 round drivers.
                     'http504_pending_chunks':sum(s.get('http504_pending_chunks',0) for s in summaries),
                     'http504_unresolved_chunks':sum(s.get('http504_unresolved_chunks',0) for s in summaries),
                     'peak_active_requests_this_process':runner.peak_requests,'books':summaries})

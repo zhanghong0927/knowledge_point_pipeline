@@ -9,10 +9,13 @@ import os
 import re
 import sys
 import time
+import urllib.error
 import urllib.request
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from shared_request_pool import completed
 from typing import Any
 
 DEFAULT_API_URL = "http://jb-aionlineinferenceservice-160662987482878464-8000-nhss-job.v5000-prod.nhss.zhejianglab.com/v1/chat/completions"
@@ -590,6 +593,7 @@ def normalize_model_item(
         result.update({
             "decision": "review",
             "api_status": "invalid_field_results",
+            "failure_kind": "content_or_format",
             "reason": "未完整返回有效判断: " + ", ".join(invalid_fields),
         })
         return result
@@ -892,6 +896,14 @@ def extract_json(content: str) -> dict[str, Any]:
         raise
 
 
+def failure_kind(exc: Exception) -> str:
+    if isinstance(exc, urllib.error.HTTPError):
+        return "transport" if exc.code in (408,429,500,502,503,504) else "content_or_format"
+    if isinstance(exc, (urllib.error.URLError, TimeoutError, ConnectionError)):
+        return "transport"
+    return "content_or_format"
+
+
 def call_api(batch_id: str, batch: list[dict[str, Any]], args: argparse.Namespace) -> tuple[str, list[dict[str, Any]], str]:
     payload = {
         "model": args.model,
@@ -911,6 +923,7 @@ def call_api(batch_id: str, batch: list[dict[str, Any]], args: argparse.Namespac
             headers["Authorization"] = f"Bearer {api_key}"
     data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     last_error = ""
+    last_kind = "content_or_format"
     for attempt in range(args.retries + 1):
         try:
             req = urllib.request.Request(args.api_url, data=data, headers=headers, method="POST")
@@ -924,15 +937,16 @@ def call_api(batch_id: str, batch: list[dict[str, Any]], args: argparse.Namespac
             for rec in batch:
                 item = result_map.get(rec["id"])
                 if not item:
-                    out.append({**rec, "decision": "review", "confidence": "low", "reason": "missing_result", "api_status": "missing_result", "api_error": ""})
+                    out.append({**rec, "decision": "review", "confidence": "low", "reason": "missing_result", "api_status": "missing_result", "api_error": "", "failure_kind": "content_or_format"})
                     continue
                 out.append(normalize_model_item(rec, item))
             return batch_id, out, body
         except Exception as exc:
             last_error = repr(exc)
+            last_kind = failure_kind(exc)
             if attempt < args.retries:
                 time.sleep(min(2 ** attempt, 8))
-    return batch_id, [{**rec, "decision": "review", "confidence": "low", "reason": "api_error_after_retries", "api_status": "api_error_after_retries", "api_error": last_error} for rec in batch], ""
+    return batch_id, [{**rec, "decision": "review", "confidence": "low", "reason": "api_error_after_retries", "api_status": "api_error_after_retries", "api_error": last_error, "failure_kind": last_kind} for rec in batch], ""
 
 
 def local_empty_titles_result(record: dict[str, Any]) -> dict[str, Any]:
@@ -1037,6 +1051,7 @@ def write_full_record_outputs(
                 "confidence": compact(result.get("confidence")) or "low",
                 "reason": compact(result.get("reason")) or "not_processed",
                 "api_status": compact(result.get("api_status")) or "not_processed",
+                "failure_kind": compact(result.get("failure_kind")),
                 "field_results": result.get("field_results", {}),
                 "pair_consistency": result.get("pair_consistency", ""),
                 "original_knowledge_point": compact(result.get("original_knowledge_point")) or compact(record.get("knowledge_point")),
@@ -1143,9 +1158,8 @@ def run_round(round_records: list[dict[str, Any]], args: argparse.Namespace, all
     progress = Progress(len(batches), f"LLM title format {round_label}")
     raw_handle = raw_path.open("a", encoding="utf-8")
     try:
-        with cf.ThreadPoolExecutor(max_workers=args.workers) as pool:
-            futures = [pool.submit(call_api, batch_id, batch, args) for batch_id, batch in batches]
-            for fut in cf.as_completed(futures):
+        if batches:
+            for _, fut in completed(lambda pair: call_api(pair[0], pair[1], args), batches, args.workers):
                 batch_id, batch_results, raw = fut.result()
                 results.extend(batch_results)
                 append_results(all_path, batch_results)

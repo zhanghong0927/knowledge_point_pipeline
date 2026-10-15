@@ -1,0 +1,6 @@
+{
+  "base": "http://127.0.0.1:40707/_jobs/taxonomy_boundary_ae568c055d440d7d9964e3c5",
+  "model": "/mnt/si002647a3lv/zhanghong/model/modelscope/Qwen/Qwen3.8-27B",
+  "max_bytes": 50000,
+  "policy": "empty"
+}

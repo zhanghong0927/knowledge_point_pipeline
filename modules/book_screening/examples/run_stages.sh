@@ -21,6 +21,13 @@ oss_args=()
 if [[ -n "${SOURCE_OSS_ENDPOINT:-}" ]]; then
   oss_args=(--source-oss-endpoint "$SOURCE_OSS_ENDPOINT")
 fi
+staged_round_args=()
+if [[ -n "${STAGED_SCREENING_ROUND:-}" ]]; then
+  staged_round_args=(--only-round "$STAGED_SCREENING_ROUND")
+elif [[ "${STAGED_SCREENING_FINALIZE:-0}" == 1 ]]; then
+  staged_round_args=(--finalize-only)
+fi
+staged_workers="${STAGED_SCREENING_WORKERS:-}"
 stage() {
   case "$1" in
     1)
@@ -33,7 +40,11 @@ stage() {
     3)
       : "${API_URL:?Set full chat-completions API_URL}"
       : "${MODEL:?Set exact MODEL}"
-      python3 scripts/llm_refine_important_book_metadata.py --input-csv "$important" --subject-config "$SUBJECT_CONFIG" --output-dir "$RUN_DIR/03_important_metadata" --api-url "$API_URL" --model "$MODEL" --sample-size 0 --workers "${META_WORKERS:-20}" --retries 2
+      metadata_args=("${staged_round_args[@]}")
+      if [[ ${#metadata_args[@]} -eq 0 && -f "$RUN_DIR/03_important_metadata/ORCHESTRATION_STATUS.json" ]]; then
+        metadata_args=(--finalize-only)
+      fi
+      python3 scripts/llm_refine_important_book_metadata.py --input-csv "$important" --subject-config "$SUBJECT_CONFIG" --output-dir "$RUN_DIR/03_important_metadata" --api-url "$API_URL" --model "$MODEL" --sample-size 0 --workers "${staged_workers:-${META_WORKERS:-20}}" --retries 2 "${metadata_args[@]}"
       ;;
     4)
       python3 scripts/prepare_post_metadata_md_input.py --dictionary-csv "$dictionary" --important-csv "$important" --llm-result-csv "$RUN_DIR/03_important_metadata/书目大模型精筛结果.csv" --output-csv "$RUN_DIR/04_input/MD审核输入.csv" --summary-json "$RUN_DIR/04_input/SUMMARY.json"
@@ -43,20 +54,41 @@ stage() {
       : "${API_URL:?Set full chat-completions API_URL}"
       : "${MODEL:?Set exact MODEL}"
       python3 -c 'from pathlib import Path; import sys; from screening_io import read_csv,write_csv; fields,rows=read_csv(Path(sys.argv[1])); write_csv(Path(sys.argv[2]),fields,rows)' "$RUN_DIR/04_tracks/important.csv" "$RUN_DIR/05_important_md/MD审核试验样本.csv"
-      python3 scripts/general_book_screening_pipeline.py audit --input-csv "$RUN_DIR/04_tracks/important.csv" --output "$RUN_DIR/05_important_md" --subject-config "$SUBJECT_CONFIG" --api-url "$API_URL" --model "$MODEL" --workers "${MD_WORKERS:-50}" --sample-count 16 --chunk-chars 1200 --retries 2 "${path_args[@]}" "${oss_args[@]}"
-      python3 scripts/general_book_screening_pipeline.py materialize --input-csv "$RUN_DIR/04_tracks/important.csv" --output "$RUN_DIR/05_important_md"
+      md_args=("${staged_round_args[@]}")
+      if [[ ${#md_args[@]} -eq 0 && -f "$RUN_DIR/05_important_md/ORCHESTRATION_STATUS.json" ]]; then
+        md_args=(--finalize-only)
+      fi
+      python3 scripts/general_book_screening_pipeline.py audit --input-csv "$RUN_DIR/04_tracks/important.csv" --output "$RUN_DIR/05_important_md" --subject-config "$SUBJECT_CONFIG" --api-url "$API_URL" --model "$MODEL" --workers "${staged_workers:-${MD_WORKERS:-50}}" --sample-count 16 --chunk-chars 1200 --retries 2 "${path_args[@]}" "${oss_args[@]}" "${md_args[@]}"
+      if [[ ${#md_args[@]} -eq 0 ]]; then
+        python3 scripts/general_book_screening_pipeline.py materialize --input-csv "$RUN_DIR/04_tracks/important.csv" --output "$RUN_DIR/05_important_md"
+      fi
       ;;
     6)
       : "${API_URL:?Set full chat-completions API_URL}"
       : "${MODEL:?Set exact MODEL}"
-      python3 screening_io.py dictionary-prepare --input-csv "$RUN_DIR/04_tracks/dictionary.csv" --subject-config "$SUBJECT_CONFIG" --out "$RUN_DIR/05_dictionary_input" "${path_args[@]}" "${oss_args[@]}"
+      if [[ ! -d "$RUN_DIR/05_dictionary_input" ]]; then
+        python3 screening_io.py dictionary-prepare --input-csv "$RUN_DIR/04_tracks/dictionary.csv" --subject-config "$SUBJECT_CONFIG" --out "$RUN_DIR/05_dictionary_input" "${path_args[@]}" "${oss_args[@]}"
+      fi
       ready="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["ready"])' "$RUN_DIR/05_dictionary_input/PREPARED.json")"
-      if [[ "$ready" -gt 0 ]]; then
-        python3 dictionary_md_v3/dictionary_md_audit.py all --root "$RUN_DIR/05_dictionary_input" --config "$RUN_DIR/05_dictionary_input/audit_config.json" --output "$RUN_DIR/05_dictionary_md" --api-url "$API_URL" --model "$MODEL" --workers "${DICT_WORKERS:-16}" --sample-count 16 --chunk-chars 1400 --retries 2 --max-tokens 5500 --knowledge-value-mode --pass-challenge --skip-priority-workbook --symlink-classified
+      if [[ "$ready" -gt 0 || -n "${STAGED_SCREENING_ROUND:-}" || "${STAGED_SCREENING_FINALIZE:-0}" == 1 || -f "$RUN_DIR/05_dictionary_md/CHALLENGE_ORCHESTRATION_STATUS.json" ]]; then
+        if [[ "${STAGED_SCREENING_PHASE:-primary}" == primary && "${STAGED_SCREENING_ROUND:-1}" == 1 && "${STAGED_SCREENING_FINALIZE:-0}" != 1 ]]; then
+          python3 dictionary_md_v3/dictionary_md_audit.py prepare --root "$RUN_DIR/05_dictionary_input" --config "$RUN_DIR/05_dictionary_input/audit_config.json" --output "$RUN_DIR/05_dictionary_md" --sample-count 16 --chunk-chars 1400 --knowledge-value-mode
+        fi
+        dict_action=all
+        if [[ -n "${STAGED_SCREENING_ROUND:-}" ]]; then
+          dict_action="${STAGED_SCREENING_PHASE:-primary}"
+          [[ "$dict_action" == primary ]] && dict_action=run
+        elif [[ "${STAGED_SCREENING_FINALIZE:-0}" == 1 || -f "$RUN_DIR/05_dictionary_md/CHALLENGE_ORCHESTRATION_STATUS.json" ]]; then
+          dict_action=materialize
+          staged_round_args=(--finalize-only)
+        fi
+        python3 dictionary_md_v3/dictionary_md_audit.py "$dict_action" --root "$RUN_DIR/05_dictionary_input" --config "$RUN_DIR/05_dictionary_input/audit_config.json" --output "$RUN_DIR/05_dictionary_md" --api-url "$API_URL" --model "$MODEL" --workers "${staged_workers:-${DICT_WORKERS:-16}}" --sample-count 16 --chunk-chars 1400 --retries 2 --max-tokens 5500 --knowledge-value-mode --pass-challenge --skip-priority-workbook --symlink-classified "${staged_round_args[@]}"
       else
         python3 -c 'from pathlib import Path; import sys; from screening_io import write_csv; write_csv(Path(sys.argv[1]),["subject","file_name","source_path","decision"],[])' "$RUN_DIR/05_dictionary_md/全学科审核结果.csv"
       fi
-      python3 screening_io.py dictionary-finalize --prepared "$RUN_DIR/05_dictionary_input" --audit-results "$RUN_DIR/05_dictionary_md/全学科审核结果.csv" --out "$RUN_DIR/06_dictionary_final"
+      if [[ -z "${STAGED_SCREENING_ROUND:-}" ]]; then
+        python3 screening_io.py dictionary-finalize --prepared "$RUN_DIR/05_dictionary_input" --audit-results "$RUN_DIR/05_dictionary_md/全学科审核结果.csv" --out "$RUN_DIR/06_dictionary_final"
+      fi
       ;;
     7)
       python3 screening_io.py merge-results --input-csv "$RUN_DIR/05_important_md/最终审核结果.csv" --input-csv "$RUN_DIR/06_dictionary_final/最终审核结果.csv" --out "$RUN_DIR/07_final"

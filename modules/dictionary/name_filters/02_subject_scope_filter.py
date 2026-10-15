@@ -15,6 +15,8 @@ import urllib.request
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from shared_request_pool import completed
 from typing import Any
 
 
@@ -248,6 +250,7 @@ def invalid_result(
     reason: str,
     api_status: str,
     api_error: str = "",
+    failure_kind: str = "content_or_format",
 ) -> dict[str, Any]:
     return {
         **record,
@@ -261,6 +264,7 @@ def invalid_result(
         "reason": reason,
         "api_status": api_status,
         "api_error": api_error,
+        "failure_kind": failure_kind,
     }
 
 
@@ -368,6 +372,14 @@ def extract_json(content: str) -> dict[str, Any]:
         raise
 
 
+def failure_kind(exc: Exception) -> str:
+    if isinstance(exc, urllib.error.HTTPError):
+        return "transport" if exc.code in (408,429,500,502,503,504) else "content_or_format"
+    if isinstance(exc, (urllib.error.URLError, TimeoutError, ConnectionError)):
+        return "transport"
+    return "content_or_format"
+
+
 def call_api(
     batch_id: str,
     batch: list[dict[str, Any]],
@@ -401,6 +413,7 @@ def call_api(
             headers["Authorization"] = f"Bearer {api_key}"
     data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     last_error = ""
+    last_kind = "content_or_format"
     for attempt in range(args.retries + 1):
         try:
             request = urllib.request.Request(args.api_url, data=data, headers=headers, method="POST")
@@ -426,6 +439,7 @@ def call_api(
                     output.append(normalize_model_item(record, item, config, digest))
             return batch_id, output, body
         except urllib.error.HTTPError as exc:
+            last_kind = failure_kind(exc)
             response_body = exc.read().decode("utf-8", errors="replace")
             last_error = (
                 f"HTTPError(code={exc.code}, url={exc.url!r}, "
@@ -435,10 +449,11 @@ def call_api(
                 time.sleep(min(2 ** attempt, 8))
         except Exception as exc:
             last_error = repr(exc)
+            last_kind = failure_kind(exc)
             if attempt < args.retries:
                 time.sleep(min(2 ** attempt, 8))
     return batch_id, [
-        invalid_result(record, config, digest, "api_error_after_retries", "api_error_after_retries", last_error)
+        invalid_result(record, config, digest, "api_error_after_retries", "api_error_after_retries", last_error, last_kind)
         for record in batch
     ], ""
 
@@ -536,6 +551,7 @@ def write_full_record_outputs(
                 "matched_l1": result.get("matched_l1", []),
                 "reason": compact(result.get("reason")) or "not_processed",
                 "api_status": compact(result.get("api_status")) or "not_processed",
+                "failure_kind": compact(result.get("failure_kind")),
                 "stage1_policy_version": compact(stage1.get("policy_version")) if isinstance(stage1, dict) else "",
             }
             encoded = json.dumps(source_row, ensure_ascii=False, separators=(",", ":")) + "\n"
@@ -566,12 +582,9 @@ def run_round(
     batches = [(f"{round_label}_batch_{index:06d}", batch) for index, batch in chunks(records, batch_size)]
     progress = Progress(len(batches), f"LLM subject scope {round_label}")
     with raw_path.open("a", encoding="utf-8") as raw_handle:
-        with cf.ThreadPoolExecutor(max_workers=args.workers) as pool:
-            futures = [
-                pool.submit(call_api, batch_id, batch, args, config, digest, prompt)
-                for batch_id, batch in batches
-            ]
-            for future in cf.as_completed(futures):
+        if batches:
+            for _, future in completed(lambda pair: call_api(pair[0], pair[1], args, config, digest, prompt),
+                                       batches, args.workers):
                 batch_id, batch_results, raw = future.result()
                 results.extend(batch_results)
                 append_results(judgments_path, batch_results)

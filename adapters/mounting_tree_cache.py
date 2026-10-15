@@ -44,7 +44,7 @@ def validate_asset(destination, value):
     expected = manifest.get('assets', {})
     if any(path.is_symlink() for path in destination.rglob('*')):
         raise ValueError('Unexpected symlink in taxonomy asset')
-    actual = {str(path.relative_to(destination)) for path in destination.rglob('*')
+    actual = {path.relative_to(destination).as_posix() for path in destination.rglob('*')
               if path.is_file() and path.name != 'MANIFEST.json'}
     if not expected or actual != set(expected):
         raise ValueError('Taxonomy asset file coverage changed')
@@ -136,7 +136,7 @@ def publish(root, value, target, group, report):
             'model_reviewed': report['verified_nodes'] > 0, 'expert_approved': False,
             'fallback_nodes': report['fallback_nodes'],
             'enriched_tree_sha256': output_hash,
-            'assets': {str(path.relative_to(staged)): bridge.sha(path)
+            'assets': {path.relative_to(staged).as_posix(): bridge.sha(path)
                        for path in staged.rglob('*') if path.is_file()},
         })
         try:

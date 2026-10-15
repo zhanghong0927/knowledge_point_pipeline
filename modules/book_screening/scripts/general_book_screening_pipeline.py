@@ -10,14 +10,19 @@ import os
 import random
 import re
 import subprocess
+import sys
 import threading
 import time
 import urllib.request
 import unicodedata
 from collections import Counter, defaultdict
-from contextlib import ExitStack
+from contextlib import ExitStack, closing
 from dataclasses import dataclass
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from shared_request_pool import completed as shared_completed
+from staged_screening_state import (TRANSPORT_ERRORS, identity, require_identity,
+                                    save_status, transient_transport)
 from typing import Any, Iterable
 
 
@@ -1945,6 +1950,7 @@ def request_llm(
     timeout: int,
     retries: int,
     max_tokens: int,
+    defer_transport_retry: bool = False,
 ) -> dict[str, Any]:
     body = {
         "model": model,
@@ -1960,6 +1966,7 @@ def request_llm(
     }
     encoded = json.dumps(body, ensure_ascii=False).encode("utf-8")
     error = ""
+    failure_kind = 'content_or_format'
     for attempt in range(1, retries + 2):
         try:
             headers = {"Content-Type": "application/json"}
@@ -1980,9 +1987,17 @@ def request_llm(
             }
         except Exception as exc:
             error = f"{type(exc).__name__}: {exc}"
+            failure_kind = ('transport' if transient_transport(exc) else
+                            'terminal_transport' if isinstance(exc, TRANSPORT_ERRORS)
+                            else 'content_or_format')
+            if defer_transport_retry and isinstance(exc, TRANSPORT_ERRORS):
+                break
             if attempt <= retries:
                 time.sleep(min(2 ** (attempt - 1), 5))
-    return {"ok": False, "error": error, "attempt": retries + 1}
+    result = {"ok": False, "error": error, "attempt": attempt}
+    if defer_transport_retry:
+        result['failure_kind'] = failure_kind
+    return result
 
 
 def audit_one(
@@ -2002,6 +2017,7 @@ def audit_one(
     timeout: int,
     retries: int,
     max_tokens: int,
+    defer_transport_retry: bool = False,
 ) -> dict[str, Any]:
     uri = normalize(row.get("parsed_path"))
     path = resolve_parsed_path(uri, mappings)
@@ -2015,6 +2031,7 @@ def audit_one(
             "audit_status": "unresolved_md_path",
             "error": "parsed_path 无本地映射且 OSS 获取不可用或失败",
         }
+    source_sha256 = hashlib.sha256(path.read_bytes()).hexdigest() if defer_transport_retry else ''
     text = read_text(path)
     periodical_signals = detect_periodical_source(row, text)
     if periodical_signals:
@@ -2036,6 +2053,7 @@ def audit_one(
             },
             "audit_status": "periodical_excluded",
             "resolved_md_path": str(path),
+            'resolved_md_sha256': source_sha256,
             "periodical_detected": True,
             "periodical_evidence": list(periodical_signals),
         }
@@ -2066,10 +2084,11 @@ def audit_one(
     )
     response = request_llm(
         api_url, model, prompt, payload, {node["path"] for node in l1_nodes},
-        timeout, retries, max_tokens,
+        timeout, retries, max_tokens, defer_transport_retry,
     )
     if not response.get("ok"):
-        return {**base, **response, "audit_status": "api_failed", "resolved_md_path": str(path)}
+        return {**base, **response, "audit_status": "api_failed", "resolved_md_path": str(path),
+                'resolved_md_sha256': source_sha256}
     result = response["result"]
     result["edited_collection_signals"] = edited_collection_signals
     result["full_text_signals"] = full_text_signals
@@ -2091,6 +2110,7 @@ def audit_one(
         "result": result,
         "audit_status": "completed",
         "resolved_md_path": str(path),
+        'resolved_md_sha256': source_sha256,
         **stats,
     }
 
@@ -2105,6 +2125,15 @@ def load_progress(path: Path) -> dict[str, dict[str, Any]]:
                 item = json.loads(line)
                 output[item["identifier"]] = item
     return output
+
+
+def verify_staged_md_sources(progress_path: Path) -> None:
+    for item in load_progress(progress_path).values():
+        original = item.get('resolved_md_sha256')
+        if original:
+            path = Path(item['resolved_md_path'])
+            if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != original:
+                raise ValueError(f'Staged important MD source changed: {path}')
 
 
 def run_md_audit(
@@ -2126,6 +2155,7 @@ def run_md_audit(
     timeout: int = 240,
     retries: int = 2,
     max_tokens: int = 2400,
+    only_round: int | None = None,
 ) -> dict[str, Any]:
     _, rows = read_csv(pilot_csv)
     boundary: dict[str, str] | None = None
@@ -2141,12 +2171,19 @@ def run_md_audit(
     progress_path = output_dir / "模型原始结果" / "progress.jsonl"
     progress_path.parent.mkdir(parents=True, exist_ok=True)
     completed = load_progress(progress_path)
+    if only_round in (2, 3):
+        verify_staged_md_sources(progress_path)
     pending = [
         row for row in rows
         if _stable_identifier(row) not in completed
-        or completed[_stable_identifier(row)].get("audit_status")
-        in {"api_failed", "unresolved_md_path"}
+        or (completed[_stable_identifier(row)].get("audit_status")
+            in ({"api_failed", "unresolved_md_path"} if only_round is None else
+                {"api_failed"}) and
+            (only_round is None or completed[_stable_identifier(row)].get('failure_kind') ==
+             'transport'))
     ]
+    if only_round in (2, 3):
+        pending = [row for row in pending if _stable_identifier(row) in completed]
     lock = threading.Lock()
     counters = Counter()
 
@@ -2167,13 +2204,21 @@ def run_md_audit(
             timeout=timeout,
             retries=retries,
             max_tokens=max_tokens,
+            defer_transport_retry=only_round is not None,
         )
 
     with progress_path.open("a", encoding="utf-8") as progress:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
-            futures = [executor.submit(work, row) for row in pending]
-            for future in concurrent.futures.as_completed(futures):
-                item = future.result()
+        with closing(shared_completed(work, pending, workers)) as completions:
+            for row, future in completions:
+                try:
+                    item = future.result()
+                except Exception as exc:
+                    if only_round is None:
+                        raise
+                    item = {'identifier': _stable_identifier(row), 'source_row': row,
+                            'ok': False, 'audit_status': 'api_failed',
+                            'failure_kind': 'source_or_local',
+                            'error': f'{type(exc).__name__}: {exc}'}
                 with lock:
                     progress.write(json.dumps(item, ensure_ascii=False) + "\n")
                     progress.flush()
@@ -2378,12 +2423,47 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cache-dir", type=Path)
     parser.add_argument("--ossutil-config", type=Path)
     parser.add_argument("--source-oss-endpoint")
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--only-round', type=int, choices=(1, 2, 3))
+    mode.add_argument('--finalize-only', action='store_true')
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
+    staged = args.only_round is not None or args.finalize_only
+    status_path = args.output / 'ORCHESTRATION_STATUS.json'
+    if staged and args.action != 'audit':
+        raise ValueError('Staged MD audit requires the audit action')
+    if staged:
+        sources = [args.input_csv, args.output / 'MD审核试验样本.csv', Path(__file__)]
+        if args.subject_config is not None:
+            sources.append(args.subject_config)
+        if args.l1_config is not None:
+            sources.append(args.l1_config)
+        if args.ossutil_config is not None:
+            sources.append(args.ossutil_config)
+        frozen = identity(sources, {'api_url': args.api_url, 'model': args.model,
+                                   'subject': args.subject, 'sample_count': args.sample_count,
+                                   'chunk_chars': args.chunk_chars, 'timeout': args.timeout,
+                                   'max_tokens': args.max_tokens, 'path_map': args.path_map,
+                                   'retries': args.retries, 'cache_dir': args.cache_dir,
+                                   'source_oss_endpoint': args.source_oss_endpoint},
+                          force_full=args.finalize_only)
+        progress_path = args.output / '模型原始结果/progress.jsonl'
+        prior = require_identity(status_path, frozen, args.only_round, (progress_path,))
+        if args.finalize_only:
+            if prior is None or prior['state'] not in ('ready_to_finalize',
+                                                      'technical_failure', 'finalized'):
+                raise ValueError('Staged MD audit is not ready to finalize')
+            verify_staged_md_sources(args.output / '模型原始结果/progress.jsonl')
+            result = materialize_from_progress(args.output / 'MD审核试验样本.csv', args.output)
+            status_path.write_text(json.dumps({**prior, 'state': 'finalized',
+                                               'status': 'finalized'}, ensure_ascii=False,
+                                              indent=2), encoding='utf-8')
+            print(json.dumps(result, ensure_ascii=False, indent=2), flush=True)
+            return
     if args.action in {"metadata", "all"}:
         print(json.dumps(run_metadata_screen(
             args.input_csv,
@@ -2413,7 +2493,19 @@ def main() -> None:
             timeout=args.timeout,
             retries=args.retries,
             max_tokens=args.max_tokens,
+            only_round=args.only_round,
         ), ensure_ascii=False, indent=2), flush=True)
+        if staged:
+            progress = load_progress(args.output / '模型原始结果/progress.jsonl')
+            _, source_rows = read_csv(pilot_csv)
+            unfinished = [progress.get(_stable_identifier(row)) for row in source_rows]
+            pending = sum(item is not None and item.get('audit_status') == 'api_failed'
+                          and item.get('failure_kind') == 'transport' for item in unfinished)
+            terminal = sum(item is None or item.get('audit_status') in
+                           ('api_failed', 'unresolved_md_path') for item in unfinished) - pending
+            print(json.dumps(save_status(status_path, frozen, args.only_round,
+                                         pending, terminal=terminal,
+                                         checkpoints=(progress_path,)), ensure_ascii=False), flush=True)
     if args.action in {"materialize", "all"}:
         print(json.dumps(materialize_from_progress(pilot_csv, args.output), ensure_ascii=False, indent=2), flush=True)
 

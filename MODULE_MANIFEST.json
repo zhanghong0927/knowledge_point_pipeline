@@ -173,6 +173,29 @@
       "tests/test_verification_parallel.py": "21f557f993944284a40f4bbb5dec5f2c2d5093d254508da1c9610854c6520fe5",
       "PACKAGE.json": "cdf6233bd7abf02ab55ff143b3a568e01ad6f6b5adf5102fd3022938786262d9"
     },
-    "differences_from_upstream_manifest": []
+    "differences_from_upstream_manifest": [],
+    "integration_overrides": {
+      "date": "2026-10-15",
+      "reason": "Explicit shared request pool integration and Git byte preservation; original archive hashes remain unchanged in sha256 and original package receipt is archived.",
+      "source_release_archive_sha256": "e2cd861f97ca3835f6abff969d99be12d04b71a2edc84f8749a52b3836e07f9c",
+      "files": {
+        ".gitattributes": {
+          "original_sha256": "8c77a10ce946898b814b0df808fd4dc8e1a86e9c56f8f74ab745ae333a82aa36",
+          "current_sha256": "94087fd7842d437d8649482a4875a7c747ca3e97e31c08506718064c1439c6d4"
+        },
+        "src/book_extractor/pipeline.py": {
+          "original_sha256": "b9d2b40cf59bc963b54f70149b3173e700149de1792db4fe040c833ead77c921",
+          "current_sha256": "16cd99fd927e9489fb3805f7653dfb9fd49a0aac6a9575b0f7c41bc3fc6c8a76"
+        },
+        "src/book_extractor/synthesis.py": {
+          "original_sha256": "6bb0e55a945b6a120037610bda851e5ef5507393c9fc55b08751aefdfc405bf7",
+          "current_sha256": "1314c759aa45446d238280ca518b291ae8518520bcdb54c87916d5487cd5dbcb"
+        },
+        "PACKAGE.json": {
+          "original_sha256": "cdf6233bd7abf02ab55ff143b3a568e01ad6f6b5adf5102fd3022938786262d9",
+          "current_sha256": "b9cbbb477bd70f70f47b7e1aa62dadcda77d862711307f8dd3fc539d9f86428b"
+        }
+      }
+    }
   }
 }

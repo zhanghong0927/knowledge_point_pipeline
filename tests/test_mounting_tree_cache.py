@@ -118,18 +118,18 @@ class MountingTreeCacheTests(unittest.TestCase):
             self.assertEqual(len(list(cache.glob('mechanical_engineering/*/MANIFEST.json'))), 2)
             self.assertTrue((asset / 'taxonomy_enriched.json').exists())
 
-    def test_pipeline_freezes_cache_location_for_preparation_and_generation(self):
+    def test_pipeline_replaces_task_cache_with_project_release(self):
         spec = importlib.util.spec_from_file_location('cached_pipeline', ROOT / 'pipeline.py')
         pipeline = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(pipeline)
         config, values = pipeline.load_config(ROOT / 'configs/pipeline.example.json')
         config['mounting']['boundaries'].update(cache_dir='{run}/../tree_assets', review_mode='off')
         tasks = pipeline.plan(config, values)[4]['tasks']
-        expected = str((Path(values['run']) / '../tree_assets').resolve())
         for name in ('prepare_mounting', 'generate_mounting_boundaries'):
             command = next(task['command'] for task in tasks if task['name'] == name)
-            self.assertIn('--boundary-cache-dir', command)
-            self.assertEqual(command[command.index('--boundary-cache-dir') + 1], expected)
+            self.assertNotIn('--boundary-cache-dir', command)
+        self.assertIn('--project-assets-lock',tasks[0]['command'])
+        self.assertIn('activate-project-assets',tasks[1]['command'])
 
     def test_changed_generation_settings_do_not_reuse_old_tree(self):
         with tempfile.TemporaryDirectory() as d:

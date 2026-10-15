@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import sys
 from cleaning_handoff import seal_export, verify_export
+import name_whitespace
 
 ROOT = Path(__file__).resolve().parents[1]
 TEXT_FIELDS = ('knowledge_point', 'name', 'definition', 'en_definition', 'description', 'en_description')
@@ -98,6 +99,7 @@ def export_records(input_path, native, out, subject, slug):
     if summary.get('input') != len(originals) or summary.get('final_keep') != len(final):
         raise ValueError('Native cleaning summary count mismatch')
     records, traces = [], []
+    name_report=name_whitespace.new_report()
     for row in final:
         original = by_id[row['id']]
         if original.get('subject_slug', slug) != slug:
@@ -114,11 +116,17 @@ def export_records(input_path, native, out, subject, slug):
         if any(not isinstance(v, str) for v in values.values()) or not any(values[f] for f in ('knowledge_point', 'name')):
             raise ValueError('Invalid native standard name/text fields')
         # The native trace remains in trace.jsonl; published provenance keeps its original identity.
-        records.append({'id': row['id'], **values, 'source': original_source,
-                        'tag': subject, 'main_tags': '', 'related_tags': []})
-        traces.append({'id': row['id'], 'subject': subject, 'subject_slug': slug,
-                       'mode': 'dictionary', 'original_record': original, 'cleaned_record': row})
+        exported,audit=name_whitespace.normalize_record(
+            {'id': row['id'], **values, 'source': original_source,
+             'tag': subject, 'main_tags': '', 'related_tags': []},originals=original)
+        records.append(exported)
+        trace={'id': row['id'], 'subject': subject, 'subject_slug': slug,
+               'mode': 'dictionary', 'original_record': original, 'cleaned_record': row}
+        if audit['fields'] or audit['warnings'] or audit['protected_fields']:trace['name_whitespace']=audit
+        traces.append(trace)
+        name_whitespace.observe(name_report,audit)
     identity = {'input_sha256': sha(input_path), 'subject': subject, 'subject_slug': slug,
+                'name_whitespace':name_report['policy'],'export_adapter_sha256':sha(Path(__file__)),
                 'native_hashes': {name: sha(native / name) for name in
                     ('MANIFEST.json', 'STATE.json', 'SUMMARY.json', 'DISPOSITIONS.jsonl', 'FINAL_RECORDS.jsonl')}}
     report_path = out / 'report.json'
@@ -128,6 +136,7 @@ def export_records(input_path, native, out, subject, slug):
         if saved.get('identity') != identity or any(sha(out / name) != value for name, value in saved['output_sha256'].items()):
             raise ValueError('Dictionary cleaning export changed; use a new output directory')
         return saved
+    if name_whitespace.identity()!=name_report['policy']:raise ValueError('Name whitespace policy changed')
     out.mkdir(parents=True, exist_ok=True)
     for name, values in (('records.jsonl', records), ('trace.jsonl', traces)):
         target = out / name
@@ -139,6 +148,7 @@ def export_records(input_path, native, out, subject, slug):
     report = {'identity': identity, 'records': len(records), 'input_records': len(originals),
               'review': summary.get('review', 0), 'technical_failures': summary.get('technical_failures', 0),
               'source_hashes_verified': True, 'semantic_quality_approved': False,
+              'name_whitespace':name_report,
               'output_sha256': {name: sha(out / name) for name in ('records.jsonl', 'trace.jsonl')}}
     manifest = read(native / 'MANIFEST.json')
     for name, digest in manifest.get('sources', {}).items():
@@ -147,7 +157,9 @@ def export_records(input_path, native, out, subject, slug):
     snapshot = [input_path.parent / name for name in ('MANIFEST.json', 'PREPARED.json')]
     report.update(seal_export(out, [input_path, *[p for p in snapshot if p.is_file()],
                                   *[native / name for name in identity['native_hashes']],
-                                  *map(Path, manifest.get('sources', {}))], 'dictionary', subject))
+                                  *map(Path, manifest.get('sources', {})),Path(__file__),
+                                  *name_whitespace.evidence_files()], 'dictionary', subject,
+                                  name_policy=name_report['policy']))
     tmp = report_path.with_suffix('.json.tmp')
     tmp.write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     tmp.replace(report_path)
@@ -166,7 +178,20 @@ def main():
     parser.add_argument('--model', required=True)
     parser.add_argument('--workers', type=int, default=32)
     parser.add_argument('--context-limit', type=int, default=32768)
+    parser.add_argument('--recovery-source')
+    parser.add_argument('--recovery-provenance')
+    parser.add_argument('--resume', action='store_true', help='Continue the inspected unfinished native round')
+    parser.add_argument('--resume-receipt', type=Path, help='Sealed offline migration/inspection receipt')
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--only-round', type=int, choices=(1,2,3))
+    mode.add_argument('--finalize-only', action='store_true')
+    mode.add_argument('--compensation-plan', type=Path, help='Sealed record-level lost-opportunity plan')
+    parser.add_argument('--compensation-sha256')
     args = parser.parse_args()
+    if args.resume != bool(args.resume_receipt) or args.resume and args.only_round is None:
+        raise ValueError('--resume and --resume-receipt must be paired with --only-round')
+    if bool(args.compensation_plan) != bool(args.compensation_sha256):
+        raise ValueError('--compensation-plan requires its exact --compensation-sha256')
     sys.path.insert(0, str(ROOT / 'modules/dictionary'))
     import portable_pipeline as native
     books = native.validate_books(read(args.books))
@@ -175,6 +200,32 @@ def main():
     verify_snapshot(args.input, books, native.source_hashes(books))
     config = {'api_url': args.api_url, 'model': args.model, 'workers': args.workers,
               'context_limit': args.context_limit, 'no_auth': True}
+    if args.recovery_source:
+        if not args.recovery_provenance:
+            raise ValueError('Recovery source requires sealed provenance')
+        config.update(recovery_source=args.recovery_source, recovery_provenance=args.recovery_provenance)
+    if args.only_round:
+        print(json.dumps(native.run_cleaning_round(args.input,config,args.out,books,args.only_round,
+            resume_receipt=args.resume_receipt if args.resume else None),ensure_ascii=False))
+        return 0
+    if args.compensation_plan:
+        print(json.dumps(native.run_compensation(args.input, config, args.out, books,
+            args.compensation_plan, args.compensation_sha256), ensure_ascii=False))
+        return 0
+    if args.finalize_only:
+        native.finalize_cleaning(args.input,config,args.out,books)
+        print(json.dumps(export_records(args.input,args.out,args.export,args.subject,args.slug),ensure_ascii=False))
+        return 0
+    # Reconcile an already finalized staged task in the ordinary pipeline ledger.
+    manifest_path = args.out/'MANIFEST.json'
+    if manifest_path.exists() and read(manifest_path).get('kind') == 'cleaning_staged':
+        native.validate_staged_run(args.input,config,args.out,books)
+        status = read(args.out/'ORCHESTRATION_STATUS.json')
+        if status.get('state') != 'finalized':
+            raise ValueError('Staged dictionary cleaning is not finalized')
+        native.verify_staged_checkpoint(args.out,status)
+        print(json.dumps(export_records(args.input,args.out,args.export,args.subject,args.slug),ensure_ascii=False))
+        return 0
     native.run_cleaning(args.input, config, args.out, books)
     print(json.dumps(export_records(args.input, args.out, args.export, args.subject, args.slug), ensure_ascii=False))
     return 0

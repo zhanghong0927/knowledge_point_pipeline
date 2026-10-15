@@ -80,10 +80,14 @@ class IntegrationTests(unittest.TestCase):
                          "pipeline.important_llm.example.json"):
             with self.subTest(config=filename):
                 config, values = pipeline.load_config(ROOT / "configs" / filename)
+                config['mounting']['review_enabled'] = True
                 tasks = pipeline.plan(config, values)[4]["tasks"]
                 generate = next(t for t in tasks if t["name"] == "generate_mounting_boundaries")
                 command = generate["command"]
-                self.assertEqual(command[command.index("--boundary-review-mode") + 1], "off")
+                self.assertIn('activate-project-assets',command)
+                self.assertNotIn('--api-url',command)
+                prepare=next(t for t in tasks if t['name']=='prepare_mounting')['command']
+                self.assertEqual(prepare[prepare.index('--boundary-review-mode')+1],'off')
                 self.assertTrue(any(t["name"] == "review_mounting" for t in tasks))
 
     def test_record_binding_survives_rules_without_entering_model_or_standard_output(self):

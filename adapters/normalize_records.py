@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 import re
 from cleaning_handoff import RECORD_FINGERPRINT, seal_export, sha
+import name_whitespace
 
 
 TEXT_FIELDS = ("name", "knowledge_point", "definition", "en_definition", "description", "en_description")
@@ -187,6 +188,7 @@ def main():
     args.out.mkdir(parents=True)
     seen = set()
     count = moved = 0
+    name_report=name_whitespace.new_report() if args.restore else None
     temporary = args.out / "records.jsonl.tmp"
     with temporary.open("w", encoding="utf-8") as output, (args.out / "trace.jsonl.tmp").open("w", encoding="utf-8") as evidence:
         for line, row in enumerate(records(args.input), 1):
@@ -204,6 +206,9 @@ def main():
                     row["source"] = original["source"]
                 row.pop(RECORD_FINGERPRINT, None)
                 trace["post_cleaning_text_requires_grounding_recheck"] = True
+                row,audit=name_whitespace.normalize_record(row,originals=original)
+                if audit['fields'] or audit['warnings'] or audit['protected_fields']:trace['name_whitespace']=audit
+                name_whitespace.observe(name_report,audit)
             else:
                 row, trace = standardize(row, args.format, args.subject, args.slug, line)
                 record_id = row["id"]
@@ -218,11 +223,14 @@ def main():
         raise ValueError('Input changed during normalization; use a new output directory')
     if any(sha(path) != digest for path, digest in normalization_hashes.items()):
         raise ValueError(f'Initial normalization evidence changed; {NORMALIZATION_REBUILD}')
+    if name_report and name_whitespace.identity()!=name_report['policy']:
+        raise ValueError('Name whitespace policy changed during export')
     temporary.replace(args.out / "records.jsonl")
     (args.out / "trace.jsonl.tmp").replace(args.out / "trace.jsonl")
     report = {"records": count, "language_moved_records": moved, "subject": args.subject,
               "input_sha256": input_digest,
               "ids_preserved_as_strings_or_generated": True, "api_calls": 0}
+    if name_report:report['name_whitespace']=name_report
     if not args.restore:
         report.update(input=str(args.input.resolve()),
                       normalization={'version': 2, 'format': args.format,
@@ -230,13 +238,15 @@ def main():
                                      'record_fingerprint_field': RECORD_FINGERPRINT},
                       output_sha256={name: sha(args.out / name) for name in ('records.jsonl', 'trace.jsonl')})
     if cleaning_evidence:
-        sealed = seal_export(args.out, [args.input, *normalization_hashes, *cleaning_evidence], 'important', args.subject,
-                             normalization_report=args.normalization_report, cleaning_report=args.cleaning_report)
+        sealed = seal_export(args.out, [args.input, *normalization_hashes, *cleaning_evidence,Path(__file__),
+                             *name_whitespace.evidence_files()], 'important', args.subject,
+                             normalization_report=args.normalization_report, cleaning_report=args.cleaning_report,
+                             name_policy=name_report['policy'])
         if any(sealed['cleaning_export']['evidence_sha256'][str(path.resolve())] != digest
                for path, digest in normalization_hashes.items()):
             raise ValueError(f'Initial normalization evidence changed while sealing; {NORMALIZATION_REBUILD}')
         report.update(sealed)
-    (args.out / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+    (args.out / "report.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n",encoding='utf-8')
     print(json.dumps(report, ensure_ascii=False))
 
 

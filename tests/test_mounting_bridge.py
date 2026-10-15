@@ -14,7 +14,7 @@ import mounting_bridge as bridge
 from mounting_assets import normalize
 
 
-def fixture(root, records=None):
+def fixture(root, records=None, mount_review_mode='on'):
     tree={'name':'机械工程','children':[{'name':'传动','children':[{'name':'齿轮','children':[]}, {'name':'传动设计','children':[]}]}]}
     tree_path=root/'tree.json';tree_path.write_text(json.dumps(tree,ensure_ascii=False))
     records=records if records is not None else [
@@ -27,7 +27,8 @@ def fixture(root, records=None):
     args=SimpleNamespace(input=input_path,out=root/'mount',registry=bridge.REGISTRY,taxonomy=tree_path,
                          taxonomy_dir=root,subject_slug='mechanical_engineering',threshold=.85,min_depth=2,
                          max_depth=5,max_related=2,limit=0,api_url='http://offline.invalid/v1',model='mock',
-                         api_key_env='',workers=2,timeout=10,max_tokens=1024)
+                         api_key_env='',workers=2,timeout=10,max_tokens=1024,
+                         mount_review_mode=mount_review_mode,asset_maintenance=True)
     bridge.prepare(args)
     return args,records
 
@@ -209,9 +210,9 @@ class MountingBridgeTests(unittest.TestCase):
             bridge.write_rows(path,[{'id':'1','name':'水利','tag':'水利工程'}])
             a=SimpleNamespace(input=path,out=root/'mount',registry=bridge.REGISTRY,taxonomy=None,taxonomy_dir=root,
                               subject_slug=None,threshold=.85,min_depth=2,max_depth=5,max_related=2,limit=0)
-            report=bridge.prepare(a)
-            self.assertEqual(report['groups'],0);self.assertEqual(report['unconfigured'],1)
-            self.assertFalse(bridge.read(a.out/'PREPARED.json')['groups'])
+            with self.assertRaisesRegex(ValueError,'not published'):
+                bridge.prepare(a)
+            self.assertFalse(a.out.exists())
 
     def test_modified_assets_or_missing_native_ids_stop_export(self):
         with tempfile.TemporaryDirectory() as d:

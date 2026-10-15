@@ -1,0 +1,503 @@
+{
+  "payload": {
+    "ancestors": [
+      {
+        "node": {
+          "code": "N_718c8fd8d25ac37c",
+          "name_zh": "医学",
+          "name_en": "",
+          "path": "医学",
+          "depth": 0,
+          "parent_code": null,
+          "children_codes": [
+            "N_67f94558ccb37c35",
+            "N_6cecc0e1e63c6b96",
+            "N_d11de3aedd4d87db",
+            "N_acf0aea52426a3d5",
+            "N_a3f8c2edaa490f23",
+            "N_22df6525cafc7cae",
+            "N_31e1c0a4768442df",
+            "N_11ab3cfe7ef7e704",
+            "N_d22520f34717acd0",
+            "N_2a2d97dd1ae211dc",
+            "N_5f061f12d1202976",
+            "N_1ed3f15e76dc54ce",
+            "N_17c1dfbed33e2348",
+            "N_d2ea9a30cf338997",
+            "N_1a01d30f26a93f06",
+            "N_634edb922006fca9",
+            "N_957028fab4f63166",
+            "N_fc978dccb365df96",
+            "N_a55ce299cfc3d31a",
+            "N_b5c7c86df3a85b67",
+            "N_614ded6d6e3a7128",
+            "N_0040e7245e30fa9f",
+            "N_3603012359c68acc",
+            "N_8bdad726e64af644",
+            "N_2e9a4c43ae648515",
+            "N_88e55f837b454a8b",
+            "N_1110be42a1dd8cf1",
+            "N_3c6f93fd18bde42f",
+            "N_c65cf507f0004070",
+            "N_c37551dc6a79cdd2",
+            "N_f0978dc82d8f6702",
+            "N_5dfe12f8e49e79ad",
+            "N_fd1f47039dcf8a91",
+            "N_479a8918a3c9091a",
+            "N_3a1cf614a1faf6b6",
+            "N_7b2d1ce21cfdd124",
+            "N_6068dc081b8a7e11",
+            "N_2cde2b2fe5968c38",
+            "N_d1e06cbe683a8bb7",
+            "N_f1f3a010052402db",
+            "N_10b394aaf02ef628",
+            "N_d34986574a0a7a39",
+            "N_2c2400aa9db06fe6",
+            "N_8f0fb66184fb3b55",
+            "N_5197ef6b8affeed7",
+            "N_db85422efd5abb0d",
+            "N_7970dc097a8fd898",
+            "N_3dcf3b398259537c",
+            "N_f60dad26ec7ac4df",
+            "N_66ba3bc3d2c4972f",
+            "N_318503d15c8cb930",
+            "N_59fe3fda964ce628",
+            "N_7965621f4bd26c34",
+            "N_7ae8db2c6873229e",
+            "N_8ffea2c2513beb42",
+            "N_1d082aaa4de9c249",
+            "N_12247f66b86c5baf",
+            "N_60d2b88650032fa1",
+            "N_418e5ddbe44ad587",
+            "N_67c6efa7e09b1a55",
+            "N_a946966c5c7019a7",
+            "N_1cdd8401a378ccb9",
+            "N_5ce4492e7d7d5dcb",
+            "N_901d3f8b3efd0f9a",
+            "N_2cb3563725748c8f",
+            "N_bce6d89789d0bd04"
+          ],
+          "existing_context": {}
+        },
+        "card": {
+          "node_code": "N_718c8fd8d25ac37c",
+          "definition": "医学是研究人类生命活动规律、疾病发生发展机制、诊断治疗原则及预防保健策略的综合性学科体系，涵盖基础医学、临床医学、预防医学及医学人文等领域。",
+          "boundary": "本节点作为根节点，涵盖所有与人类健康、疾病、医疗实践及医学教育直接相关的主题。包括从分子细胞层面的基础机制到器官系统疾病，从个体诊疗到群体公共卫生，以及医学伦理、法律、信息学等交叉领域。不涵盖纯生物学（非医学应用）、纯化学或纯物理学研究，除非其直接服务于医学目的。",
+          "includes": [
+            "基础医学与临床各科疾病诊疗",
+            "公共卫生、预防医学与卫生政策",
+            "医学技术、信息学与辅助诊断",
+            "医学伦理、法律与医患沟通"
+          ],
+          "excludes": [],
+          "sibling_distinctions": [],
+          "cross_boundary_rule": "",
+          "node_path": "医学",
+          "node_name_zh": "医学",
+          "depth": 0,
+          "provenance": "llm_candidate",
+          "seed_examples": [],
+          "semantic_card": "定义：医学是研究人类生命活动规律、疾病发生发展机制、诊断治疗原则及预防保健策略的综合性学科体系，涵盖基础医学、临床医学、预防医学及医学人文等领域。；边界：本节点作为根节点，涵盖所有与人类健康、疾病、医疗实践及医学教育直接相关的主题。包括从分子细胞层面的基础机制到器官系统疾病，从个体诊疗到群体公共卫生，以及医学伦理、法律、信息学等交叉领域。不涵盖纯生物学（非医学应用）、纯化学或纯物理学研究，除非其直接服务于医学目的。；收录：基础医学与临床各科疾病诊疗；公共卫生、预防医学与卫生政策；医学技术、信息学与辅助诊断；医学伦理、法律与医患沟通"
+        }
+      },
+      {
+        "node": {
+          "code": "N_8bdad726e64af644",
+          "name_zh": "外科学",
+          "name_en": "",
+          "path": "医学/外科学",
+          "depth": 1,
+          "parent_code": "N_718c8fd8d25ac37c",
+          "children_codes": [
+            "N_b8fdf4dfc77f2d6f",
+            "N_a39264c6b39b5dc0",
+            "N_51f949f3c53be385",
+            "N_4c6d01222d6012f6",
+            "N_07ed9d56bd8f4df8",
+            "N_8059b14fddc660f0",
+            "N_640fb1a77827fe59",
+            "N_a96e65b6f1c97073"
+          ],
+          "existing_context": {}
+        },
+        "card": {
+          "node_code": "N_8bdad726e64af644",
+          "definition": "外科学是研究通过手术、介入及围手术期管理治疗创伤、感染、肿瘤、畸形及功能障碍等疾病的医学分支，涵盖普外、骨科、神经外科、胸心血管外科等亚专科。",
+          "boundary": "本节点聚焦于需要手术干预或外科原则指导的疾病处理。包括外科总论（创伤、感染、休克）、各系统外科（普外、泌尿、神经、胸心血管、血管）及整形烧伤。不涵盖内科药物治疗为主的疾病，除非涉及外科并发症或术前评估。",
+          "includes": [
+            "外科总论、创伤急救、感染及围手术期管理",
+            "普通外科、泌尿外科、神经外科、胸心血管外科",
+            "器官移植、显微外科及整形烧伤外科"
+          ],
+          "excludes": [
+            "纯内科药物治疗为主的慢性疾病管理",
+            "口腔颌面外科（归口腔医学）"
+          ],
+          "sibling_distinctions": [
+            {
+              "other_code": "N_0040e7245e30fa9f",
+              "rule": "外科学涵盖躯体各部位手术，口腔医学涵盖口腔颌面手术；口腔颌面外科明确归口腔医学，其他部位归外科学相应亚专科。"
+            },
+            {
+              "other_code": "N_3603012359c68acc",
+              "rule": "外科学中的胸外科关注肺部及胸壁手术，呼吸系统关注肺部疾病内科诊疗；肺部肿瘤手术归外科学，肺部感染或哮喘归呼吸系统。"
+            }
+          ],
+          "cross_boundary_rule": "涉及器官移植时，若侧重手术操作及显微技术归外科学，若侧重免疫抑制治疗归免疫学或相关内科；涉及神经外科时，若侧重脑肿瘤手术归外科学，若侧重脑血管病内科管理归神经病学。",
+          "node_path": "医学/外科学",
+          "node_name_zh": "外科学",
+          "depth": 1,
+          "provenance": "llm_candidate",
+          "seed_examples": [],
+          "semantic_card": "定义：外科学是研究通过手术、介入及围手术期管理治疗创伤、感染、肿瘤、畸形及功能障碍等疾病的医学分支，涵盖普外、骨科、神经外科、胸心血管外科等亚专科。；边界：本节点聚焦于需要手术干预或外科原则指导的疾病处理。包括外科总论（创伤、感染、休克）、各系统外科（普外、泌尿、神经、胸心血管、血管）及整形烧伤。不涵盖内科药物治疗为主的疾病，除非涉及外科并发症或术前评估。；主挂载：涉及器官移植时，若侧重手术操作及显微技术归外科学，若侧重免疫抑制治疗归免疫学或相关内科；涉及神经外科时，若侧重脑肿瘤手术归外科学，若侧重脑血管病内科管理归神经病学。；同级区分：口腔医学：外科学涵盖躯体各部位手术，口腔医学涵盖口腔颌面手术；口腔颌面外科明确归口腔医学，其他部位归外科学相应亚专科。；呼吸系统：外科学中的胸外科关注肺部及胸壁手术，呼吸系统关注肺部疾病内科诊疗；肺部肿瘤手术归外科学，肺部感染或哮喘归呼吸系统。；收录：外科总论、创伤急救、感染及围手术期管理；普通外科、泌尿外科、神经外科、胸心血管外科；器官移植、显微外科及整形烧伤外科；排除：纯内科药物治疗为主的慢性疾病管理；口腔颌面外科（归口腔医学）"
+        }
+      },
+      {
+        "node": {
+          "code": "N_4c6d01222d6012f6",
+          "name_zh": "普通外科",
+          "name_en": "",
+          "path": "医学/外科学/普通外科",
+          "depth": 2,
+          "parent_code": "N_8bdad726e64af644",
+          "children_codes": [
+            "N_5ff643f3e5b4951d",
+            "N_03a110cc2b875ec7",
+            "N_e25d4b6e7a11ed34",
+            "N_56e3b574118c2971",
+            "N_91e09a3f0ae0052a",
+            "N_ac6eb9a4bab93f8b",
+            "N_e60a45c71af86d5f"
+          ],
+          "existing_context": {}
+        },
+        "card": {
+          "node_code": "N_4c6d01222d6012f6",
+          "definition": "普通外科是外科学中处理腹部及体表非专科器官疾病的核心分支，涵盖胃肠、肝胆胰脾、甲状腺乳腺、疝及肛周疾病的诊断、手术及围术期管理。",
+          "boundary": "本节点聚焦于腹腔内器官（除泌尿、血管、神经外）及体表特定部位（甲状腺、乳腺、疝、肛周）的外科治疗。包括小儿外科及腹部感染。不涵盖泌尿系统、心血管系统、神经系统及胸壁/肺部疾病的手术，这些分别归入相应专科。",
+          "includes": [
+            "胃肠、肝胆胰脾、甲状腺乳腺及疝的外科诊疗",
+            "小儿外科、肛周盆底疾病及腹部感染处理",
+            "普通外科围术期管理与基础手术技术"
+          ],
+          "excludes": [
+            "泌尿系统疾病手术（归泌尿外科学）",
+            "心脏、大血管及胸壁手术（归胸心血管外科或血管外科学）",
+            "颅脑及脊髓手术（归神经外科学）"
+          ],
+          "sibling_distinctions": [
+            {
+              "other_code": "N_07ed9d56bd8f4df8",
+              "rule": "普通外科处理腹腔脏器（如肾周脂肪囊外肿瘤、腹膜后非泌尿系肿瘤），泌尿外科学处理泌尿系统器官（肾、输尿管、膀胱、前列腺）疾病。"
+            },
+            {
+              "other_code": "N_640fb1a77827fe59",
+              "rule": "普通外科处理腹部脏器手术，胸心血管外科处理胸腔内心脏、大血管及肺部手术；食管下段手术若侧重腹部入路可归普外，侧重胸部入路归胸外。"
+            },
+            {
+              "other_code": "N_a96e65b6f1c97073",
+              "rule": "普通外科处理腹腔内血管病变（如肠系膜血管），血管外科学处理四肢及全身大血管（如主动脉、颈动脉）病变。"
+            }
+          ],
+          "cross_boundary_rule": "涉及腹膜后肿瘤时，若起源于泌尿系统归泌尿外科学，若起源于其他组织归普通外科；涉及食管手术时，根据主要手术入路及病变部位决定归普通外科或胸心血管外科。",
+          "node_path": "医学/外科学/普通外科",
+          "node_name_zh": "普通外科",
+          "depth": 2,
+          "provenance": "llm_candidate",
+          "seed_examples": [],
+          "semantic_card": "定义：普通外科是外科学中处理腹部及体表非专科器官疾病的核心分支，涵盖胃肠、肝胆胰脾、甲状腺乳腺、疝及肛周疾病的诊断、手术及围术期管理。；边界：本节点聚焦于腹腔内器官（除泌尿、血管、神经外）及体表特定部位（甲状腺、乳腺、疝、肛周）的外科治疗。包括小儿外科及腹部感染。不涵盖泌尿系统、心血管系统、神经系统及胸壁/肺部疾病的手术，这些分别归入相应专科。；主挂载：涉及腹膜后肿瘤时，若起源于泌尿系统归泌尿外科学，若起源于其他组织归普通外科；涉及食管手术时，根据主要手术入路及病变部位决定归普通外科或胸心血管外科。；同级区分：泌尿外科学：普通外科处理腹腔脏器（如肾周脂肪囊外肿瘤、腹膜后非泌尿系肿瘤），泌尿外科学处理泌尿系统器官（肾、输尿管、膀胱、前列腺）疾病。；胸心血管外科：普通外科处理腹部脏器手术，胸心血管外科处理胸腔内心脏、大血管及肺部手术；食管下段手术若侧重腹部入路可归普外，侧重胸部入路归胸外。；血管外科学：普通外科处理腹腔内血管病变（如肠系膜血管），血管外科学处理四肢及全身大血管（如主动脉、颈动脉）病变。；收录：胃肠、肝胆胰脾、甲状腺乳腺及疝的外科诊疗；小儿外科、肛周盆底疾病及腹部感染处理；普通外科围术期管理与基础手术技术；排除：泌尿系统疾病手术（归泌尿外科学）；心脏、大血管及胸壁手术（归胸心血管外科或血管外科学）；颅脑及脊髓手术（归神经外科学）"
+        }
+      },
+      {
+        "node": {
+          "code": "N_ac6eb9a4bab93f8b",
+          "name_zh": "胃肠外科",
+          "name_en": "",
+          "path": "医学/外科学/普通外科/胃肠外科",
+          "depth": 3,
+          "parent_code": "N_4c6d01222d6012f6",
+          "children_codes": [
+            "N_e44013a161e603b4",
+            "N_653a69225b2f914b"
+          ],
+          "existing_context": {}
+        },
+        "card": {
+          "node_code": "N_ac6eb9a4bab93f8b",
+          "definition": "胃肠外科是普通外科中处理食管、胃、小肠、结肠及直肠等消化道管腔疾病的外科分支，涵盖肿瘤、炎症、梗阻及畸形的手术治疗与重建。",
+          "boundary": "本节点聚焦于消化道管腔器官的外科干预。包括胃癌、结直肠癌、肠梗阻、炎症性肠病外科处理及消化道重建。不涵盖肝、胆、胰、脾等实质性脏器疾病（归肝胆胰脾外科）及肛门直肠下段及盆底支持结构疾病（归肛周与盆底疾病）。",
+          "includes": [
+            "食管、胃、十二指肠肿瘤及溃疡的外科诊疗",
+            "小肠、结肠、直肠肿瘤、梗阻及炎症性肠病的手术治疗"
+          ],
+          "excludes": [
+            "肝、胆、胰、脾实质性脏器疾病手术（归肝胆胰脾外科）",
+            "肛门直肠下段及盆底支持结构疾病（归肛周与盆底疾病）"
+          ],
+          "sibling_distinctions": [
+            {
+              "other_code": "N_91e09a3f0ae0052a",
+              "rule": "本节点处理消化道管腔疾病，肝胆胰脾外科处理实质性脏器及胆道系统疾病；两者在解剖上相邻，但手术对象及原则不同，如胃癌归本节点，肝癌归肝胆胰脾外科。"
+            },
+            {
+              "other_code": "N_56e3b574118c2971",
+              "rule": "本节点处理结肠及直肠中上段疾病，肛周与盆底疾病处理肛门直肠下段及盆底支持结构疾病；低位直肠癌若侧重肿瘤根治归本节点，若侧重盆底重建归肛周与盆底疾病。"
+            }
+          ],
+          "cross_boundary_rule": "涉及胰十二指肠切除术时，若主要病变在胰头归肝胆胰脾外科，若主要病变在十二指肠或胃窦归本节点；涉及低位直肠癌时，若手术重点在于肿瘤根治归本节点，若重点在于盆底重建或肛门功能保留归肛周与盆底疾病。",
+          "node_path": "医学/外科学/普通外科/胃肠外科",
+          "node_name_zh": "胃肠外科",
+          "depth": 3,
+          "provenance": "llm_candidate",
+          "seed_examples": [],
+          "semantic_card": "定义：胃肠外科是普通外科中处理食管、胃、小肠、结肠及直肠等消化道管腔疾病的外科分支，涵盖肿瘤、炎症、梗阻及畸形的手术治疗与重建。；边界：本节点聚焦于消化道管腔器官的外科干预。包括胃癌、结直肠癌、肠梗阻、炎症性肠病外科处理及消化道重建。不涵盖肝、胆、胰、脾等实质性脏器疾病（归肝胆胰脾外科）及肛门直肠下段及盆底支持结构疾病（归肛周与盆底疾病）。；主挂载：涉及胰十二指肠切除术时，若主要病变在胰头归肝胆胰脾外科，若主要病变在十二指肠或胃窦归本节点；涉及低位直肠癌时，若手术重点在于肿瘤根治归本节点，若重点在于盆底重建或肛门功能保留归肛周与盆底疾病。；同级区分：肝胆胰脾外科：本节点处理消化道管腔疾病，肝胆胰脾外科处理实质性脏器及胆道系统疾病；两者在解剖上相邻，但手术对象及原则不同，如胃癌归本节点，肝癌归肝胆胰脾外科。；肛周与盆底疾病：本节点处理结肠及直肠中上段疾病，肛周与盆底疾病处理肛门直肠下段及盆底支持结构疾病；低位直肠癌若侧重肿瘤根治归本节点，若侧重盆底重建归肛周与盆底疾病。；收录：食管、胃、十二指肠肿瘤及溃疡的外科诊疗；小肠、结肠、直肠肿瘤、梗阻及炎症性肠病的手术治疗；排除：肝、胆、胰、脾实质性脏器疾病手术（归肝胆胰脾外科）；肛门直肠下段及盆底支持结构疾病（归肛周与盆底疾病）"
+        }
+      }
+    ],
+    "parent_card": {
+      "node_code": "N_ac6eb9a4bab93f8b",
+      "definition": "胃肠外科是普通外科中处理食管、胃、小肠、结肠及直肠等消化道管腔疾病的外科分支，涵盖肿瘤、炎症、梗阻及畸形的手术治疗与重建。",
+      "boundary": "本节点聚焦于消化道管腔器官的外科干预。包括胃癌、结直肠癌、肠梗阻、炎症性肠病外科处理及消化道重建。不涵盖肝、胆、胰、脾等实质性脏器疾病（归肝胆胰脾外科）及肛门直肠下段及盆底支持结构疾病（归肛周与盆底疾病）。",
+      "includes": [
+        "食管、胃、十二指肠肿瘤及溃疡的外科诊疗",
+        "小肠、结肠、直肠肿瘤、梗阻及炎症性肠病的手术治疗"
+      ],
+      "excludes": [
+        "肝、胆、胰、脾实质性脏器疾病手术（归肝胆胰脾外科）",
+        "肛门直肠下段及盆底支持结构疾病（归肛周与盆底疾病）"
+      ],
+      "sibling_distinctions": [
+        {
+          "other_code": "N_91e09a3f0ae0052a",
+          "rule": "本节点处理消化道管腔疾病，肝胆胰脾外科处理实质性脏器及胆道系统疾病；两者在解剖上相邻，但手术对象及原则不同，如胃癌归本节点，肝癌归肝胆胰脾外科。"
+        },
+        {
+          "other_code": "N_56e3b574118c2971",
+          "rule": "本节点处理结肠及直肠中上段疾病，肛周与盆底疾病处理肛门直肠下段及盆底支持结构疾病；低位直肠癌若侧重肿瘤根治归本节点，若侧重盆底重建归肛周与盆底疾病。"
+        }
+      ],
+      "cross_boundary_rule": "涉及胰十二指肠切除术时，若主要病变在胰头归肝胆胰脾外科，若主要病变在十二指肠或胃窦归本节点；涉及低位直肠癌时，若手术重点在于肿瘤根治归本节点，若重点在于盆底重建或肛门功能保留归肛周与盆底疾病。",
+      "node_path": "医学/外科学/普通外科/胃肠外科",
+      "node_name_zh": "胃肠外科",
+      "depth": 3,
+      "provenance": "llm_candidate",
+      "seed_examples": [],
+      "semantic_card": "定义：胃肠外科是普通外科中处理食管、胃、小肠、结肠及直肠等消化道管腔疾病的外科分支，涵盖肿瘤、炎症、梗阻及畸形的手术治疗与重建。；边界：本节点聚焦于消化道管腔器官的外科干预。包括胃癌、结直肠癌、肠梗阻、炎症性肠病外科处理及消化道重建。不涵盖肝、胆、胰、脾等实质性脏器疾病（归肝胆胰脾外科）及肛门直肠下段及盆底支持结构疾病（归肛周与盆底疾病）。；主挂载：涉及胰十二指肠切除术时，若主要病变在胰头归肝胆胰脾外科，若主要病变在十二指肠或胃窦归本节点；涉及低位直肠癌时，若手术重点在于肿瘤根治归本节点，若重点在于盆底重建或肛门功能保留归肛周与盆底疾病。；同级区分：肝胆胰脾外科：本节点处理消化道管腔疾病，肝胆胰脾外科处理实质性脏器及胆道系统疾病；两者在解剖上相邻，但手术对象及原则不同，如胃癌归本节点，肝癌归肝胆胰脾外科。；肛周与盆底疾病：本节点处理结肠及直肠中上段疾病，肛周与盆底疾病处理肛门直肠下段及盆底支持结构疾病；低位直肠癌若侧重肿瘤根治归本节点，若侧重盆底重建归肛周与盆底疾病。；收录：食管、胃、十二指肠肿瘤及溃疡的外科诊疗；小肠、结肠、直肠肿瘤、梗阻及炎症性肠病的手术治疗；排除：肝、胆、胰、脾实质性脏器疾病手术（归肝胆胰脾外科）；肛门直肠下段及盆底支持结构疾病（归肛周与盆底疾病）"
+    },
+    "sibling_context": [
+      {
+        "code": "N_e44013a161e603b4",
+        "name_zh": "胃十二指肠外科",
+        "path": "医学/外科学/普通外科/胃肠外科/胃十二指肠外科"
+      },
+      {
+        "code": "N_653a69225b2f914b",
+        "name_zh": "小肠与结直肠外科",
+        "path": "医学/外科学/普通外科/胃肠外科/小肠与结直肠外科"
+      }
+    ],
+    "targets": [
+      {
+        "code": "N_e44013a161e603b4",
+        "name_zh": "胃十二指肠外科",
+        "name_en": "",
+        "path": "医学/外科学/普通外科/胃肠外科/胃十二指肠外科",
+        "depth": 4,
+        "parent_code": "N_ac6eb9a4bab93f8b",
+        "children_codes": [],
+        "existing_context": {},
+        "descendant_outline": [],
+        "children_names": [],
+        "children_paths": []
+      },
+      {
+        "code": "N_653a69225b2f914b",
+        "name_zh": "小肠与结直肠外科",
+        "name_en": "",
+        "path": "医学/外科学/普通外科/胃肠外科/小肠与结直肠外科",
+        "depth": 4,
+        "parent_code": "N_ac6eb9a4bab93f8b",
+        "children_codes": [],
+        "existing_context": {},
+        "descendant_outline": [],
+        "children_names": [],
+        "children_paths": []
+      }
+    ]
+  },
+  "output": {
+    "status": "empty_boundary_fallback",
+    "reason": "generation_technical_failure",
+    "technical_error": "missing target cards",
+    "rounds": [
+      {
+        "generation": {
+          "result": null,
+          "attempts": [
+            {
+              "raw": {
+                "id": "chatcmpl-0fe2081f9e6e725fc6b71a0fe884f1f7",
+                "object": "chat.completion",
+                "created": 1791969784,
+                "model": "/mnt/si002647a3lv/zhanghong/model/modelscope/Qwen/Qwen3.8-27B",
+                "choices": [
+                  {
+                    "index": 0,
+                    "message": {
+                      "role": "assistant",
+                      "content": "```json\n{\"cards\":[{\"node_code\":\"N_e44013a161e603b4\",\"definition\":\"胃十二指肠外科是胃肠外科中专门处理食管下段、胃、十二指肠及幽门区域疾病的外科分支，涵盖肿瘤、溃疡、梗阻及畸形的手术治疗与重建。\",\"boundary\":\"本节点聚焦于上消化道（胃及十二指肠）的外科干预。包括胃癌、胃溃疡穿孔、幽门梗阻、十二指肠肿瘤及胃食管反流病的外科处理。不涵盖小肠、结肠及直肠疾病（归小肠与结直肠外科）及肝、胆、胰实质性脏器疾病（归肝胆胰脾外科）。\",\"includes\":[\"胃癌、胃溃疡及幽门梗阻的外科诊疗\",\"十二指肠肿瘤、憩室及畸形的手术治疗\",\"胃食管反流病及贲门失弛缓症的外科处理\"],\"excludes\":[\"小肠、结肠及直肠疾病手术（归小肠与结直肠外科）\",\"肝、胆、胰实质性脏器疾病手术（归肝胆胰脾外科）\"],\"sibling_distinctions\":[{\"other_code\":\"N_653a69225b2f914b\",\"rule\":\"本节点处理胃及十二指肠疾病，小肠与结直肠外科处理空肠、回肠、结肠及直肠疾病；两者在解剖上以幽门为界，幽门以上归本节点，幽门以下归小肠与结直肠外科。\"}],\"cross_boundary_rule\":\"涉及胰十二指肠切除术时，若主要病变在胰头归肝胆胰脾外科，若主要病变在十二指肠或胃窦归本节点；涉及食管下段手术时，若侧重腹部入路及胃食管连接部归本节点，若侧重胸部入路归胸心血管外科。\"}]\n```",
+                      "refusal": null,
+                      "annotations": null,
+                      "audio": null,
+                      "function_call": null,
+                      "tool_calls": [],
+                      "reasoning": null
+                    },
+                    "logprobs": null,
+                    "finish_reason": "stop",
+                    "stop_reason": null,
+                    "token_ids": null,
+                    "routed_experts": null
+                  }
+                ],
+                "service_tier": null,
+                "system_fingerprint": "vllm-0.22.0-tp2-dp4-c7f76f23",
+                "usage": {
+                  "prompt_tokens": 6754,
+                  "total_tokens": 7119,
+                  "completion_tokens": 365,
+                  "prompt_tokens_details": null
+                },
+                "prompt_logprobs": null,
+                "prompt_token_ids": null,
+                "prompt_text": null,
+                "kv_transfer_params": null
+              },
+              "error": "Expecting ',' delimiter: line 2 column 1 (char 642)",
+              "failure_kind": "format_or_semantic"
+            },
+            {
+              "raw": {
+                "id": "chatcmpl-dd0d54971ae417fc10e46d7a17c82d2d",
+                "object": "chat.completion",
+                "created": 1791969800,
+                "model": "/mnt/si002647a3lv/zhanghong/model/modelscope/Qwen/Qwen3.8-27B",
+                "choices": [
+                  {
+                    "index": 0,
+                    "message": {
+                      "role": "assistant",
+                      "content": "```json\n{\"cards\":[{\"node_code\":\"N_e44013a161e603b4\",\"definition\":\"胃十二指肠外科是胃肠外科中处理胃、十二指肠及食管下段连接部疾病的外科分支，涵盖肿瘤、溃疡、梗阻及畸形的手术治疗与重建。\",\"boundary\":\"本节点聚焦于上消化道（胃及十二指肠）的外科干预。包括胃癌、胃溃疡穿孔、幽门梗阻、十二指肠肿瘤及胃食管反流病的外科处理。不涵盖小肠、结肠及直肠疾病（归小肠与结直肠外科）及肝、胆、胰实质性脏器疾病（归肝胆胰脾外科）。\",\"includes\":[\"胃癌、胃溃疡及幽门梗阻的外科诊疗\",\"十二指肠肿瘤、憩室及畸形的手术治疗\",\"胃食管反流病及贲门失弛缓症的外科处理\"],\"excludes\":[\"小肠、结肠及直肠疾病手术（归小肠与结直肠外科）\",\"肝、胆、胰实质性脏器疾病手术（归肝胆胰脾外科）\"],\"sibling_distinctions\":[{\"other_code\":\"N_653a69225b2f914b\",\"rule\":\"本节点处理胃及十二指肠疾病，小肠与结直肠外科处理空肠、回肠、结肠及直肠疾病；两者在解剖上以幽门为界，幽门以上归本节点，幽门以下归小肠与结直肠外科。\"}],\"cross_boundary_rule\":\"涉及胰十二指肠切除术时，若主要病变在胰头归肝胆胰脾外科，若主要病变在十二指肠或胃窦归本节点；涉及食管下段手术时，若侧重腹部入路及胃食管连接部归本节点，若侧重胸部入路归胸心血管外科。\"}]}\n```",
+                      "refusal": null,
+                      "annotations": null,
+                      "audio": null,
+                      "function_call": null,
+                      "tool_calls": [],
+                      "reasoning": null
+                    },
+                    "logprobs": null,
+                    "finish_reason": "stop",
+                    "stop_reason": null,
+                    "token_ids": null,
+                    "routed_experts": null
+                  }
+                ],
+                "service_tier": null,
+                "system_fingerprint": "vllm-0.22.0-tp2-dp4-c7f76f23",
+                "usage": {
+                  "prompt_tokens": 7454,
+                  "total_tokens": 7817,
+                  "completion_tokens": 363,
+                  "prompt_tokens_details": null
+                },
+                "prompt_logprobs": null,
+                "prompt_token_ids": null,
+                "prompt_text": null,
+                "kv_transfer_params": null
+              },
+              "error": "missing target cards",
+              "failure_kind": "format_or_semantic"
+            },
+            {
+              "raw": {
+                "id": "chatcmpl-89713caad37001ccd342a65077c94cf7",
+                "object": "chat.completion",
+                "created": 1791969846,
+                "model": "/mnt/si002647a3lv/zhanghong/model/modelscope/Qwen/Qwen3.8-27B",
+                "choices": [
+                  {
+                    "index": 0,
+                    "message": {
+                      "role": "assistant",
+                      "content": "```json\n{\"cards\":[{\"node_code\":\"N_e44013a161e603b4\",\"definition\":\"胃十二指肠外科是胃肠外科中处理胃、十二指肠及食管胃连接部疾病的外科分支，涵盖肿瘤、溃疡、梗阻、畸形及反流性疾病的手术治疗与重建。\",\"boundary\":\"本节点聚焦于上消化道（胃及十二指肠）的外科干预。包括胃癌、胃溃疡穿孔、幽门梗阻、十二指肠肿瘤及胃食管反流病的外科处理。不涵盖小肠、结肠及直肠疾病（归小肠与结直肠外科）及肝、胆、胰实质性脏器疾病（归肝胆胰脾外科）。\",\"includes\":[\"胃癌、胃溃疡及幽门梗阻的外科诊疗\",\"十二指肠肿瘤、憩室及畸形的手术治疗\",\"胃食管反流病及贲门失弛缓症的外科处理\"],\"excludes\":[\"小肠、结肠及直肠疾病手术（归小肠与结直肠外科）\",\"肝、胆、胰实质性脏器疾病手术（归肝胆胰脾外科）\"],\"sibling_distinctions\":[{\"other_code\":\"N_653a69225b2f914b\",\"rule\":\"本节点处理胃及十二指肠疾病，小肠与结直肠外科处理空肠、回肠、结肠及直肠疾病；两者在解剖上以幽门为界，幽门以上归本节点，幽门以下归小肠与结直肠外科。\"}],\"cross_boundary_rule\":\"涉及胰十二指肠切除术时，若主要病变在胰头归肝胆胰脾外科，若主要病变在十二指肠或胃窦归本节点；涉及食管下段手术时，若侧重腹部入路及胃食管连接部归本节点，若侧重胸部入路归胸心血管外科。\"}]}\n```",
+                      "refusal": null,
+                      "annotations": null,
+                      "audio": null,
+                      "function_call": null,
+                      "tool_calls": [],
+                      "reasoning": null
+                    },
+                    "logprobs": null,
+                    "finish_reason": "stop",
+                    "stop_reason": null,
+                    "token_ids": null,
+                    "routed_experts": null
+                  }
+                ],
+                "service_tier": null,
+                "system_fingerprint": "vllm-0.22.0-tp2-dp4-c7f76f23",
+                "usage": {
+                  "prompt_tokens": 7438,
+                  "total_tokens": 7804,
+                  "completion_tokens": 366,
+                  "prompt_tokens_details": null
+                },
+                "prompt_logprobs": null,
+                "prompt_token_ids": null,
+                "prompt_text": null,
+                "kv_transfer_params": null
+              },
+              "error": "missing target cards",
+              "failure_kind": "format_or_semantic"
+            }
+          ]
+        }
+      }
+    ],
+    "original_status": "technical_failure",
+    "cards": [
+      {
+        "node_code": "N_e44013a161e603b4",
+        "node_path": "医学/外科学/普通外科/胃肠外科/胃十二指肠外科",
+        "node_name_zh": "胃十二指肠外科",
+        "depth": 4,
+        "definition": "",
+        "boundary": "",
+        "includes": [],
+        "excludes": [],
+        "sibling_distinctions": [],
+        "cross_boundary_rule": "",
+        "semantic_card": "",
+        "provenance": "empty_boundary_fallback",
+        "seed_examples": [],
+        "fallback_reason": "generation_technical_failure"
+      },
+      {
+        "node_code": "N_653a69225b2f914b",
+        "node_path": "医学/外科学/普通外科/胃肠外科/小肠与结直肠外科",
+        "node_name_zh": "小肠与结直肠外科",
+        "depth": 4,
+        "definition": "",
+        "boundary": "",
+        "includes": [],
+        "excludes": [],
+        "sibling_distinctions": [],
+        "cross_boundary_rule": "",
+        "semantic_card": "",
+        "provenance": "empty_boundary_fallback",
+        "seed_examples": [],
+        "fallback_reason": "generation_technical_failure"
+      }
+    ]
+  }
+}

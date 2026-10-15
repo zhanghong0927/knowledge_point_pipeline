@@ -5,6 +5,7 @@ import hashlib
 import subprocess
 import sys
 import shutil
+from pathlib import Path
 
 import mounting_bridge as bridge
 import mounting_tree_cache as cache
@@ -14,14 +15,28 @@ GENERATOR = bridge.ROOT / 'modules/mounting/pipeline/generate_semantic_boundarie
 
 def generate(args):
     manifest = bridge.frozen(args.out, allow_pending_boundaries=True)
-    if not manifest.get('require_semantic_boundaries') or manifest.get('boundaries_verified'):
+    if manifest.get('project_assets'):
+        from project_taxonomy import activate
+        return activate(args)
+    if not manifest.get('require_semantic_boundaries'):
         raise ValueError('Prepare a new mounting run with required semantic boundaries')
     if not manifest['groups']:
         raise ValueError('No configured boundary subject groups to generate')
+    phase = getattr(args, 'only_round', None)
+    finalize = getattr(args, 'finalize_only', False)
+    staged = phase is not None or finalize
+    status_path = args.out/'boundary'/'ORCHESTRATION_STATUS.json'
+    if not staged and status_path.exists() and bridge.read(status_path).get('state') == 'finalized':
+        report = bridge.read(args.out/'BOUNDARIES_GENERATED.json')
+        for group in report['groups'].values():
+            for name, digest in group['assets'].items():
+                if bridge.sha(args.out/name) != digest:
+                    raise ValueError('Finalized boundary asset changed: '+name)
+        return report
+    if manifest.get('boundaries_verified'):
+        raise ValueError('Prepare a new mounting run with required semantic boundaries')
     if (args.out / 'BOUNDARIES_GENERATED.json').exists():
         raise FileExistsError('Boundary generation already ended; use a new run directory')
-    base, key = bridge.api_settings(args) if manifest['groups'] else ('', '')
-    report = {'groups': {}, 'expert_approved': False}
     policy = manifest.get('boundary_failure_policy', 'strict')
     review_mode = manifest.get('boundary_review_mode', 'strict')
     if getattr(args, 'boundary_failure_policy', 'strict') != policy:
@@ -32,12 +47,20 @@ def generate(args):
     cache_dir = str(configured_cache.resolve()) if configured_cache else None
     if manifest.get('boundary_cache_dir') != cache_dir:
         raise ValueError('Boundary cache directory changed after preparation')
+    identity_url = bridge.boundary_cache_identity_url(getattr(args, 'boundary_cache_identity_url', None))
+    if manifest.get('boundary_cache_identity_url') != identity_url:
+        raise ValueError('Boundary cache identity URL changed after preparation')
     if cache_dir and getattr(args, 'boundary_reuse_root', None):
         raise ValueError('Use either a taxonomy cache or a legacy reuse root, not both')
+    if staged:
+        return generate_staged(args, manifest, policy, review_mode, cache_dir, identity_url)
+    base, key = bridge.api_settings(args) if manifest['groups'] else ('', '')
+    report = {'groups': {}, 'expert_approved': False}
     for slug in manifest['groups']:
         target = args.out / 'groups' / slug
         destination = target / 'boundaries'
-        generation = dict(api_root=base, max_context_bytes=args.boundary_context_bytes,
+        generation = dict(api_root=bridge.endpoint(identity_url) if identity_url else base,
+                          max_context_bytes=args.boundary_context_bytes,
                           max_tokens=args.max_tokens, rewrite_rounds=getattr(args, 'boundary_rewrite_rounds', 2),
                           workers=args.workers, timeout=args.timeout)
         cache_identity = cache.identity(slug, manifest['groups'][slug], target, review_mode, policy, args.model, generation)
@@ -69,10 +92,123 @@ def generate(args):
         summary = bridge.read(destination / 'summary.json')
         report['groups'][slug] = {'summary': summary, 'cache_identity': cache_identity,
             'cache_reused': bool(reused), 'cache_source': str(reused) if reused else None, 'assets': {
-            str(path.relative_to(args.out)): bridge.sha(path)
+            path.relative_to(args.out).as_posix(): bridge.sha(path)
             for path in destination.rglob('*') if path.is_file()}}
     bridge.frozen(args.out, allow_pending_boundaries=True)
     bridge.dump(args.out / 'BOUNDARIES_GENERATED.json', report)
+    return report
+
+
+def generate_staged(args, manifest, policy, review_mode, cache_dir, identity_url):
+    if review_mode != 'off':
+        raise ValueError('Staged boundary cohorts require review mode off')
+    phase = getattr(args, 'only_round', None)
+    finalize = getattr(args, 'finalize_only', False)
+    task_dir = args.out/'boundary'
+    task_dir.mkdir(parents=True, exist_ok=True)
+    state_path = task_dir/'bridge_state.json'
+    status_path = task_dir/'ORCHESTRATION_STATUS.json'
+    base = bridge.endpoint(args.api_url)
+    generation = dict(api_root=bridge.endpoint(identity_url) if identity_url else base,
+                      max_context_bytes=args.boundary_context_bytes, max_tokens=args.max_tokens,
+                      rewrite_rounds=getattr(args, 'boundary_rewrite_rounds', 2))
+    identities = {slug: cache.identity(slug, group, args.out/'groups'/slug,
+                                       review_mode, policy, args.model, generation)
+                  for slug, group in manifest['groups'].items()}
+    if state_path.exists():
+        state = bridge.read(state_path)
+        if state.get('identities') != identities:
+            raise ValueError('Staged boundary source or semantic identity changed')
+    elif phase == 1:
+        state = {'identities': identities, 'completed_rounds': [], 'cached_groups': {}}
+        bridge.dump(state_path, state)
+    else:
+        raise ValueError('Missing boundary round 1 checkpoint')
+    completed = state['completed_rounds']
+    if completed != list(range(1, len(completed)+1)) or len(completed)>3:
+        raise ValueError('Invalid boundary round history')
+    if finalize and (not status_path.exists() or not (
+            bridge.read(status_path).get('state') == 'ready_to_finalize' or
+            bridge.read(status_path).get('resume_state') == 'ready_to_finalize')):
+        raise ValueError('Boundary rounds are not ready to finalize')
+    if phase and phase not in completed and completed != list(range(1, phase)):
+        raise ValueError(f'Boundary round {phase} requires prior rounds')
+    report = {'groups': {}, 'expert_approved': False}
+    pending_transport = 0
+    for slug in manifest['groups']:
+        target = args.out/'groups'/slug
+        destination = target/'boundaries'
+        state_dir = task_dir/'groups'/slug
+        reused = state['cached_groups'].get(slug)
+        if phase == 1 and not reused and not state_dir.exists() and cache_dir:
+            asset = cache.locate(cache_dir, identities[slug])
+            if asset:
+                if destination.exists():
+                    raise FileExistsError('Cached boundary import requires an empty generation directory')
+                shutil.copytree(asset/'boundaries', destination)
+                reused = str(asset)
+                state['cached_groups'][slug] = reused
+                bridge.dump(state_path, state)
+        if not reused:
+            command = [sys.executable, str(GENERATOR), '--tree', str(target/'boundary_input.json'),
+                       '--out', str(destination), '--staged-state-dir', str(state_dir),
+                       '--base', base, '--model', args.model, '--workers', str(args.workers),
+                       '--max-depth', '-1', '--max-context-bytes', str(args.boundary_context_bytes),
+                       '--review-mode', 'off', '--cross-review', 'off', '--failure-policy', policy,
+                       '--rewrite-rounds', str(getattr(args, 'boundary_rewrite_rounds', 2))]
+            if phase:
+                command += ['--only-round', str(phase)]
+            else:
+                command += ['--finalize-only']
+            reuse_root = getattr(args, 'boundary_reuse_root', None)
+            if reuse_root:
+                command += ['--reuse-run', str(reuse_root/'groups'/slug/'boundaries')]
+            if destination.exists():
+                command.append('--resume')
+            env = dict(os.environ, BOUNDARY_HTTP_TIMEOUT=str(args.timeout),
+                       BOUNDARY_MAX_TOKENS=str(args.max_tokens))
+            if phase:
+                _, key = bridge.api_settings(args)
+                if key:
+                    env['BOUNDARY_API_KEY'] = key
+            bridge.dump(target/'boundary_command.json', command)
+            try:
+                subprocess.run(command, env=env, check=True)
+            except Exception as exc:
+                bridge.orchestration_status(args.out, 'boundary', state='technical_failure',
+                                            round=phase, failed_group=slug, error=str(exc),
+                                            resume_state='ready_to_finalize' if finalize else None,
+                                            completed_round=completed[-1] if finalize else None)
+                raise
+            native_state = bridge.read(state_dir/'round_state.json')
+            pending_transport += native_state['pending_transport']
+        if finalize:
+            summary = bridge.read(destination/'summary.json')
+            report['groups'][slug] = {'summary': summary, 'cache_identity': identities[slug],
+                'cache_reused': bool(reused), 'cache_source': reused, 'assets': {
+                    path.relative_to(args.out).as_posix(): bridge.sha(path)
+                    for path in cache.approved_evidence(destination)}}
+            if not summary.get('runtime_release'):
+                bridge.orchestration_status(args.out, 'boundary', state='technical_failure',
+                                            completed_round=completed[-1], failed_group=slug,
+                                            error='Boundary technical failures unresolved under strict policy')
+                raise ValueError('Boundary technical failures unresolved under strict policy')
+    if phase:
+        if phase not in completed:
+            state['completed_rounds'].append(phase)
+            bridge.dump(state_path, state)
+        retry = pending_transport > 0 and phase < 3
+        return bridge.orchestration_status(args.out, 'boundary',
+            state='awaiting_retry' if retry else 'ready_to_finalize', completed_round=phase,
+            next_round=phase+1 if retry else None, pending_transport=pending_transport,
+            groups=len(manifest['groups']))
+    bridge.frozen(args.out, allow_pending_boundaries=True)
+    bridge.dump(args.out/'BOUNDARIES_GENERATED.json', report)
+    bridge.orchestration_status(args.out, 'boundary', state='finalized',
+                                completed_round=completed[-1], transport_unresolved=pending_transport,
+                                semantic_quality_degraded=any(g['summary'].get('semantic_quality_degraded')
+                                                              for g in report['groups'].values()),
+                                groups=len(report['groups']))
     return report
 
 
@@ -100,7 +236,7 @@ def verify(args):
     # Validate every subject before replacing any runtime asset.
     for slug, generated_group in generated['groups'].items():
         destination = args.out / 'groups' / slug / 'boundaries'
-        actual = {str(path.relative_to(args.out)) for path in cache.approved_evidence(destination)}
+        actual = {path.relative_to(args.out).as_posix() for path in cache.approved_evidence(destination)}
         if actual != set(generated_group['assets']):
             raise ValueError('Generated boundary evidence file coverage changed')
         for name, digest in generated_group['assets'].items():
@@ -229,10 +365,13 @@ def verify(args):
             report['groups'][slug]['cache_reused'] = generated['groups'][slug]['cache_reused']
         assets = dict(generated['groups'][slug]['assets'])
         assets[str((target / 'taxonomy_enriched.json').relative_to(args.out))] = bridge.sha(target / 'taxonomy_enriched.json')
-        assets.update({str(path.relative_to(args.out)): bridge.sha(path)
+        assets.update({path.relative_to(args.out).as_posix(): bridge.sha(path)
                        for path in profile.rglob('*') if path.is_file()})
         group['assets'].update(assets)
     report['model_reviewed'] = report['verified_nodes'] > 0
+    if manifest.get('project_assets'):
+        report['project_assets']=manifest['project_assets']
+        report['model_calls']=0
     report['generation_report_sha256'] = bridge.sha(generated_path)
     bridge.dump(args.out / 'BOUNDARIES_VERIFIED.json', report)
     manifest.update(boundaries_verified=True,

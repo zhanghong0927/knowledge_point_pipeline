@@ -86,7 +86,7 @@ class CleaningHandoffTests(unittest.TestCase):
         dump(registry, {'mechanical': {'name': 'Mechanical', 'file': ''}})
         return SimpleNamespace(input=root / 'export/records.jsonl', out=root / 'mount', registry=registry,
             subject_slug='mechanical', taxonomy=None, taxonomy_dir=root, require_cleaned=True,
-            limit=0, threshold=.85, min_depth=2, max_depth=5, max_related=2)
+            limit=0, threshold=.85, min_depth=2, max_depth=5, max_related=2,asset_maintenance=True)
 
     def test_legacy_important_proof_with_matching_hashes_requires_new_export(self):
         with tempfile.TemporaryDirectory() as d:

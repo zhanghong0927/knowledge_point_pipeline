@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 import time
 import threading
+import sys
 import uuid
 
 from markdown_it import MarkdownIt
@@ -172,7 +173,9 @@ class Runner(legacy.Runner):
     def __init__(self,args):
         super().__init__(args)
         self.workers = getattr(args,'workers',1024)
-        self.pool = concurrent.futures.ThreadPoolExecutor(max_workers=self.workers)
+        sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+        from shared_request_pool import SharedExecutor
+        self.pool = SharedExecutor(max_workers=self.workers)
         self.request_lock = threading.Lock()
         self.active_requests = 0
         self.peak_requests = 0

@@ -18,6 +18,8 @@ import urllib.request
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from shared_request_pool import completed as shared_completed
 from typing import Any, Iterable, Iterator, Sequence
 
 try:
@@ -117,6 +119,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--retries", type=int, default=2)
     parser.add_argument("--single-retries", type=int, default=1)
+    parser.add_argument("--defer-transport-retry", action="store_true",
+                        help="Leave transport failures in error checkpoints for external cohort recovery")
     parser.add_argument("--max-tokens", type=int, default=8192)
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--context-chars", type=int, default=3000)
@@ -132,6 +136,8 @@ def parse_args() -> argparse.Namespace:
         default="",
         help="Comma-separated decisions to reprocess on --resume, e.g. review,error.",
     )
+    parser.add_argument("--retry-failure-kind", choices=("transport",),
+                        help="With --resume, reprocess only error checkpoints of this kind")
     parser.add_argument(
         "--strict-checkpoint",
         action="store_true",
@@ -540,6 +546,14 @@ def http_request(body: dict[str, Any], args: argparse.Namespace, use_response_fo
     return extract_json(content), content, tokens
 
 
+class DeferredTransportError(RuntimeError):
+    """A transport failure reserved for the controller's lower-cap cohort."""
+
+
+class TerminalTransportError(RuntimeError):
+    """A non-retryable HTTP or local I/O failure retained as unresolved."""
+
+
 def request_model(batch_id: str, batch: Sequence[dict[str, Any]], prompt: str, args: argparse.Namespace) -> tuple[dict[str, Any], str, int]:
     body: dict[str, Any] = {
         "model": args.model,
@@ -577,12 +591,22 @@ def request_model(batch_id: str, batch: Sequence[dict[str, Any]], prompt: str, a
         except urllib.error.HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="replace")
             last_error = RuntimeError(f"HTTP {exc.code}: {detail[:1000]}")
+            if getattr(args, 'defer_transport_retry', False):
+                error_type = (DeferredTransportError if exc.code in
+                              (408, 429, 500, 502, 503, 504) else TerminalTransportError)
+                raise error_type(str(last_error)) from exc
             if args.response_format == "auto" and use_response_format and not auto_fallback_used:
                 use_response_format = False
                 auto_fallback_used = True
                 continue
         except Exception as exc:  # noqa: BLE001
             last_error = exc
+            if (getattr(args, 'defer_transport_retry', False) and
+                    isinstance(exc, (urllib.error.URLError, TimeoutError,
+                                     ConnectionError))):
+                raise DeferredTransportError(str(exc)) from exc
+            if getattr(args, 'defer_transport_retry', False) and isinstance(exc, OSError):
+                raise TerminalTransportError(str(exc)) from exc
             if isinstance(exc, (ValueError, KeyError, TypeError)):
                 body["messages"] = body["messages"][:2] + [{"role": "user", "content": "上次输出JSON无效。重新输出全部记录的完整JSON对象；evidence只能是一个字符串，多个依据用分号连接；不得重复空白。"}]
         if attempt < args.retries:
@@ -906,15 +930,21 @@ def process_batch(batch_index: int, batch: Sequence[dict[str, Any]], prompt: str
     except Exception as exc:  # noqa: BLE001
         by_key = {}
         batch_error = str(exc)
+        deferred_transport = isinstance(exc, DeferredTransportError)
+        terminal_transport = isinstance(exc, TerminalTransportError)
     else:
         batch_error = ""
+        deferred_transport = False
+        terminal_transport = False
 
     results: list[dict[str, Any]] = []
     for entry in batch:
         key = entry["key"]
         item = by_key.get(key)
         error = batch_error if item is None else ""
-        if item is None:
+        error_kind = ('transport' if deferred_transport else
+                      'terminal_transport' if terminal_transport else 'content_or_format')
+        if item is None and not (deferred_transport or terminal_transport):
             for attempt in range(args.single_retries + 1):
                 try:
                     payload, raw_content, tokens = request_model(f"{batch_id}-single-{attempt}", [entry], prompt, args)
@@ -933,6 +963,12 @@ def process_batch(batch_index: int, batch: Sequence[dict[str, Any]], prompt: str
                     break
                 except Exception as exc:  # noqa: BLE001
                     error = str(exc)
+                    if isinstance(exc, DeferredTransportError):
+                        error_kind = 'transport'
+                        break
+                    if isinstance(exc, TerminalTransportError):
+                        error_kind = 'terminal_transport'
+                        break
         if item is None:
             result = {
                 "decision": "error",
@@ -943,6 +979,8 @@ def process_batch(batch_index: int, batch: Sequence[dict[str, Any]], prompt: str
                 "model": args.model,
                 "updated_at": now_iso(),
             }
+            if getattr(args, 'defer_transport_retry', False):
+                result['failure_kind'] = error_kind
         else:
             result = normalize_result(entry["source_row"], item, args)
             result["error"] = ""
@@ -993,6 +1031,7 @@ def done_keys(
     connection: sqlite3.Connection,
     policy_version: str,
     retry_decisions: Iterable[str] = (),
+    retry_failure_kind: str | None = None,
 ) -> tuple[set[str], int]:
     """Return completed keys for the current policy plus the ignored row count.
 
@@ -1003,14 +1042,16 @@ def done_keys(
     skip = {str(value).lower() for value in retry_decisions}
     done: set[str] = set()
     ignored = 0
-    for record_key, decision, stored_version in connection.execute(
-        "SELECT record_key, decision, policy_version FROM results"
+    for record_key, decision, payload, stored_version in connection.execute(
+        "SELECT record_key, decision, payload, policy_version FROM results"
     ):
         if str(stored_version or "") != policy_version:
             ignored += 1
             continue
         if str(decision or "").lower() in skip:
-            continue
+            if not (retry_failure_kind and str(decision or "").lower() == 'error' and
+                    json.loads(payload).get('failure_kind') != retry_failure_kind):
+                continue
         done.add(str(record_key))
     return done, ignored
 
@@ -1343,7 +1384,10 @@ def validate_args(args: argparse.Namespace) -> None:
         raise ValueError(
             "--taxonomy-scope-chars and --taxonomy-candidate-nodes cannot be negative"
         )
-    retry_decision_set(args)
+    retry_decisions = retry_decision_set(args)
+    if (getattr(args, 'retry_failure_kind', None) and
+            (not args.resume or 'error' not in retry_decisions)):
+        raise ValueError('--retry-failure-kind requires --resume and error retry decision')
     if not args.finalize_only:
         if not args.api_url or not args.model:
             raise ValueError("--api-url and --model are required")
@@ -1381,7 +1425,8 @@ def main() -> int:
             done: set[str] = set()
             if args.resume:
                 done, ignored_versions = done_keys(
-                    connection, MODEL_POLICY_VERSION, retry_decision_set(args)
+                    connection, MODEL_POLICY_VERSION, retry_decision_set(args),
+                    getattr(args, 'retry_failure_kind', None)
                 )
             total = count_records(args.input, args.skip, args.limit)
             remaining = max(total - len(done), 0)
@@ -1389,8 +1434,8 @@ def main() -> int:
             raw_mode = "a" if args.resume and outputs["raw"].exists() else "w"
             with outputs["raw"].open(raw_mode, encoding="utf-8") as raw_handle:
                 pending: dict[futures.Future, int] = {}
-                with futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
-                    for batch_index, batch in enumerate(
+                if remaining:
+                    batches = enumerate(
                         iter_batches(
                             args.input,
                             done,
@@ -1404,14 +1449,10 @@ def main() -> int:
                             batch_stats,
                         ),
                         1,
-                    ):
-                        future = executor.submit(process_batch, batch_index, batch, prompt, args)
-                        pending[future] = len(batch)
-                        if len(pending) >= args.workers * 2:
-                            tokens, decisions = drain_one(pending, connection, raw_handle, progress)
-                            current_tokens += tokens
-                            run_decisions.update(decisions)
-                    while pending:
+                    )
+                    for (_, batch), future in shared_completed(
+                            lambda pair: process_batch(pair[0], pair[1], prompt, args), batches, args.workers):
+                        pending = {future: len(batch)}
                         tokens, decisions = drain_one(pending, connection, raw_handle, progress)
                         current_tokens += tokens
                         run_decisions.update(decisions)

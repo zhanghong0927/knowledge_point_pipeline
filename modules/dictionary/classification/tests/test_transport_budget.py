@@ -64,6 +64,60 @@ class TransportBudgetTests(unittest.TestCase):
         self.assertEqual(result["status"], "technical_failed")
         self.assertFalse(any(url.endswith("/v1/chat/completions") for url, _ in calls))
 
+    def test_long_prefix_can_be_trimmed_around_anchor(self):
+        def count(windows):
+            return sum(20000 if row['id'] == 'md:1' else 300 for w in windows for row in w['lines'])
+        result, _, stored = self.invoke(count, {'max_tokens': 8192})
+        self.assertEqual(result['status'], 'sample_supported')
+        ids = [row['id'] for row in stored['windows'][0]['lines']]
+        self.assertIn('md:7', ids)
+        self.assertNotIn('md:1', ids)
+        self.assertEqual([int(x.split(':')[1]) for x in ids],
+                         list(range(int(ids[0].split(':')[1]), int(ids[-1].split(':')[1]) + 1)))
+
+    def test_multiple_regions_keep_head_and_following_body(self):
+        windows = []
+        for region in range(3):
+            rows = [{'id': f'md:{region * 100 + i + 1}', 'text': f'region {region} line {i}'}
+                    for i in range(60)]
+            windows.append({'window_id': f'w{region}', 'candidate': {'line': region * 100 + 6},
+                            'lines': rows})
+
+        def tokenize(url, payload):
+            sent = json.loads(payload['messages'][1]['content'])['windows']
+            return {'count': sum(20000 if row['id'].endswith('1') else 200
+                                 for w in sent for row in w['lines'])}
+
+        with patch.object(transport.io, 'http', side_effect=tokenize), \
+             patch.object(transport.core, 'PROMPT', 'Classification'):
+            fitted, _, _ = transport.fit_request('book', windows,
+                                                 {'api_url': 'http://model', 'model': 'test',
+                                                  'context_limit': 32768, 'max_tokens': 8192})
+        self.assertEqual(len(fitted), 3)
+        for region, window in enumerate(fitted):
+            ids = [row['id'] for row in window['lines']]
+            self.assertIn(f'md:{region * 100 + 7}', ids)
+            self.assertIn(f'md:{region * 100 + 8}', ids)
+            self.assertEqual([int(value[3:]) for value in ids],
+                             list(range(int(ids[0][3:]), int(ids[-1][3:]) + 1)))
+
+    def test_single_oversized_context_line_can_be_removed(self):
+        windows = [{'window_id': 'w0', 'candidate': {'line': 0},
+                    'lines': [{'id': 'md:1', 'text': 'head'}, {'id': 'md:2', 'text': 'body'}],
+                    'context_lines': [{'id': 'md:0', 'text': 'large context'}]}]
+
+        def tokenize(url, payload):
+            sent = json.loads(payload['messages'][1]['content'])['windows']
+            return {'count': 50000 if sent[0].get('context_lines') else 1000}
+
+        with patch.object(transport.io, 'http', side_effect=tokenize), \
+             patch.object(transport.core, 'PROMPT', 'Classification'):
+            fitted, _, _ = transport.fit_request('book', windows,
+                                                 {'api_url': 'http://model', 'model': 'test',
+                                                  'context_limit': 32768, 'max_tokens': 8192})
+        self.assertEqual([r['text'] for r in fitted[0]['lines']], ['head', 'body'])
+        self.assertEqual(fitted[0]['context_lines'], [])
+
 
 if __name__ == "__main__":
     unittest.main()

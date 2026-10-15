@@ -51,10 +51,10 @@ def disposition(result, allowed_families=DEFAULT_FAMILIES):
     return "approved", "supported_structure_and_compatible_samples"
 
 
-def convert(books_path, classification, allowed_families=DEFAULT_FAMILIES):
+def convert(books_path, classification, allowed_families=DEFAULT_FAMILIES, allow_empty=False):
     allowed_families = validate_families(allowed_families)
     books = read(books_path)
-    if not isinstance(books, list) or not books:
+    if not isinstance(books, list) or (not books and not allow_empty):
         raise ValueError("books must be a nonempty JSON array")
     refs = [book.get("identifier") for book in books]
     if any(not isinstance(ref, str) or not re.fullmatch(r"[A-Za-z0-9_-]+", ref) for ref in refs):
@@ -146,10 +146,11 @@ def main():
     parser.add_argument("--classification", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--allowed-families", nargs="+", choices=sorted(FAMILIES), default=list(DEFAULT_FAMILIES))
+    parser.add_argument("--allow-empty", action="store_true", help="Accept a verified classification cohort with zero approved books")
     args = parser.parse_args()
     if args.out.exists():
         raise FileExistsError(f"Use a new output directory: {args.out}")
-    approved, queues, audit, report = convert(args.books, args.classification, args.allowed_families)
+    approved, queues, audit, report = convert(args.books, args.classification, args.allowed_families, args.allow_empty)
     args.out.mkdir(parents=True)
     for name, value in (("approved_books.json", approved), ("report.json", report)):
         (args.out / name).write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -158,7 +159,7 @@ def main():
             for value in values:
                 f.write(json.dumps(value, ensure_ascii=False) + "\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))
-    return 0 if approved else 2
+    return 0 if approved or (args.allow_empty and not queues['technical_failed']) else 2
 
 
 if __name__ == "__main__":

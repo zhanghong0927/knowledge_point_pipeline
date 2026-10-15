@@ -199,19 +199,18 @@ class MountingBoundaryTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'review.*changed'):
                     bridge.generate_boundaries(args)
 
-    def test_pipeline_passes_explicit_review_mode_to_preparation_and_generation(self):
+    def test_pipeline_derives_boundary_review_policy_from_project_release(self):
         spec = importlib.util.spec_from_file_location('unreviewed_pipeline', ROOT / 'pipeline.py')
         pipeline = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(pipeline)
         config, values = pipeline.load_config(ROOT / 'configs/pipeline.example.json')
         config['mounting']['boundaries'].update(review_mode='off')
         tasks = pipeline.plan(config, values)[4]['tasks']
-        for name in ('prepare_mounting', 'generate_mounting_boundaries'):
-            command = next(task['command'] for task in tasks if task['name'] == name)
-            self.assertEqual(command[command.index('--boundary-review-mode') + 1], 'off')
+        command=next(task['command'] for task in tasks if task['name']=='prepare_mounting')
+        self.assertEqual(command[command.index('--boundary-review-mode') + 1], 'off')
+        self.assertIn('activate-project-assets',tasks[1]['command'])
         config['mounting']['boundaries']['review_mode'] = 'invalid'
-        with self.assertRaisesRegex(ValueError, 'review'):
-            pipeline.plan(config, values)
+        self.assertEqual(tasks,pipeline.plan(config,values)[4]['tasks'])
 
     def test_explicit_empty_fallback_activates_without_claiming_full_semantic_review(self):
         with tempfile.TemporaryDirectory() as d:
@@ -274,13 +273,15 @@ class MountingBoundaryTests(unittest.TestCase):
         spec.loader.exec_module(pipeline)
         config, values = pipeline.load_config(ROOT / 'configs/pipeline.example.json')
         config['mounting']['boundaries'] = {'enabled': True, 'workers': 1024, 'max_tokens': 8192}
+        config['mounting']['review_enabled'] = True
         tasks = pipeline.plan(config, values)[4]['tasks']
         self.assertEqual([task['name'] for task in tasks], [
             'prepare_mounting', 'generate_mounting_boundaries', 'verify_mounting_boundaries',
             'route_mounting', 'review_mounting', 'export_mounting'])
         self.assertIn('--require-boundaries', tasks[0]['command'])
         self.assertIn(str(Path(values['run']) / '05_mounting/BOUNDARIES_VERIFIED.json'), tasks[3]['requires'])
-        self.assertEqual(tasks[1]['command'][tasks[1]['command'].index('--workers') + 1], '1024')
+        self.assertIn('activate-project-assets',tasks[1]['command'])
+        self.assertNotIn('--workers',tasks[1]['command'])
         config['hooks']['mounting'] = [['echo', 'custom']]
         with self.assertRaisesRegex(ValueError, 'boundar'):
             pipeline.plan(config, values)

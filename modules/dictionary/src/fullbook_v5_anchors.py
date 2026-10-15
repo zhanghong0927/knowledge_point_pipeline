@@ -515,6 +515,59 @@ def _same_heading_recovery(resolver, original, fixed, old, new):
                    for r in resolver.ordered)
 
 
+def _evidenced_definition_crop(resolver, original, fixed, old, new):
+    """Crop a definition only when the original separate name pins the same head."""
+    if (len(old)!=1 or len(new)!=1 or old[0][0]!=new[0][0]
+            or not new[0][1]<old[0][1]
+            or resolver.row_at(old[0][0])['unit']!=resolver.row_at(old[0][1]-1)['unit']):
+        return False
+    scripts=_scripts(resolver.slice(*new[0]))
+    field='knowledge_point' if scripts=={'latin'} else 'name' if scripts=={'cjk'} else None
+    if field is None:return False
+    other='name' if field=='knowledge_point' else 'knowledge_point'
+    if original.get(other) or fixed.get(other):return False
+    try:
+        before=resolver.parts(original.get(field),role='name',head_spans=old)
+        after=resolver.parts(fixed.get(field),role='name',head_spans=new)
+        expected=_lexical(resolver.chars(new))
+        if _lexical(resolver.chars(before))!=expected or _lexical(resolver.chars(after))!=expected:
+            return False
+    except (KeyError,IndexError,TypeError,ValueError):
+        return False
+    row=resolver.row_at(new[0][1]-1)
+    tail=row['text'][new[0][1]-row['offset']:]
+    predicate=(r'[ \t]+(?:is|are|means|refers to)\b|'
+               r'[ \t]+(?:A|An|The)[ \t]+[\w-]+[ \t]+'
+               r'(?:with|which|that|having|consisting|used|intended|composed|designed|containing|formed|for|of)\b|'
+               r'[ \t]*(?:是(?:一[种个位名]|指)|指的是|用于)')
+    return bool(re.match(predicate,tail))
+
+
+def _evidenced_acronym_extension(resolver, original, fixed, old, new):
+    """Allow only an adjacent literal acronym matching the full name's initials."""
+    if (len(old)!=1 or len(new)!=1 or old[0][0]!=new[0][0]
+            or not old[0][1]<new[0][1]
+            or resolver.row_at(old[0][0])['unit']!=resolver.row_at(new[0][1]-1)['unit']):
+        return False
+    value=resolver.slice(*old[0])
+    if _scripts(value)!={'latin'} or original.get('name') or fixed.get('name'):return False
+    match=re.fullmatch(r'[ \t]+\(([A-Z][A-Z0-9.-]{1,15})\)',resolver.slice(old[0][1],new[0][1]))
+    if not match:return False
+    words=re.findall(r'[A-Za-z]+',value)
+    acronym=re.sub(r'[^A-Z0-9]','',match[1])
+    stop={'a','an','the','of','and','for','in','on'}
+    initials={''.join(word[0].upper() for word in words),
+              ''.join(word[0].upper() for word in words if word.casefold() not in stop)}
+    if acronym not in initials:return False
+    try:
+        before=resolver.parts(original.get('knowledge_point'),role='name',head_spans=old)
+        after=resolver.parts(fixed.get('knowledge_point'),role='name',head_spans=new)
+        return (_lexical(resolver.chars(before))==_lexical(resolver.chars(old))
+                and _lexical(resolver.chars(after))==_lexical(resolver.chars(new)))
+    except (KeyError,IndexError,TypeError,ValueError):
+        return False
+
+
 def check_repair_identity(original, fixed, part):
     """Return identity compatibility; raise source/structure failures separately.
 
@@ -532,6 +585,9 @@ def check_repair_identity(original, fixed, part):
     if not old or not new:
         raise ValueError('Empty repair head')
     _head_cluster(resolver, new, explicit=True)
+    if (_evidenced_definition_crop(resolver,original,fixed,old,new)
+            or _evidenced_acronym_extension(resolver,original,fixed,old,new)):
+        return True
     old_chars, new_chars = _lexical(resolver.chars(old)), _lexical(resolver.chars(new))
     if not old_chars or not new_chars:
         raise ValueError('Repair head contains no headword characters')

@@ -1,1 +1,2 @@
-*.sh text eol=lf
+# Preserve source and asset bytes used by checkpoint and package hashes.
+* -text

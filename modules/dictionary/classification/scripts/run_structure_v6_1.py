@@ -8,6 +8,14 @@ import json
 from pathlib import Path
 import shutil
 import time
+from urllib.error import HTTPError, URLError
+
+
+def transient_transport(exc):
+    if isinstance(exc, HTTPError):
+        return exc.code in (408, 429, 500, 502, 503, 504)
+    return isinstance(exc, (URLError, TimeoutError, ConnectionError,
+                            ConnectionResetError, BrokenPipeError))
 import structure_v6_1 as core
 import run_md_primary_v5 as io
 
@@ -22,7 +30,7 @@ def fit_request(ref, windows, cfg):
     if isinstance(output,bool) or not isinstance(output,int) or output<1 or output+500>=context:
         raise ValueError('invalid_output_budget')
     original_lines=sum(len(w['lines']) for w in windows)
-    for shrink in range(8):
+    for shrink in range(12):
         messages=[{'role':'system','content':core.PROMPT},
                   {'role':'user','content':json.dumps({'ref':ref,'windows':windows},ensure_ascii=False,separators=(',',':'))}]
         count=io.http(cfg['api_url']+'/tokenize',{'model':cfg['model'],'messages':messages,'add_generation_prompt':True})['count']
@@ -31,16 +39,25 @@ def fit_request(ref, windows, cfg):
                                      'original_lines':original_lines,'sent_lines':sum(len(w['lines']) for w in windows),
                                      'shrink_rounds':shrink}
         changed=False
-        # Keep every regional window, its anchor, and verbatim contiguous lines.
+        # Retain a contiguous original slice around each regional anchor.
         for window in windows:
             lines=window['lines']
+            if not lines:continue
             anchor=window.get('candidate') or {}
             anchor_id='md:'+str(anchor.get('line',int(lines[0]['id'].split(':')[1])-1)+1)
             index=next((i for i,row in enumerate(lines) if row['id']==anchor_id),0)
-            minimum=max(24,index+12)
-            length=max(minimum,len(lines)//2)
+            length=max(2,len(lines)//2)
             if length<len(lines):
-                window['lines']=lines[:length]
+                start=max(0,min(index-length//4,len(lines)-length))
+                window['lines']=lines[start:start+length]
+                changed=True
+            context_lines=window.get('context_lines',[])
+            if context_lines:
+                keep=len(context_lines)//2
+                window['context_lines']=context_lines[-keep:] if keep else []
+                changed=True
+            elif window.get('section_hint'):
+                window['section_hint']=None
                 changed=True
         if not changed:break
     raise ValueError('context_budget_exceeded_after_sampling')
@@ -61,9 +78,11 @@ def process(ref,base,out,cfg):
         windows,messages,budget=fit_request(ref,windows,cfg)
     except ValueError as exc:
         result={'ref':ref,'status':'technical_failed','errors':[repr(exc)]}
+        if cfg.get('defer_transport_retry'):result['failure_kind']='source_or_budget'
         io.write(dest,result);return result
     prep.update(windows=windows,request_budget=budget);io.write(out/'prepared'/f'{ref}.json',prep)
     errors=[]
+    failure_kind='content_or_format'
     for attempt in range(2):
         try:
             count=io.http(cfg['api_url']+'/tokenize',{'model':cfg['model'],'messages':messages,'add_generation_prompt':True})['count']
@@ -80,8 +99,14 @@ def process(ref,base,out,cfg):
             io.write(dest,result);return result
         except Exception as exc:
             errors.append(repr(exc))
+            if cfg.get('defer_transport_retry') and isinstance(
+                    exc,(HTTPError,URLError,TimeoutError,ConnectionError)):
+                failure_kind='transport' if transient_transport(exc) else 'terminal_transport'
+                break
             messages=messages[:2]+[{'role':'user','content':'仅修复格式和原文引证，不改原文。错误：'+str(exc)[:250]}]
-    result={'ref':ref,'status':'technical_failed','errors':errors};io.write(dest,result);return result
+    result={'ref':ref,'status':'technical_failed','errors':errors}
+    if cfg.get('defer_transport_retry'):result['failure_kind']=failure_kind
+    io.write(dest,result);return result
 
 
 def execute(base,out,workers):

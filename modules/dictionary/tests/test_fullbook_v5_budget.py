@@ -2,6 +2,7 @@ import argparse
 import io
 import json
 import unittest
+import urllib.error
 from unittest.mock import patch
 
 import fullbook_llm_v5 as v5
@@ -54,6 +55,20 @@ class BudgetTests(unittest.TestCase):
                     return_value=io.BytesIO(json.dumps({'count': count}).encode())):
                 with self.assertRaises(ValueError):
                     runner.fits_messages([{'role': 'user', 'content': 'short'}])
+
+    def test_oversized_tokenize_request_triggers_smaller_ranges_not_book_failure(self):
+        runner = self.runner()
+        error = urllib.error.HTTPError('http://service/tokenize', 413, 'too large', {}, None)
+        with patch('urllib.request.urlopen', side_effect=error):
+            self.assertFalse(runner.fits_messages([{'role': 'user', 'content': 'large'}]))
+        with patch('urllib.request.urlopen', return_value=io.BytesIO(b'{"count":10}')):
+            self.assertTrue(runner.fits_messages([{'role': 'user', 'content': 'smaller'}]))
+
+    def test_other_http_failures_still_propagate(self):
+        runner = self.runner()
+        error = urllib.error.HTTPError('http://service/tokenize', 503, 'unavailable', {}, None)
+        with patch('urllib.request.urlopen', side_effect=error), self.assertRaises(urllib.error.HTTPError):
+            runner.fits_messages([{'role': 'user', 'content': 'short'}])
 
     def test_local_tokenizer_uses_the_inference_template_without_network(self):
         runner = self.runner()

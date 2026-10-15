@@ -64,32 +64,37 @@ class TransportTests(unittest.TestCase):
         self.run_round(3, True)
         self.assertEqual(len(self.calls), 3)
 
-    def test_non504_failure_marker_survives_cached_leaf_reuse(self):
+    def test_timeout_failure_marker_survives_same_round_cached_leaf_reuse(self):
         def unavailable(*a):
             raise TimeoutError('model unavailable')
         self.responder = unavailable
         first = self.run_round(1)
         self.assertEqual(first['status'], 'partial')
-        self.assertEqual(first['execution']['technical_errors'], 3)
+        self.assertEqual(first['execution']['technical_errors'], 1)
+        self.assertEqual(first['transport_pending_chunks'], 1)
         self.assertTrue(first['chunks'][0]['technical_failure_unresolved'])
         cache = next((self.root/'out').glob('*/chunks/*.json'))
         self.assertTrue(json.loads(cache.read_text())['technical_failure_unresolved'])
         cached = self.run_round(1)
-        self.assertEqual(len(self.calls), 3)
+        self.assertEqual(len(self.calls), 1)
         self.assertEqual(cached['execution']['technical_errors'], 0)
         self.assertTrue(cached['chunks'][0]['technical_failure_unresolved'])
         self.assertEqual(cached['technical_failure_unresolved_chunks'], 1)
 
-    def test_earlier_non504_failure_clears_after_successful_response(self):
+    def test_earlier_timeout_clears_after_successful_lower_concurrency_round(self):
         def recover(*a):
             if len(self.calls) == 1:
                 raise TimeoutError('temporary')
             return {'choices':[{'finish_reason':'stop','message':{'content':json.dumps(
                 {'scanned_all':True, 'entries':[]})}}]}
         self.responder = recover
-        result = self.run_round(1)
+        deferred = self.run_round(1)
+        self.assertEqual(deferred['status'], 'partial')
+        self.assertEqual(deferred['execution']['technical_errors'], 1)
+        self.assertTrue(deferred['chunks'][0]['technical_failure_unresolved'])
+        result = self.run_round(2)
         self.assertEqual(result['status'], 'completed')
-        self.assertEqual(result['execution']['technical_errors'], 1)
+        self.assertEqual(result['execution']['technical_errors'], 0)
         self.assertFalse(result['chunks'][0]['technical_failure_unresolved'])
 
     def test_repair_timeout_keeps_valid_neighbor_and_only_retries_repair(self):

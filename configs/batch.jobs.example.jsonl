@@ -1,0 +1,2 @@
+{"job_id":"dictionary_mechanical","config":"/absolute/configs/mechanical_dictionary.json","stages":["01","02","03","04","05","06"]}
+{"job_id":"dictionary_transportation","config":"/absolute/configs/transportation_dictionary.json","stages":["01","02","03","04","05","06"]}

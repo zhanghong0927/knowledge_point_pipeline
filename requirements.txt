@@ -2,6 +2,7 @@
 -r modules/dictionary/requirements.txt
 -r modules/important_books/requirements.txt
 -r modules/cleaning/requirements.txt
+-r requirements-scheduling.txt
 
 # Optional: modules/book_screening/requirements-oss.txt
 # Optional: modules/dictionary/requirements-tokenizer.txt

@@ -12,6 +12,7 @@ import os
 import platform
 import re
 import socket
+import sys
 from collections.abc import Iterator
 from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from contextlib import contextmanager, nullcontext
@@ -43,6 +44,18 @@ from .rule_candidates import extract_rule_candidates, rule_only_units
 from .storage import replace_checkpoint
 from .synthesis import synthesize
 from .telemetry import EventLog, TelemetryWriteError, summarize_events
+
+
+def _request_executor(workers):
+    if os.environ.get('PIPELINE_SHARED_POOL_URL'):
+        parents = Path(__file__).resolve().parents
+        # An installed package may have no pipeline checkout above it. Only
+        # add the known in-checkout helper; configured sharing never falls back.
+        if len(parents) > 4 and (parents[4] / 'shared_request_pool.py').is_file():
+            sys.path.insert(0, str(parents[4]))
+        from shared_request_pool import SharedExecutor
+        return SharedExecutor(max_workers=workers)
+    return ThreadPoolExecutor(max_workers=workers)
 
 IMPLEMENTATION_MODULES = (
     "llm",
@@ -1366,7 +1379,7 @@ def _run(
     # 最多提交 workers 个块；快块完成即补位，不等待同波最慢块。
     completed: dict[int, tuple[list[Candidate], list[dict[str, Any]]]] = {}
     remaining = iter(range(len(chunks)))
-    with ThreadPoolExecutor(max_workers=workers) as pool:
+    with _request_executor(workers) as pool:
         pending = {}
         for _ in range(min(workers, len(chunks))):
             index = next(remaining)

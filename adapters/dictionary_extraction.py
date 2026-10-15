@@ -38,7 +38,7 @@ def unresolved_technical_failure(folder, key, chunk, execution_errors):
     return bool(execution_errors and "technical_failure_unresolved" not in chunk and not errors)
 
 
-def finalized_report(manifest, out, returncode, allow_partial):
+def finalized_report(manifest, out, returncode, allow_partial, require_driver_state=True):
     summary = read(out / "SUMMARY.json")
     driver = read(out / "ORCHESTRATION_STATUS.json")
     books = summary["books"]
@@ -47,7 +47,8 @@ def finalized_report(manifest, out, returncode, allow_partial):
     if len(identifiers) != len(expected) or set(identifiers) != expected or summary.get("finished_books") != len(expected):
         raise ValueError("Extraction output does not cover manifest books")
     statuses = {b.get("status") for b in books}
-    if not statuses <= {"completed", "partial"} or driver.get("state") not in {"completed", "partial"}:
+    allowed_states = {"completed", "partial"} if require_driver_state else {"ready_to_finalize", "completed", "partial"}
+    if not statuses <= {"completed", "partial"} or driver.get("state") not in allowed_states:
         raise ValueError("Extraction contains a technical failure or unfinished driver")
     if any(summary.get(k, 0) or any(b.get(k, 0) for b in books)
            for k in ("http504_pending_chunks", "http504_unresolved_chunks")):
@@ -103,14 +104,33 @@ def main():
         parser.error("Native --out and --manifest are required")
     out = Path(native_args[native_args.index("--out") + 1])
     manifest = Path(native_args[native_args.index("--manifest") + 1])
+    status_path = out / "ORCHESTRATION_STATUS.json"
+    staged = status_path.is_file() and read(status_path).get("mode") == "staged"
+    implicit_staged_finalization = staged and not any(
+        flag in native_args for flag in ("--only-round", "--finalize-only"))
+    if implicit_staged_finalization:
+        if read(status_path).get("state") not in {"completed", "partial"}:
+            raise ValueError("Staged extraction has not completed native finalization")
+        native_args = [*native_args, "--finalize-only"]
     code = subprocess.run([sys.executable, "-u", str(ROOT / "modules/dictionary/src/run_fullbook_v5.py"), *native_args]).returncode
+    if "--only-round" in native_args:
+        return code
     if code not in (0, 2):
         return code
     report, pending = finalized_report(manifest, out, code, args.allow_partial)
-    (out / "HANDOFF.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    with (out / "UNRESOLVED.jsonl").open("w", encoding="utf-8") as stream:
-        for row in pending:
-            stream.write(json.dumps(row, ensure_ascii=False) + "\n")
+    handoff_bytes = (json.dumps(report, ensure_ascii=False, indent=2) + "\n").encode("utf-8")
+    unresolved_bytes = "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in pending).encode("utf-8")
+    handoff_path, unresolved_path = out / "HANDOFF.json", out / "UNRESOLVED.jsonl"
+    if implicit_staged_finalization:
+        if (not handoff_path.is_file() or handoff_path.read_bytes() != handoff_bytes
+                or not unresolved_path.is_file() or unresolved_path.read_bytes() != unresolved_bytes):
+            raise ValueError("Finalized staged HANDOFF/UNRESOLVED differs from native extraction")
+    else:
+        for path, expected in ((handoff_path, handoff_bytes), (unresolved_path, unresolved_bytes)):
+            if staged and path.exists() and path.read_bytes() != expected:
+                raise ValueError(f"Existing {path.name} differs from native extraction")
+        handoff_path.write_bytes(handoff_bytes)
+        unresolved_path.write_bytes(unresolved_bytes)
     print(json.dumps(report, ensure_ascii=False))
     return 0
 

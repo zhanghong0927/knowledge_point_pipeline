@@ -10,8 +10,14 @@ import sys
 import time
 import urllib.request
 from collections import Counter
+from contextlib import closing, nullcontext
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from shared_request_pool import completed as shared_completed
 from typing import Any, Iterable
+
+from staged_screening_state import (TRANSPORT_ERRORS, identity, latest_jsonl,
+                                    require_identity, save_status, transient_transport)
 
 
 DEFAULT_API_URL = (
@@ -225,6 +231,7 @@ def call_batch(
     timeout: int,
     retries: int,
     max_tokens: int,
+    defer_transport_retry: bool = False,
 ) -> list[dict[str, Any]]:
     expected_ids = [_text(row.get("record_id")) for row in rows]
     body = json.dumps(
@@ -241,8 +248,10 @@ def call_batch(
                 payload = json.loads(response.read().decode("utf-8"))
             content = payload["choices"][0]["message"]["content"]
             return parse_batch_response(content, expected_ids)
-        except Exception as exc:  # network and model-format failures use the same bounded retry path
+        except Exception as exc:  # content repair stays in this phase
             error = exc
+            if defer_transport_retry and isinstance(exc, TRANSPORT_ERRORS):
+                break
             if attempt < retries:
                 time.sleep(min(2 ** attempt, 8))
     raise RuntimeError(f"批次调用失败: {error}") from error
@@ -256,6 +265,7 @@ def call_batch_resilient(
     timeout: int,
     retries: int,
     max_tokens: int,
+    defer_transport_retry: bool = False,
 ) -> list[dict[str, Any]]:
     try:
         return call_batch(
@@ -266,6 +276,7 @@ def call_batch_resilient(
             timeout,
             retries,
             max_tokens,
+            defer_transport_retry,
         )
     except RuntimeError as exc:
         if len(rows) == 1 or not isinstance(exc.__cause__, ValueError):
@@ -279,10 +290,12 @@ def call_batch_resilient(
         }, ensure_ascii=False), flush=True)
         return (
             call_batch_resilient(
-                api_url, model, system_prompt, rows[:midpoint], timeout, retries, max_tokens
+                api_url, model, system_prompt, rows[:midpoint], timeout, retries, max_tokens,
+                defer_transport_retry
             )
             + call_batch_resilient(
-                api_url, model, system_prompt, rows[midpoint:], timeout, retries, max_tokens
+                api_url, model, system_prompt, rows[midpoint:], timeout, retries, max_tokens,
+                defer_transport_retry
             )
         )
 
@@ -334,7 +347,33 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     unexpected = sorted(set(results) - expected_ids)
     if unexpected:
         raise ValueError("检查点包含当前输入不存在的 record_id: " + ", ".join(unexpected[:10]))
-    pending_rows = [row for row in rows if row["record_id"] not in results]
+    round_number = getattr(args, 'only_round', None)
+    finalize_only = getattr(args, 'finalize_only', False)
+    staged = round_number is not None or finalize_only
+    status_path = args.output_dir / 'ORCHESTRATION_STATUS.json'
+    failures_path = args.output_dir / '技术失败检查点.jsonl'
+    if staged:
+        frozen = identity((args.input_csv, args.subject_config, Path(__file__)),
+                          {'api_url': args.api_url, 'model': args.model,
+                           'sample_size': args.sample_size, 'seed': args.seed,
+                           'batch_size': args.batch_size, 'timeout': args.timeout,
+                           'max_tokens': args.max_tokens, 'retries': args.retries},
+                          force_full=finalize_only)
+        prior = require_identity(status_path, frozen, round_number,
+                                 (checkpoint_path, failures_path))
+        if finalize_only and (prior is None or prior['state'] not in
+                              ('ready_to_finalize', 'technical_failure', 'finalized')):
+            raise ValueError('Staged metadata audit is not ready to finalize')
+        latest_failures = latest_jsonl(failures_path, 'record_id')
+        if round_number == 1:
+            pending_rows = [row for row in rows if row['record_id'] not in results]
+        elif round_number is not None:
+            pending_rows = [row for row in rows if row['record_id'] not in results
+                            and latest_failures.get(row['record_id'], {}).get('failure_kind') == 'transport']
+        else:
+            pending_rows = []
+    else:
+        pending_rows = [row for row in rows if row["record_id"] not in results]
     batches = list(_batches(pending_rows, args.batch_size))
     if results:
         print(json.dumps({
@@ -342,11 +381,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             "completed_records": len(results),
             "pending_records": len(pending_rows),
         }, ensure_ascii=False), flush=True)
-    with checkpoint_path.open("a", encoding="utf-8") as checkpoint:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
-            futures = {
-                executor.submit(
-                    call_batch_resilient,
+    with checkpoint_path.open("a", encoding="utf-8") as checkpoint, (
+            failures_path.open('a', encoding='utf-8') if staged else nullcontext()) as failures:
+        def request_batch(batch):
+            return call_batch_resilient(
                     args.api_url,
                     args.model,
                     system_prompt,
@@ -354,12 +392,25 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                     args.timeout,
                     args.retries,
                     args.max_tokens,
-                ): batch
-                for batch in batches
-            }
+                    staged)
+        with closing(shared_completed(request_batch, batches, args.workers)) as completions:
             completed = 0
-            for future in concurrent.futures.as_completed(futures):
-                batch_results = future.result()
+            for batch, future in completions:
+                try:
+                    batch_results = future.result()
+                except Exception as exc:
+                    if not staged:
+                        raise
+                    cause = exc.__cause__ if isinstance(exc, RuntimeError) else exc
+                    kind = ('transport' if transient_transport(cause) else
+                            'terminal_transport' if isinstance(cause, TRANSPORT_ERRORS)
+                            else 'content_or_format')
+                    for row in batch:
+                        failures.write(json.dumps({'record_id': row['record_id'],
+                                                   'failure_kind': kind,
+                                                   'error': str(exc)}, ensure_ascii=False) + '\n')
+                    failures.flush()
+                    continue
                 for result in batch_results:
                     results[result["record_id"]] = result
                     checkpoint.write(json.dumps(result, ensure_ascii=False) + "\n")
@@ -372,9 +423,23 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
                         "completed_records": len(results),
                     }), flush=True)
 
+    if staged and round_number is not None:
+        latest_failures = latest_jsonl(failures_path, 'record_id')
+        unresolved = [row for row in rows if row['record_id'] not in results]
+        pending_transport = sum(latest_failures.get(row['record_id'], {}).get('failure_kind') ==
+                                'transport' for row in unresolved)
+        terminal = len(unresolved) - pending_transport
+        return save_status(status_path, frozen, round_number, pending_transport,
+                           terminal=terminal, checkpoints=(checkpoint_path, failures_path))
+
     output_rows: list[dict[str, Any]] = []
     for row in rows:
-        result = results[row["record_id"]]
+        result = results.get(row['record_id'])
+        if result is None:
+            if not staged:
+                raise ValueError('Metadata checkpoint is incomplete')
+            result = {'decision': 'REVIEW', 'evidence_fields': [],
+                      'reason': '模型技术或格式失败，待复核'}
         output_rows.append({
             "source_row_number": row["source_row_number"],
             "record_id": row["record_id"],
@@ -420,6 +485,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     (args.output_dir / "书目大模型精筛汇总.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
     )
+    if staged:
+        finalized = {**prior, 'state': 'finalized', 'status': 'finalized',
+                     'unresolved_records': len(rows) - len(results)}
+        status_path.write_text(json.dumps(finalized, ensure_ascii=False, indent=2),
+                               encoding='utf-8')
     return summary
 
 
@@ -437,6 +507,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--timeout", type=int, default=180)
     parser.add_argument("--retries", type=int, default=2)
     parser.add_argument("--max-tokens", type=int, default=2400)
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument('--only-round', type=int, choices=(1, 2, 3))
+    mode.add_argument('--finalize-only', action='store_true')
     args = parser.parse_args()
     if args.sample_size < 0 or args.batch_size < 1 or args.workers < 1:
         parser.error("sample-size 必须不小于0，batch-size 和 workers 必须大于0")

@@ -1,0 +1,12 @@
+[
+  {
+    "node_code": "N_e44013a161e603b4",
+    "path": "医学/外科学/普通外科/胃肠外科/胃十二指肠外科",
+    "reason": "generation_technical_failure"
+  },
+  {
+    "node_code": "N_653a69225b2f914b",
+    "path": "医学/外科学/普通外科/胃肠外科/小肠与结直肠外科",
+    "reason": "generation_technical_failure"
+  }
+]

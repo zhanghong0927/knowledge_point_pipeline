@@ -2,15 +2,56 @@
 """Audit plans and local handoffs without invoking model services."""
 
 import argparse
+from contextlib import contextmanager
 import hashlib
 import json
+import re
 from pathlib import Path
 import subprocess
 import sys
+import socket
 import unittest
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parent
+
+
+def important_llm_core_changes(root, baseline):
+    """Honor explicit integration updates while retaining original archive pins."""
+    expected=dict(baseline['sha256'])
+    overrides=baseline.get('integration_overrides',{}).get('files',{})
+    if not isinstance(overrides,dict):
+        raise ValueError('Native-module integration overrides must be a mapping')
+    for name,proof in overrides.items():
+        if (name not in expected or not isinstance(proof,dict)
+                or proof.get('original_sha256')!=expected[name]
+                or not isinstance(proof.get('current_sha256'),str)
+                or not re.fullmatch(r'[0-9a-f]{64}',proof['current_sha256'])):
+            raise ValueError('Invalid native-module integration provenance: '+str(name))
+        expected[name]=proof['current_sha256']
+    return [name for name,digest in expected.items()
+            if hashlib.sha256((Path(root)/'modules/important_llm'/name).read_bytes()).hexdigest()!=digest]
+
+
+@contextmanager
+def offline_network_guard():
+    """Permit only literal loopback endpoints for isolated mock HTTP servers."""
+    original = socket.socket.connect
+
+    def guarded_connect(sock, address):
+        if not isinstance(address, tuple) or address[0] not in ('127.0.0.1', '::1'):
+            raise AssertionError('External network disabled in offline tests')
+        return original(sock, address)
+
+    original_create = socket.create_connection
+
+    def guarded_create(address, *args, **kwargs):
+        if not isinstance(address, tuple) or address[0] not in ('127.0.0.1', '::1'):
+            raise AssertionError('External network disabled in offline tests')
+        return original_create(address, *args, **kwargs)
+
+    with patch('socket.socket.connect', guarded_connect), patch('socket.create_connection', guarded_create):
+        yield
 
 
 def main():
@@ -20,8 +61,7 @@ def main():
     args = parser.parse_args()
     if args.suite:
         directory = ROOT/'tests' if args.suite == 'integration' else ROOT/'modules/cleaning/tests'
-        with patch('socket.socket.connect', side_effect=AssertionError('Network disabled in offline tests')), \
-             patch('socket.create_connection', side_effect=AssertionError('Network disabled in offline tests')):
+        with offline_network_guard():
             suite = unittest.defaultTestLoader.discover(str(directory))
             result = unittest.TextTestRunner(verbosity=2).run(suite)
         print('OFFLINE_RESULT=' + json.dumps({'run':result.testsRun,'failed':len(result.failures),
@@ -59,8 +99,7 @@ def main():
         graph[name]={'missing_internal_producers':unresolved,'unimplemented_hooks':blocked,
                      'task_count':sum(len(s['tasks']) for s in stages)}
     baseline=json.loads((ROOT/'MODULE_MANIFEST.json').read_text())['important_llm']
-    core_changes=[name for name,h in baseline['sha256'].items()
-                  if hashlib.sha256((ROOT/'modules/important_llm'/name).read_bytes()).hexdigest()!=h]
+    core_changes=important_llm_core_changes(ROOT,baseline)
     code_paths=[ROOT/'pipeline.py',*list((ROOT/'adapters').glob('*.py')),
                 ROOT/'modules/cleaning/scripts/rule_clean.py',ROOT/'modules/cleaning/scripts/model_clean.py']
     report={'scope':'offline_contracts_and_local_processing_only','model_api_calls':0,

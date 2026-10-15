@@ -10,6 +10,8 @@ subject_config=""
 api_base=""
 credentials_file=""
 workers=50
+staged_round=""
+staged_finalize=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -22,9 +24,17 @@ while [[ $# -gt 0 ]]; do
     --api-base) api_base="$2"; shift 2 ;;
     --credentials-file) credentials_file="$2"; shift 2 ;;
     --workers) workers="$2"; shift 2 ;;
+    --only-round) staged_round="$2"; shift 2 ;;
+    --finalize-only) staged_finalize=1; shift ;;
     *) echo "unknown argument: $1" >&2; exit 2 ;;
   esac
 done
+if [[ -n "$staged_round" && "$staged_finalize" == 1 ]]; then
+  echo 'choose one staged round or finalization' >&2; exit 2
+fi
+if [[ -n "$staged_round" && ! "$staged_round" =~ ^[123]$ ]]; then
+  echo 'staged round must be 1, 2 or 3' >&2; exit 2
+fi
 
 for value in \
   "$subject_key" "$dictionary_csv" "$important_csv" "$metadata_results_csv" \
@@ -69,10 +79,12 @@ else
   models_url="${api_base%/}/v1/models"
 fi
 
-while ! curl -fsS --max-time 20 "$models_url" >/dev/null; do
-  echo "$(date -Is) waiting_for_api subject=$subject_key"
-  sleep 60
-done
+if [[ -z "$staged_round" && "$staged_finalize" != 1 ]]; then
+  while ! curl -fsS --max-time 20 "$models_url" >/dev/null; do
+    echo "$(date -Is) waiting_for_api subject=$subject_key"
+    sleep 60
+  done
+fi
 
 credential_lines="$(grep -E '^(export )?(SOURCE_OSS_ACCESS_ID|SOURCE_OSS_ACCESS_KEY|OSS_ACCESS_KEY_ID|OSS_ACCESS_KEY_SECRET)=' "$credentials_file" || true)"
 if [[ -z "$credential_lines" ]]; then
@@ -89,6 +101,19 @@ if [[ -z "$SOURCE_OSS_ACCESS_ID" || -z "$SOURCE_OSS_ACCESS_KEY" ]]; then
   exit 3
 fi
 trap 'unset SOURCE_OSS_ACCESS_ID SOURCE_OSS_ACCESS_KEY OSS_ACCESS_KEY_ID OSS_ACCESS_KEY_SECRET' EXIT
+
+if [[ -n "$staged_round" || "$staged_finalize" == 1 ]]; then
+  mode=(--finalize-only)
+  if [[ -n "$staged_round" ]]; then mode=(--only-round "$staged_round"); fi
+  python3 "$(dirname "$0")/general_book_screening_pipeline.py" audit \
+    --input-csv "$combined_csv" --output "$output_dir" \
+    --subject-config "$subject_config" --workers "$workers" \
+    --sample-count 16 --chunk-chars 1200 --api-url "$api_chat" \
+    --timeout 240 --retries 2 --max-tokens 2400 \
+    --cache-dir "$cache_dir" --source-oss-endpoint "$source_endpoint" \
+    "${mode[@]}"
+  exit $?
+fi
 
 while true; do
   while ! curl -fsS --max-time 20 "$models_url" >/dev/null; do

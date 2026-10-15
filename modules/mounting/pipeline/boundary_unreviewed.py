@@ -5,6 +5,9 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import hashlib
 import json
 from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from shared_request_pool import completed as shared_completed
 
 import boundary_recovery as recovery
 import generate_semantic_boundaries as b
@@ -15,6 +18,20 @@ TECHNICAL = 'technical_failure'
 EMPTY = recovery.EMPTY
 FALLBACK_REASONS = {'context_byte_budget_exceeded', 'generation_technical_failure',
                     'parent_empty_boundary'}
+
+
+def staged_checkpoint(payload, output, phase):
+    value = {'payload': payload, 'output': output, 'last_attempt_round': phase}
+    value['checkpoint_sha256'] = hashlib.sha256(json.dumps(
+        value, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+    return value
+
+
+def validate_staged_checkpoint(saved):
+    digest = saved.get('checkpoint_sha256')
+    body = {key: saved[key] for key in ('payload', 'output', 'last_attempt_round')}
+    if digest != hashlib.sha256(json.dumps(body, ensure_ascii=False, sort_keys=True).encode()).hexdigest():
+        raise ValueError('Staged boundary checkpoint checksum changed')
 
 
 def validate_group(payload, output, allow_empty=False):
@@ -101,7 +118,105 @@ def generate_group(base, model, payload, max_bytes):
     return dict(status=STATUS, cards=generation['result'], rounds=rounds)
 
 
-def run(nodes, out, base, model, workers, max_bytes, policy='strict', reuse=None):
+def generate_group_staged(base, model, payload, max_bytes):
+    if len(json.dumps(payload, ensure_ascii=False).encode('utf-8')) > max_bytes:
+        return dict(status=TECHNICAL, reason='context_byte_budget_exceeded',
+                    technical_error='sibling context exceeds configured byte budget; no partial generation',
+                    technical_kind='budget', rounds=[])
+
+    def validate_generation(obj):
+        if not isinstance(obj, dict) or set(obj) != {'cards'}:
+            raise ValueError('Raw generation contains unexpected fields')
+        if not isinstance(obj['cards'], list) or any(not isinstance(card, dict) or 'review' in card for card in obj['cards']):
+            raise ValueError('Raw generation contains invalid cards or review evidence')
+        return b.validate_cards(obj, payload['targets'], payload['sibling_context'])
+
+    generation, kind = b.staged_call(base, model, b.PROMPT, payload, validate_generation)
+    rounds = [dict(generation=generation)]
+    if generation['result'] is None:
+        return dict(status=TECHNICAL, reason='generation_technical_failure',
+                    technical_kind=kind, technical_error=str(generation['attempts'][-1].get('error', kind)), rounds=rounds)
+    return dict(status=STATUS, cards=generation['result'], rounds=rounds)
+
+
+def run_round(nodes, out, base, model, workers, max_bytes, phase, reuse=None):
+    """Attempt each newly eligible or transient-failed group at most once per cohort."""
+    out = Path(out)
+    groups = out/'groups'
+    groups.mkdir(parents=True, exist_ok=True)
+    reused = Path(reuse) if reuse else None
+    cards_by_code = {}
+    states = {}
+    attempted = 0
+    pending_transport = 0
+
+    for depth in range(max(node['depth'] for node in nodes)+1):
+        pending = []
+        parents = list(dict.fromkeys(node['parent_code'] for node in nodes if node['depth'] == depth))
+        for parent in parents:
+            if parent is not None and parent not in cards_by_code:
+                for node in nodes:
+                    if node['parent_code'] == parent:
+                        states[node['code']] = 'blocked_by_parent'
+                continue
+            for number, payload in enumerate(b.planned_groups(nodes, parent, cards_by_code)):
+                key = (parent or '__root__')+'#'+str(number)
+                path = groups/(hashlib.sha256(key.encode()).hexdigest()[:24]+'.json')
+                saved_path = path if path.exists() else (reused/'groups'/path.name if reused else None)
+                saved = json.loads(saved_path.read_text(encoding='utf-8')) if saved_path and saved_path.exists() else None
+                if saved:
+                    if saved_path == path:
+                        validate_staged_checkpoint(saved)
+                    if saved.get('payload') != payload:
+                        raise ValueError('Boundary checkpoint parent context changed')
+                    output = saved.get('output') or {}
+                    if output.get('status') == STATUS:
+                        validate_group(payload, output)
+                        if saved_path != path:
+                            b.atomic_json(path, staged_checkpoint(payload, output, 0))
+                        for card in output['cards']:
+                            cards_by_code[card['node_code']] = card
+                        for node in payload['targets']:
+                            states[node['code']] = STATUS
+                        continue
+                    if output.get('status') != TECHNICAL:
+                        raise ValueError('Unexpected staged boundary checkpoint status')
+                    if saved.get('last_attempt_round') == phase or output.get('technical_kind') != 'transport':
+                        for node in payload['targets']:
+                            states[node['code']] = TECHNICAL
+                        continue
+                    if saved.get('last_attempt_round', 0) >= phase:
+                        raise ValueError('Boundary checkpoint phase moved backwards')
+                pending.append((payload, path))
+        if pending:
+            for (payload, path), future in shared_completed(
+                    lambda pair: generate_group_staged(base.rstrip('/'), model, pair[0], max_bytes),
+                    pending, workers):
+                try:
+                    result = future.result()
+                except Exception as exc:
+                    result = dict(status=TECHNICAL, reason='generation_technical_failure',
+                                  technical_kind='implementation', technical_error=str(exc),
+                                  rounds=[dict(generation=dict(result=None, attempts=[{'error': str(exc)}]))])
+                if result['status'] == STATUS:
+                    validate_group(payload, result)
+                    for card in result['cards']:
+                        cards_by_code[card['node_code']] = card
+                for node in payload['targets']:
+                    states[node['code']] = result['status']
+                if path.exists():
+                    recovery.archive(path, out/'group_history')
+                b.atomic_json(path, staged_checkpoint(payload, result, phase))
+                attempted += 1
+    for path in groups.glob('*.json'):
+        saved = json.loads(path.read_text(encoding='utf-8'))
+        if saved['output'].get('status') == TECHNICAL and saved['output'].get('technical_kind') == 'transport':
+            pending_transport += 1
+    return {'round': phase, 'attempted_groups': attempted, 'pending_transport': pending_transport,
+            'accepted_nodes': len(cards_by_code), 'blocked_nodes': sum(v == 'blocked_by_parent' for v in states.values())}
+
+
+def run(nodes, out, base, model, workers, max_bytes, policy='strict', reuse=None, offline_only=False):
     if policy not in ('strict', 'empty') or not isinstance(workers, int) or not 1 <= workers <= 1024 or max_bytes <= 0:
         raise ValueError('Invalid unreviewed generation policy or limits')
     if not nodes:
@@ -182,23 +297,38 @@ def run(nodes, out, base, model, workers, max_bytes, policy='strict', reuse=None
                         record(payload, saved['output'])
                         continue
                 pending.append((key, payload, path))
-        with ThreadPoolExecutor(max_workers=workers) as pool:
-            futures = {pool.submit(generate_group, base.rstrip('/'), model, payload, max_bytes): (key, payload, path)
-                       for key, payload, path in pending}
-            for future in as_completed(futures):
-                key, payload, path = futures[future]
-                result = future.result()
-                attempted.add(key)
-                if result['status'] == TECHNICAL and policy == 'empty':
-                    reason = result['reason']
-                    result = dict(result, original_status=TECHNICAL, status=EMPTY, cards=[
-                        recovery.empty_card(node, reason) for node in payload['targets']])
-                if result['status'] in (STATUS, EMPTY):
-                    validate_group(payload, result, allow_empty=policy == 'empty')
-                if path.exists():
-                    recovery.archive(path, out / 'group_history')
-                b.atomic_json(path, dict(payload=payload, output=result))
-                record(payload, result)
+        if offline_only:
+            finished = []
+            for key, payload, path in pending:
+                if not path.exists():
+                    raise ValueError('Offline boundary finalize lacks group checkpoint: '+key)
+                saved = json.loads(path.read_text(encoding='utf-8'))
+                if saved.get('payload') != payload or saved.get('output', {}).get('status') != TECHNICAL:
+                    raise ValueError('Offline boundary checkpoint identity changed: '+key)
+                finished.append((key, payload, path, saved['output']))
+        else:
+            if pending:
+                finished = []
+                for (key, payload, path), future in shared_completed(
+                        lambda item: generate_group(base.rstrip('/'), model, item[1], max_bytes),
+                        pending, workers):
+                    finished.append((key, payload, path, future.result()))
+            else:
+                finished = []
+        for key, payload, path, result in finished:
+            attempted.add(key)
+            result = dict(result)
+            if result['status'] == TECHNICAL and policy == 'empty':
+                reason = result['reason']
+                result.pop('technical_kind', None)
+                result = dict(result, original_status=TECHNICAL, status=EMPTY, cards=[
+                    recovery.empty_card(node, reason) for node in payload['targets']])
+            if result['status'] in (STATUS, EMPTY):
+                validate_group(payload, result, allow_empty=policy == 'empty')
+            if path.exists():
+                recovery.archive(path, out / 'group_history')
+            b.atomic_json(path, dict(payload=payload, output=result))
+            record(payload, result)
     for node in nodes:
         states.setdefault(node['code'], 'blocked_by_parent')
     cards = [cards_by_code[node['code']] for node in nodes if node['code'] in cards_by_code]

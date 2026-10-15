@@ -15,7 +15,7 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def seal_export(out, evidence, track, subject, normalization_report=None, cleaning_report=None):
+def seal_export(out, evidence, track, subject, normalization_report=None, cleaning_report=None,name_policy=None):
     if track == 'important' and (normalization_report is None or cleaning_report is None):
         raise ValueError(IMPORTANT_REBUILD)
     proof = {'version': 3 if track == 'important' else 1, 'track': track, 'subject': subject,
@@ -25,6 +25,7 @@ def seal_export(out, evidence, track, subject, normalization_report=None, cleani
                                   'record_fingerprint_field': RECORD_FINGERPRINT,
                                   'normalization_report': str(Path(normalization_report).resolve()),
                                   'cleaning_report': str(Path(cleaning_report).resolve())}
+    if name_policy is not None:proof['name_whitespace_policy']=name_policy
     return {'cleaning_export': proof,
             'output_sha256': {name: sha(out / name) for name in ('records.jsonl', 'trace.jsonl')}}
 
@@ -102,6 +103,18 @@ def verify_export(records):
             verify_record_fingerprints(initial_path.parent / 'records.jsonl', upstream_path)
         if set(report['output_sha256']) != {'records.jsonl', 'trace.jsonl'}:
             raise ValueError('Invalid cleaning output manifest')
+        if 'name_whitespace' in report or 'name_whitespace_policy' in proof:
+            import name_whitespace
+            normalization=report.get('name_whitespace')
+            if not isinstance(normalization,dict):raise ValueError('Invalid name whitespace metadata')
+            policy=normalization.get('policy')
+            if policy!=name_whitespace.identity() or proof.get('name_whitespace_policy')!=policy:
+                raise ValueError('Unbound or changed name whitespace policy')
+            if proof['track']=='dictionary' and report.get('identity',{}).get('name_whitespace')!=policy:
+                raise ValueError('Dictionary name whitespace identity mismatch')
+            if any(proof['evidence_sha256'].get(str(p.resolve()))!=sha(p)
+                   for p in name_whitespace.evidence_files()):
+                raise ValueError('Missing name whitespace evidence')
         checks = {str(records.parent / name): value for name, value in report['output_sha256'].items()}
         checks.update(proof['evidence_sha256'])
         if any(not Path(p).is_absolute() or sha(p) != value for p, value in checks.items()):
