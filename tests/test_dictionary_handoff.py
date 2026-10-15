@@ -144,8 +144,9 @@ class DictionaryHandoffTests(unittest.TestCase):
             root = Path(temp)
             code = root / 'code'
             (code / 'adapters').mkdir(parents=True)
-            original = Path(module.__file__).parent / 'adapters/inference_gateway.py'
-            shutil.copy2(original, code / 'adapters/inference_gateway.py')
+            source = Path(module.__file__).parent.resolve()
+            for name in ('adapters/inference_gateway.py', 'shared_request_pool.py'):
+                shutil.copy2(source / name, code / name)
             script = code / 'staged_benchmark.py'
             script.write_text('''import json,pathlib,subprocess,sys,time
 root=pathlib.Path(sys.argv[sys.argv.index('--root')+1])
@@ -159,11 +160,19 @@ while True: time.sleep(.05)
 ''')
             command = [sys.executable, '-B', '-u', str(script), 'run', '--root', str(root),
                        '--fake', f'http://127.0.0.1:{server.server_port}']
-            child = subprocess.Popen(command, start_new_session=True, stdout=subprocess.DEVNULL,
-                                     stderr=subprocess.DEVNULL)
+            env = os.environ.copy()
+            # The frozen fixture must not import missing files from this checkout.
+            env['PYTHONPATH'] = os.pathsep.join(
+                entry for entry in env.get('PYTHONPATH', '').split(os.pathsep)
+                if entry and Path(entry).resolve() != source)
+            child_log = root / 'child.log'
+            with child_log.open('w', encoding='utf-8') as log:
+                child = subprocess.Popen(command, start_new_session=True, stdout=log,
+                                         stderr=subprocess.STDOUT, cwd=root, env=env)
             timer = None
             try:
-                self.assertTrue(entered.wait(15))
+                self.assertTrue(entered.wait(15),
+                                child_log.read_text(encoding='utf-8', errors='replace'))
                 ready = json.loads((root / 'gateway/READY.json').read_text())
                 self.assertEqual(_request(ready['api_url'], 'GET', '/_scheduler/stats')['total']['active'], 1)
                 self.assertIsNone(module.boundary_summary(root))
